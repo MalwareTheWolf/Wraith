@@ -392,3 +392,6 @@ texture = ExtResource("7_ta15a")
 
 [node name="Path2D" parent="." instance=ExtResource("7_3px5j")]
 position = Vector2(150, 213)
+
+[node name="Water_Body" parent="." instance=ExtResource("7_bia53")]
+position = Vector2(15, 92)

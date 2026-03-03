@@ -11,6 +11,7 @@ func init() -> void:
 #what happens when entering the state 
 func enter() -> void: 
 	player.animation_player.play( "Idle" )
+	player.collision_crouch.disabled = true
 	pass 
 
   

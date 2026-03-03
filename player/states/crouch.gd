@@ -17,7 +17,7 @@ func enter() -> void:
 	player.collision_crouch.disabled = false
 	
 	# Move sprite down 5 pixels from original position
-	player.sprite.position = original_sprite_position + Vector2(0, 15)
+	#player.sprite.position = original_sprite_position + Vector2(0, 13)
 
 
 #what happens when exiting the state 
@@ -27,7 +27,7 @@ func exit() -> void:
 	player.collision_crouch.disabled = true
 	
 	# Reset sprite position
-	player.sprite.position = original_sprite_position
+	#player.sprite.position = original_sprite_position
 
 
 #what happens when an input is pressed 
