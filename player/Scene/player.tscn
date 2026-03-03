@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cea1jp1i8qfma"]
+[gd_scene load_steps=18 format=3 uid="uid://cea1jp1i8qfma"]
 
 [ext_resource type="Script" uid="uid://bdvcm051rhx07" path="res://player/scripts/player.gd" id="1_oul6g"]
 [ext_resource type="Script" uid="uid://qwdar35yeqan" path="res://player/states/idle.gd" id="2_rkbax"]
@@ -6,72 +6,42 @@
 [ext_resource type="Script" uid="uid://dldsyixj31obw" path="res://player/states/jump.gd" id="3_qjkh3"]
 [ext_resource type="Script" uid="uid://dcgbdhpob072g" path="res://player/states/fall.gd" id="3_yw30f"]
 [ext_resource type="Script" uid="uid://c5qk37j448of8" path="res://player/states/crouch.gd" id="6_g6k8r"]
-[ext_resource type="Texture2D" uid="uid://cislvqw23gs3h" path="res://Assets/Assets/Free/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Idle.png" id="7_h2vqo"]
-[ext_resource type="Texture2D" uid="uid://ciq1bxkddy1ur" path="res://Assets/Assets/Free/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Run.png" id="8_ya7di"]
+[ext_resource type="Texture2D" uid="uid://b76a6s6kwra2i" path="res://player/sprites/EnemySheet.png" id="7_kq2ai"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kq2ai"]
-radius = 6.0
+radius = 4.0
 height = 34.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h2vqo"]
-radius = 6.5
+radius = 4.0
 height = 20.0
 
-[sub_resource type="Animation" id="Animation_ivps1"]
-resource_name = "Crouch"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [40]
-}
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ya7di"]
+size = Vector2(20, 3)
 
-[sub_resource type="Animation" id="Animation_n7ghd"]
-resource_name = "Fall"
-
-[sub_resource type="Animation" id="Animation_dw050"]
+[sub_resource type="Animation" id="Animation_h2vqo"]
 resource_name = "Idle"
+length = 0.8
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
+tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+"values": [0, 1, 2, 3, 4, 5, 6]
 }
 
-[sub_resource type="Animation" id="Animation_nvl01"]
-resource_name = "Jump"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [40, 41, 42, 43, 44, 50, 51, 52, 53, 60]
-}
-
-[sub_resource type="Animation" id="Animation_urp6f"]
+[sub_resource type="Animation" id="Animation_ya7di"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
+tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -80,125 +50,42 @@ tracks/0/keys = {
 "update": 1,
 "values": [0]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:texture")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("7_h2vqo")]
-}
 
-[sub_resource type="Animation" id="Animation_b26j0"]
-resource_name = "Run"
+[sub_resource type="Animation" id="Animation_8u50t"]
+resource_name = "Crouch"
+length = 0.75
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:texture")
+tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.099999994, 0.19999999, 0.3, 0.39999998, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ExtResource("8_ya7di"), ExtResource("8_ya7di")]
+"values": [72, 73, 74, 75, 76, 77, 78]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_bwjto"]
+[sub_resource type="Animation" id="Animation_lp0h7"]
+resource_name = "CrouchWalk"
+
+[sub_resource type="Animation" id="Animation_eut4h"]
+resource_name = "Run"
+
+[sub_resource type="Animation" id="Animation_era1q"]
+resource_name = "Jump"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6bw35"]
 _data = {
-&"Crouch": SubResource("Animation_ivps1"),
-&"Fall": SubResource("Animation_n7ghd"),
-&"Idle": SubResource("Animation_dw050"),
-&"Jump": SubResource("Animation_nvl01"),
-&"RESET": SubResource("Animation_urp6f"),
-&"Run": SubResource("Animation_b26j0")
+&"Crouch": SubResource("Animation_8u50t"),
+&"CrouchWalk": SubResource("Animation_lp0h7"),
+&"Idle": SubResource("Animation_h2vqo"),
+&"Jump": SubResource("Animation_era1q"),
+&"RESET": SubResource("Animation_ya7di"),
+&"Run": SubResource("Animation_eut4h")
 }
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ya7di"]
-size = Vector2(20, 3)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8u50t"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(0, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lp0h7"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(120, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_eut4h"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(240, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_era1q"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(360, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6bw35"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(480, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_o7381"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(600, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cmacy"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(720, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xs5gv"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(840, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_s057m"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(960, 0, 120, 80)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hoh6r"]
-atlas = ExtResource("7_h2vqo")
-region = Rect2(1080, 0, 120, 80)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_r7c7h"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8u50t")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lp0h7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_eut4h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_era1q")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6bw35")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_o7381")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cmacy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xs5gv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_s057m")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hoh6r")
-}],
-"loop": true,
-"name": &"Idle",
-"speed": 5.0
-}]
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 0
@@ -230,33 +117,27 @@ script = ExtResource("6_g6k8r")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(4, -40)
-texture = ExtResource("7_h2vqo")
-hframes = 10
+position = Vector2(1, -37)
+texture = ExtResource("7_kq2ai")
+hframes = 24
+vframes = 31
 
 [node name="CollisionStand" type="CollisionShape2D" parent="."]
-position = Vector2(-1, -16)
+position = Vector2(0, -16)
 shape = SubResource("CapsuleShape2D_kq2ai")
 
 [node name="CollisionCrouch" type="CollisionShape2D" parent="."]
-position = Vector2(-1, -9)
+position = Vector2(0, -9)
 shape = SubResource("CapsuleShape2D_h2vqo")
 debug_color = Color(0.8209421, 0.0017710191, 0.96571594, 0.41960785)
 
 [node name="Label" type="Label" parent="."]
-offset_left = -47.0
-offset_top = -55.0
-offset_right = 44.0
-offset_bottom = -32.0
+offset_left = -43.0
+offset_top = -70.0
+offset_right = 48.0
+offset_bottom = -47.0
 text = "label"
 horizontal_alignment = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../Sprite2D")
-libraries = {
-&"": SubResource("AnimationLibrary_bwjto")
-}
-autoplay = "Idle"
 
 [node name="OneWayShapeCast" type="ShapeCast2D" parent="."]
 position = Vector2(0, -3)
@@ -266,8 +147,8 @@ target_position = Vector2(0, 6)
 max_results = 23
 collision_mask = 15
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(65, -40)
-sprite_frames = SubResource("SpriteFrames_r7c7h")
-animation = &"Idle"
-frame_progress = 0.5623804
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_6bw35")
+}
+autoplay = "Idle"

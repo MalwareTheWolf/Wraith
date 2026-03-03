@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b8x3cgk5ooy1c" path="res://Other/Stuff/MovingPlatform.gd" id="1_bt1me"]
 [ext_resource type="Texture2D" uid="uid://43218ag583sr" path="res://World/Tilesets/[FREE] Industrial Tileset/FREE/5. Industrial Tileset - Starter Pack 32p/Block1.png" id="2_hfdv3"]
-[ext_resource type="Texture2D" uid="uid://cqvy0hisiyyl2" path="res://Other/Sprites/small_metal_spike_03.png" id="3_gldhq"]
+[ext_resource type="Texture2D" uid="uid://cqvy0hisiyyl2" path="res://Other/Other Sprites/small_metal_spike_03.png" id="3_gldhq"]
 [ext_resource type="Script" uid="uid://c1gegim0r3fwd" path="res://Other/Death/Spikes.gd" id="4_cg0yu"]
 
 [sub_resource type="Curve2D" id="Curve2D_r4eua"]

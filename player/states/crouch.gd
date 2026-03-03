@@ -2,9 +2,12 @@ class_name PlayerStateCrouch extends PlayerState
 
 @export var deceleration_rate : float = 10
 
+var original_sprite_position : Vector2
+
+
 #initialize
 func init() -> void: 
-	pass 
+	original_sprite_position = player.sprite.position
 
 
 #what happens when entering the state 
@@ -12,15 +15,19 @@ func enter() -> void:
 	player.animation_player.play("Crouch")
 	player.collision_stand.disabled = true
 	player.collision_crouch.disabled = false
-	pass 
+	
+	# Move sprite down 5 pixels from original position
+	player.sprite.position = original_sprite_position + Vector2(0, 15)
 
-  
+
 #what happens when exiting the state 
 func exit() -> void: 
 	
 	player.collision_stand.disabled = false
 	player.collision_crouch.disabled = true
-	pass 
+	
+	# Reset sprite position
+	player.sprite.position = original_sprite_position
 
 
 #what happens when an input is pressed 

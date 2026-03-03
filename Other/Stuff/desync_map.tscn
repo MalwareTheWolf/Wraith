@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ib6pc4hayebe"]
 
-[ext_resource type="Texture2D" uid="uid://3fiq62qk4rvg" path="res://MAP & INFO/Desync Map.png" id="1_gq5c0"]
+[ext_resource type="Texture2D" uid="uid://3fiq62qk4rvg" path="res://General/MAP & INFO/Desync Map.png" id="1_gq5c0"]
 
 [node name="DesyncMap" type="Sprite2D"]
 position = Vector2(463, 206.29999)
