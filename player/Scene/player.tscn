@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cea1jp1i8qfma"]
+﻿[gd_scene load_steps=18 format=3 uid="uid://cea1jp1i8qfma"]
 
 [ext_resource type="Script" uid="uid://bdvcm051rhx07" path="res://player/scripts/player.gd" id="1_oul6g"]
 [ext_resource type="Script" uid="uid://qwdar35yeqan" path="res://player/states/idle.gd" id="2_rkbax"]
@@ -19,8 +19,6 @@ height = 13.999975
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ya7di"]
 size = Vector2(20, 3)
 
-<<<<<<< HEAD
-=======
 [sub_resource type="Animation" id="Animation_h2vqo"]
 resource_name = "Idle"
 length = 0.8
@@ -53,7 +51,6 @@ tracks/0/keys = {
 "values": [0]
 }
 
->>>>>>> f042ffc6c6e17ded7051b280e345e4e8353e37e1
 [sub_resource type="Animation" id="Animation_8u50t"]
 resource_name = "Crouch"
 length = 0.75
@@ -74,7 +71,6 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_lp0h7"]
 resource_name = "CrouchWalk"
 
-<<<<<<< HEAD
 [sub_resource type="Animation" id="Animation_h2vqo"]
 resource_name = "Idle"
 length = 0.8
@@ -110,8 +106,6 @@ tracks/0/keys = {
 "values": [0]
 }
 
-=======
->>>>>>> f042ffc6c6e17ded7051b280e345e4e8353e37e1
 [sub_resource type="Animation" id="Animation_eut4h"]
 resource_name = "Run"
 length = 0.6
@@ -129,12 +123,9 @@ tracks/0/keys = {
 "values": [120, 121, 122, 123, 124, 125]
 }
 
-<<<<<<< HEAD
-=======
 [sub_resource type="Animation" id="Animation_era1q"]
 resource_name = "Jump"
 
->>>>>>> f042ffc6c6e17ded7051b280e345e4e8353e37e1
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6bw35"]
 _data = {
 &"Crouch": SubResource("Animation_8u50t"),
@@ -145,13 +136,10 @@ _data = {
 &"Run": SubResource("Animation_eut4h")
 }
 
-<<<<<<< HEAD
 [node name="Player" type="CharacterBody2D" groups=["Player"]]
 collision_layer = 16
-=======
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 0
->>>>>>> f042ffc6c6e17ded7051b280e345e4e8353e37e1
 collision_mask = 3
 floor_constant_speed = true
 script = ExtResource("1_oul6g")
