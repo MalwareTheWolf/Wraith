@@ -15,10 +15,13 @@ run/main_scene="uid://bplp8sfsj72s1"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="uid://bo8puqbp7sg4v"
 
+<<<<<<< HEAD
 [autoload]
 
 SceneManager="*res://00_Global/Scene_Manager/scene_manager.tscn"
 
+=======
+>>>>>>> f042ffc6c6e17ded7051b280e345e4e8353e37e1
 [display]
 
 window/size/viewport_width=480
@@ -31,10 +34,13 @@ window/stretch/mode="canvas_items"
 
 import/blender/enabled=false
 
+<<<<<<< HEAD
 [global_group]
 
 Player=""
 
+=======
+>>>>>>> f042ffc6c6e17ded7051b280e345e4e8353e37e1
 [input]
 
 left={
