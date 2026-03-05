@@ -3,6 +3,8 @@ extends CharacterBody2D
 # Main player controller.
 # Handles movement, gravity, state machine logic, and respawning.
 
+
+
 const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
 # Small visual marker used for debugging jump positions.
 
@@ -29,10 +31,10 @@ const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
 
 #        EXPORT SETTINGS
 
-@export var move_speed : float = 150
+@export var move_speed: float = 150
 # Ground movement speed.
 
-@export var air_velocity : float = 250.0
+@export var air_velocity: float = 250.0
 # Horizontal velocity allowed while airborne.
 
 @export var respawn_position: Vector2
@@ -45,28 +47,28 @@ const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
 
 #        STATE MACHINE VARIABLES
 
-var states : Array[ PlayerState ]
+var states: Array[PlayerState]
 # List of all player states (Idle, Run, Jump, etc).
 
-var current_state : PlayerState :
-	get : return states.front()
+var current_state: PlayerState:
+	get: return states.front()
 # Current active state.
 
-var previous_state : PlayerState :
-	get : return states[ 1 ]
+var previous_state: PlayerState:
+	get: return states[1]
 # Previous state (used for transitions).
 
 
 
 #        STANDARD VARIABLES
 
-var direction : Vector2 = Vector2.ZERO
+var direction: Vector2 = Vector2.ZERO
 # Input direction from player controls.
 
-var gravity : float = 980
+var gravity: float = 980
 # Base gravity applied every physics frame.
 
-var gravity_multiplier : float = 1.0
+var gravity_multiplier: float = 1.0
 # Allows states to modify gravity strength.
 
 
@@ -75,18 +77,35 @@ var gravity_multiplier : float = 1.0
 
 func _ready() -> void:
 
-	#
-	if get_tree().get_first_node_in_group("Player") != self :
-		self.queue_free()
-
 	# Add player to global group so transitions can find it.
 	add_to_group("Player")
 
+	# If a persistent player already exists, delete this one.
+	# The persistent player is the one parented under the tree root.
+	var players := get_tree().get_nodes_in_group("Player")
+
+	if players.size() > 1:
+
+		var keep: Node2D = null
+
+		for p in players:
+			if p is Node2D and p.get_parent() == get_tree().root:
+				keep = p
+				break
+
+		if keep == null:
+			keep = players[0]
+
+		if self != keep:
+			queue_free()
+			return
+
+	# Make sure the kept player persists between scenes.
+	if get_parent() != get_tree().root:
+		call_deferred("reparent", get_tree().root)
+
 	# Initialize state machine and states.
 	initialize_states()
-
-	# Move player to the root so it persists between scenes.
-	self.call_deferred("reparent", get_tree().root)
 
 	# Store spawn position if one hasn't been set.
 	if respawn_position == Vector2.ZERO:
@@ -173,7 +192,7 @@ func initialize_states() -> void:
 
 #        STATE TRANSITIONS
 
-func change_state(new_state : PlayerState) -> void:
+func change_state(new_state: PlayerState) -> void:
 
 	# Ignore invalid transitions.
 	if new_state == null:
@@ -205,7 +224,7 @@ func change_state(new_state : PlayerState) -> void:
 
 func update_direction() -> void:
 
-	var prev_direction : Vector2 = direction
+	var prev_direction: Vector2 = direction
 
 	# Get input axes from input map.
 	var x_axis = Input.get_axis("left", "right")
@@ -226,10 +245,10 @@ func update_direction() -> void:
 
 #        DEBUG TOOLS
 
-func add_debug_indicator(color : Color = Color.RED) -> void:
+func add_debug_indicator(color: Color = Color.RED) -> void:
 
 	# Spawn a temporary visual marker.
-	var d : Node2D = DEBUG_JUMP_INDICATOR.instantiate()
+	var d: Node2D = DEBUG_JUMP_INDICATOR.instantiate()
 
 	get_tree().root.add_child(d)
 
@@ -264,3 +283,5 @@ func die(reason: String = "unknown") -> void:
 	if current_state:
 		current_state.exit()
 		current_state.enter()
+
+	pass
