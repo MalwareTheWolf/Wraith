@@ -1,15 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://c01dqe75lk8qa"]
+[gd_scene format=3 uid="uid://c01dqe75lk8qa"]
 
 [ext_resource type="Script" uid="uid://dltrvnjfw4bpf" path="res://World/Water/Dynamic_Water/Scripts/water_spring.gd" id="1_04ag7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sgtfj"]
 size = Vector2(8, 8)
 
-[node name="Water_Spring" type="Node2D"]
+[node name="Water_Spring" type="Node2D" unique_id=733563649]
 script = ExtResource("1_04ag7")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." unique_id=2128476978]
 unique_name_in_owner = true
+collision_mask = 17
 
-[node name="Collision" type="CollisionShape2D" parent="Area2D"]
+[node name="Collision" type="CollisionShape2D" parent="Area2D" unique_id=2092277888]
 shape = SubResource("RectangleShape2D_sgtfj")

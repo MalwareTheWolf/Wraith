@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://5k6e6duydusj"]
+
+[ext_resource type="Script" uid="uid://hmuvjhch5nnj" path="res://General/player_spawn/player_spawn.gd" id="1_4x37l"]
+[ext_resource type="Texture2D" uid="uid://b76a6s6kwra2i" path="res://player/sprites/EnemySheet.png" id="2_ux0wo"]
+
+[node name="PlayerSpawn" type="Node2D" unique_id=1914222064]
+script = ExtResource("1_4x37l")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=467207856]
+modulate = Color(0, 4.3205647, 1.7168877, 1)
+position = Vector2(1, -42)
+texture = ExtResource("2_ux0wo")
+hframes = 24
+vframes = 33
+frame = 1

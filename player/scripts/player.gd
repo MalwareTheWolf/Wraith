@@ -8,7 +8,26 @@ extends CharacterBody2D
 const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
 # Small visual marker used for debugging jump positions.
 
-
+#region /// player stats
+var hp : float = 20
+var max_hp : float = 20
+var dash : bool = false
+var double_jump : bool = false
+var lightning : bool = false
+var Chain_lightning : bool = false
+var dark_blast : bool = false
+var heavy_attack : bool = false
+var power_up : bool = false
+var ground_slam : bool = false
+var morph : bool = false
+var spell2 : bool = false
+var spell3 : bool = false
+var spell4 : bool = false
+var spell5 : bool = false
+var spell6 : bool = false
+var spell7 : bool = false
+var spell8 : bool = false
+#endregion
 
 #        NODE REFERENCES
 
