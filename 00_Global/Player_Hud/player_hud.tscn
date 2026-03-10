@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cbsqfqtmhxkwf"]
 
-[ext_resource type="Texture2D" uid="uid://mgmd5qj1ldfp" path="res://General/Assets/Assets/Free/Pixel UI pack 3/04.png" id="1_d5qjv"]
+[ext_resource type="Script" uid="uid://dbtlhp4yov65r" path="res://00_Global/Player_Hud/player_hud.gd" id="1_nqvf5"]
+[ext_resource type="Texture2D" uid="uid://b5mxlt2k37fll" path="res://00_Global/Player_Hud/EvilHealthBar.png" id="1_ym8xv"]
+[ext_resource type="Texture2D" uid="uid://jbhtwms6kuid" path="res://00_Global/Player_Hud/EvilHealthBarProg.png" id="2_nqvf5"]
 
 [sub_resource type="Gradient" id="Gradient_ym8xv"]
 
@@ -8,17 +10,9 @@
 gradient = SubResource("Gradient_ym8xv")
 fill_to = Vector2(0, 0)
 
-[sub_resource type="Gradient" id="Gradient_eg44a"]
-offsets = PackedFloat32Array(0.9415584, 1)
-colors = PackedColorArray(0.7805161, 0, 0.019388221, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_5he8h"]
-gradient = SubResource("Gradient_eg44a")
-fill = 1
-fill_from = Vector2(0.47706422, 0.47247708)
-
 [node name="PlayerHud" type="CanvasLayer" unique_id=611558025]
 process_mode = 3
+script = ExtResource("1_nqvf5")
 
 [node name="Control" type="Control" parent="." unique_id=893609310]
 layout_mode = 3
@@ -27,26 +21,36 @@ offset_right = 481.0
 offset_bottom = 270.0
 mouse_filter = 2
 
-[node name="HPBar" type="TextureProgressBar" parent="Control" unique_id=834410463]
+[node name="HPMarginContainer" type="MarginContainer" parent="Control" unique_id=250346660]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = -1.0
-offset_right = 124.0
-offset_bottom = 44.0
-value = 50.0
-nine_patch_stretch = true
-texture_under = SubResource("GradientTexture2D_nqvf5")
-texture_progress = SubResource("GradientTexture2D_5he8h")
-
-[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=250346660]
-unique_name_in_owner = true
-layout_mode = 0
-offset_right = 119.0
+offset_right = 122.0
 offset_bottom = 40.0
 
-[node name="NinePatchRect" type="NinePatchRect" parent="Control/MarginContainer" unique_id=1744972359]
+[node name="NinePatchRect" type="NinePatchRect" parent="Control/HPMarginContainer" unique_id=1744972359]
 layout_mode = 2
-texture = ExtResource("1_d5qjv")
-region_rect = Rect2(-0.071792126, 0, 48.187347, 16.892967)
-patch_margin_left = 17
-patch_margin_right = 18
+texture = ExtResource("1_ym8xv")
+region_rect = Rect2(7.972027, 2.0761604, 120.27031, 36.996944)
+patch_margin_left = 78
+patch_margin_top = 14
+patch_margin_right = 29
+axis_stretch_horizontal = 1
+
+[node name="HPBar" type="TextureProgressBar" parent="Control/HPMarginContainer/NinePatchRect" unique_id=834410463]
+unique_name_in_owner = true
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_top = 20.0
+offset_right = -23.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+allow_greater = true
+nine_patch_stretch = true
+texture_under = SubResource("GradientTexture2D_nqvf5")
+texture_progress = ExtResource("2_nqvf5")

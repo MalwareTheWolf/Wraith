@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bjthfj4hqgl57"]
+
+[ext_resource type="Script" uid="uid://ceskkd85d1o3f" path="res://World/Props/Interactable/Doors and Switches/switch.gd" id="1_8307x"]
+[ext_resource type="Texture2D" uid="uid://qdmmsg6j8ahm" path="res://World/Tilesets/Castle/Decoratives.png" id="2_xwsq3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fk3tc"]
+size = Vector2(32, 25)
+
+[node name="Switch" type="Node2D" unique_id=1440813296]
+script = ExtResource("1_8307x")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1753109717]
+position = Vector2(-1, -16)
+texture = ExtResource("2_xwsq3")
+hframes = 8
+vframes = 15
+frame = 24
+region_rect = Rect2(0, 32, 32, 21)
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1372035061]
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=563831287]
+position = Vector2(0, -12.5)
+shape = SubResource("RectangleShape2D_fk3tc")

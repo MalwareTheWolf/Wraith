@@ -1,6 +1,5 @@
+# PlayerHud
 extends CanvasLayer
-# Player HUD script.
-# Handles updating the on-screen health display.
 
 @onready var hp_margin_container: MarginContainer = %HPMarginContainer
 @onready var hp_bar: TextureProgressBar = %HPBar

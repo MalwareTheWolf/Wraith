@@ -1,4 +1,4 @@
-class_name PauseMenuTest extends CanvasLayer
+class_name PauseMenu extends CanvasLayer
 
 #region /// On ready variables
 @onready var pause_screen: Control = %PauseScreen

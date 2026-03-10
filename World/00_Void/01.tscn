@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://cnlg81cbb56ha"]
 
-[ext_resource type="TileSet" uid="uid://c168e1m37miya" path="res://World/Tilesets/Void.tres" id="1_pcrhc"]
+[ext_resource type="TileSet" uid="uid://c168e1m37miya" path="res://World/Tilesets/Outside/Void.tres" id="1_pcrhc"]
 [ext_resource type="Script" uid="uid://c66y0kemubeet" path="res://General/Scripts/level_bounds.gd" id="3_4tv7a"]
 [ext_resource type="PackedScene" uid="uid://bwbk2dppx5kup" path="res://General/Level_Transition/level_transition.tscn" id="4_61kuw"]
 [ext_resource type="PackedScene" uid="uid://5k6e6duydusj" path="res://General/player_spawn/player_spawn.tscn" id="4_bc6l6"]

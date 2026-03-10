@@ -109,16 +109,39 @@ func _ready() -> void:
 	pass
 
 
-func _unhandled_input( event: InputEvent ) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if !can_move:
 		return
+
+	if event.is_action_pressed("action"):
+		Messages.player_interacted.emit(self)
+
+	elif event.is_action_pressed("pause"):
+		# Spawn pause menu at root; the menu handles pausing
+		var pause_menu = preload("res://World/Testing/pause_menu2.tscn").instantiate()
+		get_tree().root.add_child(pause_menu)
+		return
+
+	change_state(current_state.handle_input(event))
+
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_MINUS :
+			if Input.is_key_pressed( KEY_SHIFT ):
+				max_hp -= 10
+			else:
+				hp -= 2
+		elif event.keycode == KEY_EQUAL :
+			if Input.is_key_pressed( KEY_SHIFT ):
+				max_hp += 10
+			else:
+				hp += 2
 
 	if event.is_action_pressed( "action" ):
 		Messages.player_interacted.emit( self )
 
 	elif event.is_action_pressed( "pause" ):
 		get_tree().paused = true
-		var pause_menu : PauseMenu = load( "res://pause_menu/pause_menu.tscn" ).instantiate()
+		var pause_menu : PauseMenuTest = load( "res://pause_menu2.tscn" ).instantiate()
 		add_child( pause_menu )
 		return
 
