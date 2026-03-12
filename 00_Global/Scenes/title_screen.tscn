@@ -50,6 +50,7 @@ texture = ExtResource("4_jqemp")
 
 [node name="MainMenu" type="VBoxContainer" parent="Control" unique_id=90824282]
 unique_name_in_owner = true
+visible = false
 z_index = 2
 layout_mode = 1
 anchors_preset = 8
@@ -78,6 +79,30 @@ text = "New Game"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Load Game"
+
+[node name="Play" type="VBoxContainer" parent="Control" unique_id=188212398]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 101.0
+offset_top = -20.0
+offset_right = 348.0
+offset_bottom = 249.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Play" type="Button" parent="Control/Play" unique_id=1848159879]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Play"
 
 [node name="NewGameMenu" type="VBoxContainer" parent="Control" unique_id=916641300]
 unique_name_in_owner = true

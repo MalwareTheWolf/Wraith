@@ -1,14 +1,19 @@
 [gd_scene format=3 uid="uid://c12f1n65xe0e"]
 
-[ext_resource type="Script" uid="uid://cle0i5upss4ur" path="res://00_global/audio/audio.gd" id="1_qqy3t"]
+[ext_resource type="Script" uid="uid://cle0i5upss4ur" path="res://00_Global/Audio/audio.gd" id="1_qqy3t"]
 [ext_resource type="AudioStream" uid="uid://dhu31yc3lmq6f" path="res://00_Global/Audio/HeartBeat01.wav" id="2_xqtmo"]
+[ext_resource type="AudioStream" uid="uid://cpwsdepemkwn8" path="res://00_Global/Audio/HeartBeat02.wav" id="3_ed5ey"]
+[ext_resource type="AudioStream" uid="uid://bsqowvo2sy1er" path="res://00_Global/Audio/HeartBeat03.wav" id="4_qt2oq"]
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_6i7w7"]
 polyphony = 16
 
-[node name="AudioController" type="Node" unique_id=1578921581]
+[node name="Audio" type="Node" unique_id=1578921581]
 process_mode = 3
 script = ExtResource("1_qqy3t")
+heartbeat_01 = ExtResource("2_xqtmo")
+heartbeat_02 = ExtResource("3_ed5ey")
+heartbeat_03 = ExtResource("4_qt2oq")
 
 [node name="Music1" type="AudioStreamPlayer" parent="." unique_id=1780391735]
 unique_name_in_owner = true
@@ -25,4 +30,3 @@ bus = &"UI"
 
 [node name="Heartbeat" type="AudioStreamPlayer" parent="." unique_id=2123596771]
 unique_name_in_owner = true
-stream = ExtResource("2_xqtmo")

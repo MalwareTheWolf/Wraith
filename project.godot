@@ -20,13 +20,17 @@ config/name="Wraith"
 run/main_scene="uid://rkyvut4ndhjv"
 config/features=PackedStringArray("4.6", "Forward Plus")
 
+[audio]
+
+buses/default_bus_layout="uid://c8lixixcsjdqf"
+
 [autoload]
 
 SceneManager="*res://00_Global/Scene_Manager/scene_manager.tscn"
 SaveManager="*uid://d7xxxqmiw70k"
 Messages="*uid://bg7faxx0f8yw2"
-Audio="*uid://cle0i5upss4ur"
 PlayerHud="*uid://cbsqfqtmhxkwf"
+Audio="*uid://c12f1n65xe0e"
 
 [display]
 
