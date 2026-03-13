@@ -3,8 +3,11 @@
 [sub_resource type="AudioEffectReverb" id="AudioEffectReverb_j3pel"]
 resource_name = "Reverb"
 
+[sub_resource type="AudioEffectDelay" id="AudioEffectDelay_j3pel"]
+resource_name = "Delay"
+
 [resource]
-bus/0/volume_db = 1.8537483
+bus/0/volume_db = 6.0199986
 bus/1/name = &"EffectPass"
 bus/1/solo = false
 bus/1/mute = false
@@ -31,9 +34,11 @@ bus/4/mute = false
 bus/4/bypass_fx = false
 bus/4/volume_db = 0.0
 bus/4/send = &"Master"
-bus/5/name = &"HeartBeat"
+bus/5/name = &"Heartbeat"
 bus/5/solo = false
 bus/5/mute = false
 bus/5/bypass_fx = false
-bus/5/volume_db = 0.0
+bus/5/volume_db = 0.06726074
 bus/5/send = &"Master"
+bus/5/effect/0/effect = SubResource("AudioEffectDelay_j3pel")
+bus/5/effect/0/enabled = true

@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://b76a6s6kwra2i" path="res://player/sprites/EnemySheet.png" id="7_kq2ai"]
 [ext_resource type="Script" uid="uid://dlpxh6l27fuvo" path="res://player/scripts/input_hints.gd" id="8_ya7di"]
 [ext_resource type="Texture2D" uid="uid://cvcscv6kbapt2" path="res://General/Sprites/input_icons.png" id="9_8u50t"]
+[ext_resource type="Script" uid="uid://buu3vcea6n7iy" path="res://General/Scripts/attack_area.gd" id="10_8u50t"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kq2ai"]
 radius = 4.0
@@ -160,6 +161,9 @@ gradient = SubResource("Gradient_ya7di")
 fill = 1
 fill_from = Vector2(0.46818182, 0.45454547)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lp0h7"]
+size = Vector2(20, 47)
+
 [node name="Player" type="CharacterBody2D" unique_id=183006880]
 z_index = 1
 collision_layer = 16
@@ -242,3 +246,16 @@ hframes = 16
 position = Vector2(1, -37)
 color = Color(1, 0, 0, 1)
 texture = SubResource("GradientTexture2D_8u50t")
+
+[node name="AttackArea" type="Area2D" parent="." unique_id=354258241]
+unique_name_in_owner = true
+position = Vector2(1, -23)
+collision_layer = 0
+collision_mask = 96
+script = ExtResource("10_8u50t")
+metadata/_custom_type_script = "uid://buu3vcea6n7iy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=938652412]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_lp0h7")
+debug_color = Color(1, 0, 0, 0.41960785)

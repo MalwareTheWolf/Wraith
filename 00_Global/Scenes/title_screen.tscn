@@ -1,10 +1,6 @@
 [gd_scene format=3 uid="uid://rkyvut4ndhjv"]
 
-[ext_resource type="Texture2D" uid="uid://cuh2qjpoayfmt" path="res://General/Assets/Assets/Paid/SSWorlds_SET2_v1.0/Background_night1.png" id="1_05l2w"]
 [ext_resource type="Script" uid="uid://d0wos60571u8y" path="res://00_Global/Scripts/title_screen.gd" id="1_462q2"]
-[ext_resource type="Texture2D" uid="uid://ck5b3xu4cwenm" path="res://General/Assets/Assets/Paid/SSWorlds_SET2_v1.0/Background_night2.png" id="2_hafda"]
-[ext_resource type="Texture2D" uid="uid://dkg42e40whe44" path="res://General/Assets/Assets/Paid/SSWorlds_SET2_v1.0/Background_night3.png" id="3_tpml5"]
-[ext_resource type="Texture2D" uid="uid://b4c5e73x12u56" path="res://General/Assets/Assets/Paid/SSWorlds_SET2_v1.0/Background_night4.png" id="4_jqemp"]
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=1543294767]
 script = ExtResource("1_462q2")
@@ -22,31 +18,7 @@ offset_left = -68.0
 offset_top = -116.0
 offset_right = 570.0
 offset_bottom = 354.0
-color = Color(0, 0, 0, 0.3372549)
-
-[node name="Background" type="Control" parent="Control" unique_id=21570576]
-self_modulate = Color(0.94252336, 0.85960245, 0.8317276, 1)
-anchors_preset = 0
-offset_left = 250.0
-offset_top = 124.0
-offset_right = 290.0
-offset_bottom = 164.0
-
-[node name="Sprite2D" type="Sprite2D" parent="Control/Background" unique_id=1281002775]
-modulate = Color(0.9999984, 0.30404317, 0.3121076, 1)
-texture = ExtResource("1_05l2w")
-
-[node name="Sprite2D2" type="Sprite2D" parent="Control/Background" unique_id=893732339]
-modulate = Color(1, 0.72570586, 0.6990367, 1)
-texture = ExtResource("2_hafda")
-
-[node name="Sprite2D3" type="Sprite2D" parent="Control/Background" unique_id=1808181268]
-modulate = Color(1, 0.5419525, 0.47091085, 1)
-texture = ExtResource("3_tpml5")
-
-[node name="Sprite2D4" type="Sprite2D" parent="Control/Background" unique_id=333173466]
-modulate = Color(1, 0.36304784, 0.3388905, 1)
-texture = ExtResource("4_jqemp")
+color = Color(0, 0, 0, 1)
 
 [node name="MainMenu" type="VBoxContainer" parent="Control" unique_id=90824282]
 unique_name_in_owner = true
@@ -80,7 +52,7 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Load Game"
 
-[node name="Play" type="VBoxContainer" parent="Control" unique_id=188212398]
+[node name="PlayMenu" type="VBoxContainer" parent="Control" unique_id=188212398]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 1
@@ -98,7 +70,8 @@ grow_vertical = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="Play" type="Button" parent="Control/Play" unique_id=1848159879]
+[node name="PlayButton" type="Button" parent="Control/PlayMenu" unique_id=1848159879]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4

@@ -4,10 +4,7 @@ extends CharacterBody2D
 # Handles movement, gravity, state machine logic, pause menu access,
 # persistence between scenes, healing, and respawning.
 
-
 const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
-# Small visual marker used for debugging jump positions.
-
 
 #region /// on ready variables
 @onready var sprite: Sprite2D = $Sprite2D
@@ -15,6 +12,8 @@ const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
 @onready var collision_crouch: CollisionShape2D = $CollisionCrouch
 @onready var one_way_shape_cast: ShapeCast2D = $OneWayShapeCast
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var attack_area: AttackArea = %AttackArea
+
 #endregion
 
 
@@ -28,26 +27,36 @@ const DEBUG_JUMP_INDICATOR = preload("uid://b37qe6ik3s8if")
 
 
 #region /// State Machine Variables
-var states : Array[ PlayerState ]
-var current_state : PlayerState :
-	get : return states.front()
-var previous_state : PlayerState :
-	get : return states[ 1 ]
+var states : Array[PlayerState]
+
+var current_state : PlayerState:
+	get: return states.front()
+
+var previous_state : PlayerState:
+	get: return states[1]
 #endregion
 
 
-#region /// player stats
-var hp : float = 20 :
-	set( value ):
-		hp = clampf( value, 0, max_hp )
-		Messages.player_health_changed.emit( hp, max_hp )
+#region /// player stats (fixed recursion bug)
+var _hp : float = 20
+var _max_hp : float = 20
 
-var max_hp : float = 20 :
-	set( value ):
-		max_hp = maxf( value, 1.0 )
-		hp = clampf( hp, 0, max_hp )
-		Messages.player_health_changed.emit( hp, max_hp )
+var hp : float:
+	get: return _hp
+	set(value):
+		_hp = clampf(value, 0, _max_hp)
+		Messages.player_health_changed.emit(_hp, _max_hp)
 
+var max_hp : float:
+	get: return _max_hp
+	set(value):
+		_max_hp = maxf(value, 1.0)
+		_hp = clampf(_hp, 0, _max_hp)
+		Messages.player_health_changed.emit(_hp, _max_hp)
+#endregion
+
+
+#region /// abilities
 var dash : bool = false
 var double_jump : bool = false
 var lightning : bool = false
@@ -76,37 +85,28 @@ var can_move : bool = true
 
 
 func _ready() -> void:
-	add_to_group( "Player" )
+	add_to_group("Player")
 
-	# Prevent duplicate persistent players.
-	var players := get_tree().get_nodes_in_group( "Player" )
+	# Prevent duplicate persistent players
+	var players := get_tree().get_nodes_in_group("Player")
+
 	if players.size() > 1:
-		var keep : Node2D = null
-
 		for p in players:
-			if p is Node2D and p.get_parent() == get_tree().root:
-				keep = p
-				break
+			if p != self:
+				queue_free()
+				return
 
-		if keep == null:
-			keep = players[0]
-
-		if self != keep:
-			queue_free()
-			return
-
-	# Ensure persistent player.
+	# Ensure persistent player
 	if get_parent() != get_tree().root:
-		call_deferred( "reparent", get_tree().root )
+		call_deferred("reparent", get_tree().root)
 
 	initialize_states()
 
 	if respawn_position == Vector2.ZERO:
 		respawn_position = global_position
 
-	Messages.player_healed.connect( _on_player_healed )
-	Messages.back_to_title_screen.connect( queue_free )
-	pass
+	Messages.player_healed.connect(_on_player_healed)
+	Messages.back_to_title_screen.connect(queue_free)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -117,59 +117,50 @@ func _unhandled_input(event: InputEvent) -> void:
 		Messages.player_interacted.emit(self)
 
 	elif event.is_action_pressed("pause"):
-		# Spawn pause menu at root; the menu handles pausing
-		var pause_menu = preload("res://World/Testing/pause_menu2.tscn").instantiate()
+
+		if get_tree().paused:
+			return
+
+		get_tree().paused = true
+
+		var pause_menu = preload("uid://dnv5ffvrxoh8t").instantiate()
 		get_tree().root.add_child(pause_menu)
 		return
 
 	change_state(current_state.handle_input(event))
 
 	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_MINUS :
-			if Input.is_key_pressed( KEY_SHIFT ):
+		if event.keycode == KEY_MINUS:
+			if Input.is_key_pressed(KEY_SHIFT):
 				max_hp -= 10
 			else:
 				hp -= 2
-		elif event.keycode == KEY_EQUAL :
-			if Input.is_key_pressed( KEY_SHIFT ):
+		elif event.keycode == KEY_EQUAL:
+			if Input.is_key_pressed(KEY_SHIFT):
 				max_hp += 10
 			else:
 				hp += 2
 
-	if event.is_action_pressed( "action" ):
-		Messages.player_interacted.emit( self )
 
-	elif event.is_action_pressed( "pause" ):
-		get_tree().paused = true
-		var pause_menu : PauseMenuTest = load( "res://pause_menu2.tscn" ).instantiate()
-		add_child( pause_menu )
-		return
-
-	change_state( current_state.handle_input( event ) )
-	pass
-
-
-func _process( _delta: float ) -> void:
+func _process(_delta: float) -> void:
 	if !can_move:
 		return
 
 	update_direction()
-	change_state( current_state.process( _delta ) )
-	pass
+	change_state(current_state.process(_delta))
 
 
-func _physics_process( _delta: float ) -> void:
+func _physics_process(_delta: float) -> void:
 	if !can_move:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
 
 	velocity.y += gravity * _delta * gravity_multiplier
-	velocity.y = clampf( velocity.y, -1000.0, max_fall_speed )
+	velocity.y = clampf(velocity.y, -1000.0, max_fall_speed)
 
 	move_and_slide()
-	change_state( current_state.physics_process( _delta ) )
-	pass
+	change_state(current_state.physics_process(_delta))
 
 
 func initialize_states() -> void:
@@ -177,9 +168,8 @@ func initialize_states() -> void:
 
 	for c in $States.get_children():
 		if c is PlayerState:
-			states.append( c )
+			states.append(c)
 			c.player = self
-		pass
 
 	if states.size() == 0:
 		return
@@ -187,14 +177,13 @@ func initialize_states() -> void:
 	for state in states:
 		state.init()
 
-	change_state( current_state )
+	change_state(current_state)
 	current_state.enter()
 
 	$Label.text = current_state.name
-	pass
 
 
-func change_state( new_state : PlayerState ) -> void:
+func change_state(new_state : PlayerState) -> void:
 	if new_state == null:
 		return
 	elif new_state == current_state:
@@ -203,44 +192,38 @@ func change_state( new_state : PlayerState ) -> void:
 	if current_state:
 		current_state.exit()
 
-	states.push_front( new_state )
+	states.push_front(new_state)
 	current_state.enter()
 
-	states.resize( 3 )
+	states.resize(3)
 	$Label.text = current_state.name
-	pass
 
 
 func update_direction() -> void:
 	var prev_direction : Vector2 = direction
 
-	var x_axis = Input.get_axis( "left", "right" )
-	var y_axis = Input.get_axis( "up", "down" )
+	var x_axis = Input.get_axis("left", "right")
+	var y_axis = Input.get_axis("up", "down")
 
-	direction = Vector2( x_axis, y_axis )
+	direction = Vector2(x_axis, y_axis)
 
-	if prev_direction.x != direction.x:
-		if direction.x < 0:
-			sprite.flip_h = true
-		elif direction.x > 0:
-			sprite.flip_h = false
-	pass
+	if prev_direction.x != direction.x and direction.x != 0:
+		sprite.flip_h = direction.x < 0
 
 
-func add_debug_indicator( color : Color = Color.RED ) -> void:
+func add_debug_indicator(color : Color = Color.RED) -> void:
 	var d : Node2D = DEBUG_JUMP_INDICATOR.instantiate()
 
-	get_tree().root.add_child( d )
+	get_tree().root.add_child(d)
 	d.global_position = global_position
 	d.modulate = color
 
-	await get_tree().create_timer( 3.0 ).timeout
+	await get_tree().create_timer(3.0).timeout
 	d.queue_free()
-	pass
 
 
-func die( reason: String = "unknown" ) -> void:
-	print( "Player died by %s" % reason )
+func die(reason: String = "unknown") -> void:
+	print("Player died by %s" % reason)
 
 	global_position = respawn_position
 	velocity = Vector2.ZERO
@@ -250,33 +233,23 @@ func die( reason: String = "unknown" ) -> void:
 		current_state.exit()
 		current_state.enter()
 
-	# audio / visual
-	#Audio.play_spatial_sound(...)
-	pass
-
 
 func lock_movement() -> void:
 	can_move = false
 	velocity = Vector2.ZERO
-	pass
 
 
 func unlock_movement() -> void:
 	can_move = true
-	pass
 
 
-func lock_movement_with_timer( time : float = movement_lock_time ) -> void:
+func lock_movement_with_timer(time : float = movement_lock_time) -> void:
 	lock_movement()
 
-	await get_tree().create_timer( time ).timeout
+	await get_tree().create_timer(time).timeout
 
 	unlock_movement()
-	pass
 
 
-func _on_player_healed( amount : float ) -> void:
+func _on_player_healed(amount : float) -> void:
 	hp += amount
-	# audio / visual
-	#Audio.play_spatial_sound(...)
-	pass

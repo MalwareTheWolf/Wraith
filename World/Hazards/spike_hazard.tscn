@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bb7mi8t5kfu7y"]
+
+[ext_resource type="Script" uid="uid://n52nq074lw2g" path="res://World/Hazards/spike_hazard.gd" id="1_84dj7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_84dj7"]
+size = Vector2(32, 32)
+
+[node name="SpikeHazard" type="Node2D" unique_id=1137570293]
+script = ExtResource("1_84dj7")
+
+[node name="SpikeArea2D" type="Area2D" parent="." unique_id=1410828591]
+collision_layer = 4
+collision_mask = 16
+
+[node name="SpikeCollisionShape2D" type="CollisionShape2D" parent="SpikeArea2D" unique_id=1878444871]
+shape = SubResource("RectangleShape2D_84dj7")
+debug_color = Color(1, 0, 0, 0.41960785)

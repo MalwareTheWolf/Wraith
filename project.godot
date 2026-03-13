@@ -31,6 +31,7 @@ SaveManager="*uid://d7xxxqmiw70k"
 Messages="*uid://bg7faxx0f8yw2"
 PlayerHud="*uid://cbsqfqtmhxkwf"
 Audio="*uid://c12f1n65xe0e"
+VisualEffects="*uid://csgw44whwer1v"
 
 [display]
 
@@ -145,6 +146,11 @@ pause={
 
 2d_physics/layer_1="Ground"
 2d_physics/layer_2="1 way platform"
+2d_physics/layer_3="Hazards"
+2d_physics/layer_5="Player"
+2d_physics/layer_6="Enemy"
+2d_physics/layer_7="Breakable"
+2d_physics/layer_8="Abiity Break"
 
 [rendering]
 
