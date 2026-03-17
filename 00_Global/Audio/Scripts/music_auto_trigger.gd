@@ -1,4 +1,4 @@
-@icon( "res://general/icons/music_trigger.svg" )
+@icon( "uid://v77h8txr2sw5" )
 class_name MusicAutoTrigger extends Node
 
 

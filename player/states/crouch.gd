@@ -1,57 +1,55 @@
-class_name PlayerStateCrouch extends PlayerState 
+class_name PlayerStateCrouch extends PlayerState
 
-@export var deceleration_rate : float = 10
+func init() -> void:
+	pass
 
-var original_sprite_position : Vector2
+func enter() -> void:
+	player.animation_player.play("Crouch") 
 
+	if player.collision_stand:
+		player.collision_stand.disabled = true
+	if player.collision_crouch:
+		player.collision_crouch.disabled = false
+	if player.da_stand:
+		player.da_stand.disabled = true
+	if player.da_crouch:
+		player.da_crouch.disabled = false
 
-#initialize
-func init() -> void: 
-	original_sprite_position = player.sprite.position
+func exit() -> void:
+	if player.collision_stand:
+		player.collision_stand.set_deferred("disabled", false)
+	if player.collision_crouch:
+		player.collision_crouch.set_deferred("disabled", true)
+	if player.da_stand:
+		player.da_stand.set_deferred("disabled", false)
+	if player.da_crouch:
+		player.da_crouch.set_deferred("disabled", true)
 
-
-#what happens when entering the state 
-func enter() -> void: 
-	player.animation_player.play("Crouch")
-	player.collision_stand.disabled = true
-	player.collision_crouch.disabled = false
-	
-	# Move sprite down 5 pixels from original position
-	#player.sprite.position = original_sprite_position + Vector2(0, 13)
-
-
-#what happens when exiting the state 
-func exit() -> void: 
-	
-	player.collision_stand.disabled = false
-	player.collision_crouch.disabled = true
-	
-	# Reset sprite position
-	#player.sprite.position = original_sprite_position
-
-
-#what happens when an input is pressed 
-func handle_input( _event : InputEvent ) -> PlayerState:
-	#Handle input
-	if _event.is_action_pressed("jump"):
-		player.one_way_shape_cast.force_shapecast_update()
-		if player.one_way_shape_cast.is_colliding():
+func handle_input(_event : InputEvent) -> PlayerState:
+	if _event.is_action_pressed("dash") and player.can_dash():
+		return dash
+	if _event.is_action_pressed("attack"):
+		return attack
+	if _event.is_action_pressed("jump") and player.one_way_platform_shape_cast:
+		player.one_way_platform_shape_cast.force_shapecast_update()
+		if player.one_way_platform_shape_cast.is_colliding():
 			player.position.y += 4
 			return fall
 		return jump
+	if _event.is_action_pressed("action") and player.can_morph():
+		return ball
 	return next_state
-  
 
-#what happens each process tick in this state 
-func process( _delta: float) -> PlayerState: 
+func process(_delta: float) -> PlayerState:
 	if player.direction.y <= 0.5:
 		return idle
-	return next_state 
+	return next_state
 
-
-#what happens each process tick in this state 
-func physics_process( _delta: float) -> PlayerState: 
-	player.velocity.x -= player.velocity.x * deceleration_rate * _delta
-	if player.is_on_floor() == false:
+func physics_process(_delta: float) -> PlayerState:
+	if player.is_on_floor():
+		player.velocity.x = player.direction.x * player.move_speed
+	else:
+		player.velocity.x = player.direction.x * player.air_velocity
+	if not player.is_on_floor():
 		return fall
-	return next_state 
+	return next_state

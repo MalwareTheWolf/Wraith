@@ -7,20 +7,36 @@
 [ext_resource type="Script" uid="uid://dcgbdhpob072g" path="res://player/states/fall.gd" id="3_yw30f"]
 [ext_resource type="Script" uid="uid://c5qk37j448of8" path="res://player/states/crouch.gd" id="6_g6k8r"]
 [ext_resource type="Texture2D" uid="uid://b76a6s6kwra2i" path="res://player/sprites/EnemySheet.png" id="7_kq2ai"]
+[ext_resource type="Script" uid="uid://odubn25rf4n7" path="res://Attack.gd" id="7_lp0h7"]
+[ext_resource type="Script" uid="uid://b1sxw2k6plrbn" path="res://take_damage.gd" id="8_6bw35"]
+[ext_resource type="Script" uid="uid://bc53hd65rw47x" path="res://player/Scene/camera_2d.gd" id="8_lp0h7"]
 [ext_resource type="Script" uid="uid://dlpxh6l27fuvo" path="res://player/scripts/input_hints.gd" id="8_ya7di"]
 [ext_resource type="Texture2D" uid="uid://cvcscv6kbapt2" path="res://General/Sprites/input_icons.png" id="9_8u50t"]
-[ext_resource type="Script" uid="uid://buu3vcea6n7iy" path="res://General/Scripts/attack_area.gd" id="10_8u50t"]
+[ext_resource type="Script" uid="uid://cbkh8eda20lbh" path="res://death.gd" id="9_o7381"]
+[ext_resource type="Script" uid="uid://5gq2b8e8cqvq" path="res://player/Scene/dash.gd" id="10_xs5gv"]
+[ext_resource type="Script" uid="uid://cuni2eknvd7fx" path="res://player/Scene/ball.gd" id="11_s057m"]
+[ext_resource type="Script" uid="uid://buu3vcea6n7iy" path="res://General/Scripts/attack_area.gd" id="12_eut4h"]
+[ext_resource type="Script" uid="uid://b2q7gmaar6yxa" path="res://ground_slam.gd" id="12_s057m"]
+[ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://damageable_area.gd" id="14_o7381"]
+[ext_resource type="AudioStream" uid="uid://du6gtwm2l5epc" path="res://00_Global/Audio/hit.wav" id="19_f575y"]
+[ext_resource type="AudioStream" uid="uid://1ma2paybglqb" path="res://00_Global/Audio/jump.wav" id="20_qwku7"]
+[ext_resource type="AudioStream" uid="uid://bukw4uv7uxw8t" path="res://00_Global/Audio/land.wav" id="21_sf4bk"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kq2ai"]
-radius = 4.0
-height = 34.0
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h2vqo"]
-radius = 6.9999876
-height = 13.999975
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ya7di"]
-size = Vector2(20, 3)
+[sub_resource type="Animation" id="Animation_cmacy"]
+resource_name = "Attack"
+length = 0.58
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.099999994, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [480, 481, 482, 483, 484, 485]
+}
 
 [sub_resource type="Animation" id="Animation_8u50t"]
 resource_name = "Crouch"
@@ -140,8 +156,25 @@ tracks/0/keys = {
 "values": [456, 457, 458, 459, 460, 461, 432, 443, 433, 434, 435, 436, 437, 438, 439, 440, 441]
 }
 
+[sub_resource type="Animation" id="Animation_xs5gv"]
+resource_name = "take_damage"
+length = 0.48
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [576, 577, 578, 579, 580]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6bw35"]
 _data = {
+&"Attack": SubResource("Animation_cmacy"),
 &"Crouch": SubResource("Animation_8u50t"),
 &"CrouchWalk": SubResource("Animation_lp0h7"),
 &"Fall": SubResource("Animation_kq2ai"),
@@ -149,8 +182,20 @@ _data = {
 &"Jump": SubResource("Animation_era1q"),
 &"RESET": SubResource("Animation_ya7di"),
 &"Run": SubResource("Animation_eut4h"),
-&"Save": SubResource("Animation_6bw35")
+&"Save": SubResource("Animation_6bw35"),
+&"take_damage": SubResource("Animation_xs5gv")
 }
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kq2ai"]
+radius = 4.0
+height = 34.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h2vqo"]
+radius = 6.9999876
+height = 13.999975
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ya7di"]
+size = Vector2(20, 3)
 
 [sub_resource type="Gradient" id="Gradient_ya7di"]
 offsets = PackedFloat32Array(0, 0.5641026)
@@ -161,8 +206,7 @@ gradient = SubResource("Gradient_ya7di")
 fill = 1
 fill_from = Vector2(0.46818182, 0.45454547)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lp0h7"]
-size = Vector2(20, 47)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_era1q"]
 
 [node name="Player" type="CharacterBody2D" unique_id=183006880]
 z_index = 1
@@ -170,7 +214,8 @@ collision_layer = 16
 collision_mask = 3
 floor_constant_speed = true
 script = ExtResource("1_oul6g")
-movement_lock_time = 3.0
+move_speed = 200.0
+air_velocity = 300.0
 
 [node name="States" type="Node" parent="." unique_id=1752412975]
 
@@ -194,13 +239,29 @@ script = ExtResource("3_g1dw6")
 unique_name_in_owner = true
 script = ExtResource("6_g6k8r")
 
-[node name="Label" type="Label" parent="." unique_id=235609684]
-offset_left = -42.0
-offset_top = -83.0
-offset_right = 49.0
-offset_bottom = -60.0
-text = "label"
-horizontal_alignment = 1
+[node name="Attack" type="Node" parent="States" unique_id=510829426]
+unique_name_in_owner = true
+script = ExtResource("7_lp0h7")
+
+[node name="TakeDamage" type="Node" parent="States" unique_id=1234432559]
+unique_name_in_owner = true
+script = ExtResource("8_6bw35")
+
+[node name="Death" type="Node" parent="States" unique_id=1884208281]
+unique_name_in_owner = true
+script = ExtResource("9_o7381")
+
+[node name="Dash" type="Node" parent="States" unique_id=1527649618]
+unique_name_in_owner = true
+script = ExtResource("10_xs5gv")
+
+[node name="Ball" type="Node" parent="States" unique_id=1182924973]
+unique_name_in_owner = true
+script = ExtResource("11_s057m")
+
+[node name="GroundSlam" type="Node" parent="States" unique_id=1462020378]
+unique_name_in_owner = true
+script = ExtResource("12_s057m")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1448383656]
 z_index = -1
@@ -209,15 +270,28 @@ texture = ExtResource("7_kq2ai")
 hframes = 24
 vframes = 33
 
-[node name="CollisionStand" type="CollisionShape2D" parent="." unique_id=64600370]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1039723297]
+libraries/ = SubResource("AnimationLibrary_6bw35")
+autoplay = &"Idle"
+
+[node name="CollisionStand" type="CollisionShape2D" parent="." unique_id=1874536383]
 position = Vector2(0, -16)
 shape = SubResource("CapsuleShape2D_kq2ai")
 
-[node name="CollisionCrouch" type="CollisionShape2D" parent="." unique_id=891836543]
+[node name="CollisionCrouch" type="CollisionShape2D" parent="." unique_id=2086634429]
 position = Vector2(-6.661338e-16, -6)
 rotation = 3.1395626
+scale = Vector2(1.9561425, 1.0073189)
 shape = SubResource("CapsuleShape2D_h2vqo")
 debug_color = Color(0.8209421, 0.0017710191, 0.96571594, 0.41960785)
+
+[node name="Label" type="Label" parent="." unique_id=235609684]
+offset_left = -42.0
+offset_top = -83.0
+offset_right = 49.0
+offset_bottom = -60.0
+text = "label"
+horizontal_alignment = 1
 
 [node name="OneWayShapeCast" type="ShapeCast2D" parent="." unique_id=324956999]
 position = Vector2(0, -4)
@@ -227,12 +301,14 @@ target_position = Vector2(0, 6)
 max_results = 23
 collision_mask = 15
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1039723297]
-libraries/ = SubResource("AnimationLibrary_6bw35")
-autoplay = &"Idle"
-
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1101385868]
 position = Vector2(1, -35)
+script = ExtResource("8_lp0h7")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1290377337]
+position = Vector2(1, -37)
+color = Color(1, 0, 0, 1)
+texture = SubResource("GradientTexture2D_8u50t")
 
 [node name="InputHints" type="Node2D" parent="." unique_id=941693109]
 position = Vector2(0, -56)
@@ -242,20 +318,44 @@ script = ExtResource("8_ya7di")
 texture = ExtResource("9_8u50t")
 hframes = 16
 
-[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1290377337]
-position = Vector2(1, -37)
-color = Color(1, 0, 0, 1)
-texture = SubResource("GradientTexture2D_8u50t")
-
-[node name="AttackArea" type="Area2D" parent="." unique_id=354258241]
+[node name="AttackArea" type="Area2D" parent="." unique_id=994649293]
 unique_name_in_owner = true
-position = Vector2(1, -23)
-collision_layer = 0
-collision_mask = 96
-script = ExtResource("10_8u50t")
+script = ExtResource("12_eut4h")
 metadata/_custom_type_script = "uid://buu3vcea6n7iy"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=938652412]
-position = Vector2(0, -0.5)
-shape = SubResource("RectangleShape2D_lp0h7")
-debug_color = Color(1, 0, 0, 0.41960785)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=1478579972]
+shape = SubResource("RectangleShape2D_era1q")
+
+[node name="DamageableArea" type="Area2D" parent="." unique_id=512661750]
+unique_name_in_owner = true
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("14_o7381")
+
+[node name="DAStand" type="CollisionShape2D" parent="DamageableArea" unique_id=64600370]
+unique_name_in_owner = true
+position = Vector2(0, -16)
+shape = SubResource("CapsuleShape2D_kq2ai")
+debug_color = Color(0, 0, 1, 0.41960785)
+
+[node name="DACrouch" type="CollisionShape2D" parent="DamageableArea" unique_id=891836543]
+unique_name_in_owner = true
+position = Vector2(-6.661338e-16, -6)
+rotation = 3.1395626
+scale = Vector2(1.9561425, 1.007319)
+shape = SubResource("CapsuleShape2D_h2vqo")
+debug_color = Color(0.023529412, 0, 0.9647059, 0.41960785)
+
+[node name="AudioStreams" type="Node2D" parent="." unique_id=937540924]
+
+[node name="HurtAudio" type="AudioStreamPlayer2D" parent="AudioStreams" unique_id=1494524475]
+unique_name_in_owner = true
+stream = ExtResource("19_f575y")
+
+[node name="JumpAudio" type="AudioStreamPlayer2D" parent="AudioStreams" unique_id=636154062]
+unique_name_in_owner = true
+stream = ExtResource("20_qwku7")
+
+[node name="LandAudio" type="AudioStreamPlayer2D" parent="AudioStreams" unique_id=336485297]
+unique_name_in_owner = true
+stream = ExtResource("21_sf4bk")

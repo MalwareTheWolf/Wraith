@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dbtlhp4yov65r" path="res://00_Global/Player_Hud/player_hud.gd" id="1_nqvf5"]
 [ext_resource type="Texture2D" uid="uid://b5mxlt2k37fll" path="res://00_Global/Player_Hud/EvilHealthBar.png" id="1_ym8xv"]
 [ext_resource type="Texture2D" uid="uid://jbhtwms6kuid" path="res://00_Global/Player_Hud/EvilHealthBarProg.png" id="2_nqvf5"]
+[ext_resource type="Script" uid="uid://bh7vkupllyl0d" path="res://Particle_Test_button.gd" id="4_eg44a"]
 
 [sub_resource type="Gradient" id="Gradient_ym8xv"]
 
@@ -54,3 +55,95 @@ allow_greater = true
 nine_patch_stretch = true
 texture_under = SubResource("GradientTexture2D_nqvf5")
 texture_progress = ExtResource("2_nqvf5")
+
+[node name="GameOver" type="Control" parent="Control" unique_id=1445785317]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 480.0
+offset_bottom = 270.0
+
+[node name="ColorRect" type="ColorRect" parent="Control/GameOver" unique_id=1264941456]
+layout_mode = 0
+offset_right = 480.0
+offset_bottom = 269.0
+color = Color(0, 0, 0, 0.6039216)
+
+[node name="Label" type="Label" parent="Control/GameOver" unique_id=1125178697]
+modulate = Color(1, 0.043137256, 0.011764706, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.5
+offset_top = -9.5
+offset_right = 48.5
+offset_bottom = 9.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "The Massacre Has Ended"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/GameOver" unique_id=2043610563]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -187.0
+offset_top = -115.0
+offset_right = 164.0
+offset_bottom = -88.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="LoadButton" type="Button" parent="Control/GameOver/HBoxContainer" unique_id=671431813]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load last Checkpoint"
+
+[node name="QuitButton" type="Button" parent="Control/GameOver/HBoxContainer" unique_id=682715527]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Quit To Menu"
+
+[node name="Debug_Menu" type="Control" parent="." unique_id=187546164]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 243.0
+offset_right = 481.0
+offset_bottom = 268.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Debug_Menu" unique_id=1162162471]
+layout_mode = 0
+offset_right = 236.0
+offset_bottom = 268.0
+
+[node name="Particles" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1524327880]
+layout_mode = 2
+script = ExtResource("4_eg44a")
+
+[node name="GameOver" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1049881917]
+layout_mode = 2
+
+[node name="Test Spell" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=928228176]
+layout_mode = 2
+
+[node name="Test Spell2" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1186180942]
+layout_mode = 2
+
+[node name="Test Spell3" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1825199670]
+layout_mode = 2
+
+[node name="Spell_Modifier" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=1124562523]
+layout_mode = 2
+
+[node name="Infinite_Mana" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=424602503]
+layout_mode = 2
+
+[node name="Infinite_Health" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=944785567]
+layout_mode = 2
+
+[node name="No_Cooldowns" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=981182243]
+layout_mode = 2

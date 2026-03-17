@@ -6,7 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://5k6e6duydusj" path="res://General/player_spawn/player_spawn.tscn" id="4_bc6l6"]
 [ext_resource type="PackedScene" uid="uid://b5shhu35gorq7" path="res://00_Global/Scenes/save_point.tscn" id="5_bc6l6"]
 [ext_resource type="PackedScene" uid="uid://bb7mi8t5kfu7y" path="res://World/Hazards/spike_hazard.tscn" id="6_podw3"]
-[ext_resource type="Script" uid="uid://b5vovsgatwg0j" path="res://General/Scripts/damage_area.gd" id="7_y3rm2"]
+[ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://damageable_area.gd" id="7_y3rm2"]
+[ext_resource type="Script" uid="uid://c0n65xuyoaqvo" path="res://00_Global/Audio/Scripts/music_auto_trigger.gd" id="8_i5uu7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i5uu7"]
 
@@ -51,8 +52,11 @@ position = Vector2(197, -74)
 collision_layer = 32
 collision_mask = 0
 script = ExtResource("7_y3rm2")
-metadata/_custom_type_script = "uid://b5vovsgatwg0j"
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="DamagableArea" unique_id=1364555928]
 shape = SubResource("RectangleShape2D_i5uu7")
 debug_color = Color(0, 0.011764706, 1, 0.41960785)
+
+[node name="MusicAutoTrigger" type="Node" parent="." unique_id=2004634586]
+script = ExtResource("8_i5uu7")
+metadata/_custom_type_script = "uid://c0n65xuyoaqvo"
