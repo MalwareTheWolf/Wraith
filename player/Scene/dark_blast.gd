@@ -1,4 +1,4 @@
-class_name PlayerStateGroundSlam extends PlayerState
+class_name PlayerDarkBlast extends PlayerState
 
 const DASH_AUDIO = preload("uid://fp3pia3qydwj")
 const BOOM_AUDIO = preload("uid://cpy4obvavg3o7")

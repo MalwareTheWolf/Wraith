@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dhvjvwf1i08ua"]
 
-[ext_resource type="Script" uid="uid://b4o53y201dhwt" path="res://dust_effect.gd" id="1_yh82b"]
+[ext_resource type="Script" uid="uid://b4o53y201dhwt" path="res://00_Global/VFX/Scripts/dust_effect.gd" id="1_yh82b"]
 
 [sub_resource type="Animation" id="Animation_3u3rl"]
 length = 0.001

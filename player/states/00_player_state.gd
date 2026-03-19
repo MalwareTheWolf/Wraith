@@ -4,6 +4,7 @@ class_name PlayerState extends Node
 var player : Player
 var next_state : PlayerState
 
+
 #region /// state references
 @onready var idle: PlayerStateIdle = %Idle
 @onready var run: PlayerStateRun = %Run
@@ -16,6 +17,8 @@ var next_state : PlayerState
 @onready var dash: PlayerStateDash = %Dash
 @onready var ball: PlayerStateBall = %Ball
 @onready var ground_slam: PlayerStateGroundSlam = %GroundSlam
+@onready var afk: PlayerStateAFK = %AFK
+
 #endregion
 
 

@@ -7,18 +7,18 @@
 [ext_resource type="Script" uid="uid://dcgbdhpob072g" path="res://player/states/fall.gd" id="3_yw30f"]
 [ext_resource type="Script" uid="uid://c5qk37j448of8" path="res://player/states/crouch.gd" id="6_g6k8r"]
 [ext_resource type="Texture2D" uid="uid://b76a6s6kwra2i" path="res://player/sprites/EnemySheet.png" id="7_kq2ai"]
-[ext_resource type="Script" uid="uid://odubn25rf4n7" path="res://player/states/Attack.gd" id="7_lp0h7"]
-[ext_resource type="Script" uid="uid://b1sxw2k6plrbn" path="res://player/states/take_damage.gd" id="8_6bw35"]
+[ext_resource type="Script" uid="uid://odubn25rf4n7" path="res://Attack.gd" id="7_lp0h7"]
+[ext_resource type="Script" uid="uid://b1sxw2k6plrbn" path="res://take_damage.gd" id="8_6bw35"]
 [ext_resource type="Script" uid="uid://bc53hd65rw47x" path="res://player/Scene/camera_2d.gd" id="8_lp0h7"]
 [ext_resource type="Script" uid="uid://dlpxh6l27fuvo" path="res://player/scripts/input_hints.gd" id="8_ya7di"]
 [ext_resource type="Texture2D" uid="uid://cvcscv6kbapt2" path="res://General/Sprites/input_icons.png" id="9_8u50t"]
-[ext_resource type="Script" uid="uid://cbkh8eda20lbh" path="res://player/states/death.gd" id="9_o7381"]
+[ext_resource type="Script" uid="uid://cbkh8eda20lbh" path="res://death.gd" id="9_o7381"]
 [ext_resource type="Script" uid="uid://5gq2b8e8cqvq" path="res://player/Scene/dash.gd" id="10_xs5gv"]
 [ext_resource type="Script" uid="uid://cuni2eknvd7fx" path="res://player/Scene/ball.gd" id="11_s057m"]
 [ext_resource type="Script" uid="uid://buu3vcea6n7iy" path="res://General/Scripts/attack_area.gd" id="12_eut4h"]
-[ext_resource type="Script" uid="uid://b2q7gmaar6yxa" path="res://player/states/ground_slam.gd" id="12_s057m"]
-[ext_resource type="Script" uid="uid://7f2jhieqh4n4" path="res://player/states/AFK.gd" id="13_qwku7"]
-[ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://00_Global/Scripts/damageable_area.gd" id="14_o7381"]
+[ext_resource type="Script" uid="uid://b2q7gmaar6yxa" path="res://ground_slam.gd" id="12_s057m"]
+[ext_resource type="Script" uid="uid://7f2jhieqh4n4" path="res://AFK.gd" id="13_qwku7"]
+[ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://damageable_area.gd" id="14_o7381"]
 [ext_resource type="AudioStream" uid="uid://du6gtwm2l5epc" path="res://00_Global/Audio/hit.wav" id="19_f575y"]
 [ext_resource type="AudioStream" uid="uid://1ma2paybglqb" path="res://00_Global/Audio/jump.wav" id="20_qwku7"]
 [ext_resource type="AudioStream" uid="uid://bukw4uv7uxw8t" path="res://00_Global/Audio/land.wav" id="21_sf4bk"]
@@ -75,22 +75,6 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_lp0h7"]
 resource_name = "CrouchWalk"
-
-[sub_resource type="Animation" id="Animation_qwku7"]
-resource_name = "Death"
-length = 1.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.099999994, 0.3, 0.5, 0.7, 0.9, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [696, 697, 698, 699, 700, 701, 702]
-}
 
 [sub_resource type="Animation" id="Animation_kq2ai"]
 resource_name = "Fall"
@@ -212,7 +196,6 @@ _data = {
 &"Attack": SubResource("Animation_cmacy"),
 &"Crouch": SubResource("Animation_8u50t"),
 &"CrouchWalk": SubResource("Animation_lp0h7"),
-&"Death": SubResource("Animation_qwku7"),
 &"Fall": SubResource("Animation_kq2ai"),
 &"Idle": SubResource("Animation_h2vqo"),
 &"Jump": SubResource("Animation_era1q"),
@@ -252,6 +235,7 @@ collision_mask = 3
 floor_constant_speed = true
 script = ExtResource("1_oul6g")
 move_speed = 200.0
+air_velocity = 300.0
 
 [node name="States" type="Node" parent="." unique_id=1752412975]
 

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d1av2hrkq170n"]
 
-[ext_resource type="Script" uid="uid://3gufavv4oced" path="res://hit_particles.gd" id="1_opwag"]
+[ext_resource type="Script" uid="uid://3gufavv4oced" path="res://00_Global/VFX/Scripts/hit_particles.gd" id="1_opwag"]
 
 [sub_resource type="Curve" id="Curve_22que"]
 _data = [Vector2(0.5070423, 1), 0.0, -0.05698217, 0, 0, Vector2(1, 0), -2.7478173, 0.0, 0, 0]

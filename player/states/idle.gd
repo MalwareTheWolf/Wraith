@@ -1,5 +1,4 @@
-class_name PlayerStateIdle
-extends PlayerState
+class_name PlayerStateIdle extends PlayerState
 
 func init() -> void:
 	pass

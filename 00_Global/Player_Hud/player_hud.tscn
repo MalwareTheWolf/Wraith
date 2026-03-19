@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dbtlhp4yov65r" path="res://00_Global/Player_Hud/player_hud.gd" id="1_nqvf5"]
 [ext_resource type="Texture2D" uid="uid://b5mxlt2k37fll" path="res://00_Global/Player_Hud/EvilHealthBar.png" id="1_ym8xv"]
 [ext_resource type="Texture2D" uid="uid://jbhtwms6kuid" path="res://00_Global/Player_Hud/EvilHealthBarProg.png" id="2_nqvf5"]
-[ext_resource type="Script" uid="uid://bh7vkupllyl0d" path="res://Particle_Test_button.gd" id="4_eg44a"]
+[ext_resource type="Script" uid="uid://bh7vkupllyl0d" path="res://DEBUG/Particle_Test_button.gd" id="4_eg44a"]
 
 [sub_resource type="Gradient" id="Gradient_ym8xv"]
 
@@ -58,6 +58,7 @@ texture_progress = ExtResource("2_nqvf5")
 
 [node name="GameOver" type="Control" parent="Control" unique_id=1445785317]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 0
 offset_right = 480.0
 offset_bottom = 270.0

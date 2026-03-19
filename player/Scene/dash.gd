@@ -10,7 +10,7 @@ var dir : float = 1.0
 var time : float = 0.0
 var effect_time : float = 0.0
 
-@onready var damageable_area: DamageableArea = %DamageArea
+@onready var damageable_area: DamageableArea = %DamageableArea
 
 # What happens when this state is initialized?
 func init() -> void:

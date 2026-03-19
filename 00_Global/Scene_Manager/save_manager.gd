@@ -134,18 +134,15 @@ func setup_player() -> void:
 
 	player.max_hp = save_data.get("max_hp", 20)
 	player.hp = save_data.get("hp", 20)
-
 	player.dash = save_data.get("dash", false)
 	player.double_jump = save_data.get("double_jump", false)
 	player.ground_slam = save_data.get("ground_slam", false)
 	player.morph = save_data.get("morph", false)
-
 	player.lightning = save_data.get("lightning", false)
 	player.Chain_lightning = save_data.get("Chain_lightning", false)
 	player.dark_blast = save_data.get("dark_blast", false)
 	player.heavy_attack = save_data.get("heavy_attack", false)
 	player.power_up = save_data.get("power_up", false)
-
 	player.spell2 = save_data.get("spell2", false)
 	player.spell3 = save_data.get("spell3", false)
 	player.spell4 = save_data.get("spell4", false)

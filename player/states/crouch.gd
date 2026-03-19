@@ -1,21 +1,16 @@
 class_name PlayerStateCrouch
 extends PlayerState
 
-# Deceleration rate when crouching on ground
 @export var deceleration_rate: float = 10
-
-func init() -> void:
-	pass
 
 func enter() -> void:
 	if not player:
 		return
 
-	# Play crouch animation
 	if player.animation_player:
 		player.animation_player.play("Crouch")
 
-	# Adjust collisions for crouch
+	# toggling hitboxes
 	if player.collision_stand:
 		player.collision_stand.disabled = true
 	if player.collision_crouch:
@@ -25,11 +20,11 @@ func enter() -> void:
 	if player.da_crouch:
 		player.da_crouch.disabled = false
 
+
 func exit() -> void:
 	if not player:
 		return
 
-	# Reset collisions when leaving crouch
 	if player.collision_stand:
 		player.collision_stand.set_deferred("disabled", false)
 	if player.collision_crouch:
@@ -39,23 +34,30 @@ func exit() -> void:
 	if player.da_crouch:
 		player.da_crouch.set_deferred("disabled", true)
 
-func handle_input(_event: InputEvent) -> PlayerState:
+
+func handle_input(event: InputEvent) -> PlayerState:
 	if not player:
 		return null
 
-	if _event.is_action_pressed("dash") and player.can_dash():
+	if event.is_action_pressed("dash") and player.can_dash():
 		return dash
-	if _event.is_action_pressed("attack"):
+
+	if event.is_action_pressed("attack"):
 		return attack
-	if _event.is_action_pressed("jump") and player.one_way_platform_shape_cast:
-		player.one_way_platform_shape_cast.force_shapecast_update()
-		if player.one_way_platform_shape_cast.is_colliding():
-			player.position.y += 4
-			return fall
+
+	if event.is_action_pressed("jump"):
+		if player.one_way_shape_cast:
+			player.one_way_shape_cast.force_shapecast_update()
+			if player.one_way_shape_cast.is_colliding():
+				player.position.y += 4
+				return fall
 		return jump
-	if _event.is_action_pressed("action") and player.can_morph():
+
+	if event.is_action_pressed("action") and player.can_morph():
 		return ball
+
 	return next_state
+
 
 func process(_delta: float) -> PlayerState:
 	if not player:
@@ -63,14 +65,15 @@ func process(_delta: float) -> PlayerState:
 
 	if player.direction.y <= 0.5:
 		return idle
+
 	return next_state
 
-func physics_process(_delta: float) -> PlayerState:
+
+func physics_process(delta: float) -> PlayerState:
 	if not player:
 		return null
 
-	# Apply ground deceleration while crouching
-	player.velocity.x -= player.velocity.x * deceleration_rate * _delta
+	player.velocity.x -= player.velocity.x * deceleration_rate * delta
 
 	if not player.is_on_floor():
 		return fall

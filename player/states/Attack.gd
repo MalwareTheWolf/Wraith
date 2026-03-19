@@ -1,5 +1,4 @@
-class_name PlayerStateAttack
-extends PlayerState
+class_name PlayerStateAttack extends PlayerState
 
 const AUDIO_ATTACK = preload("uid://bbgd8l2c7hv38")
 
