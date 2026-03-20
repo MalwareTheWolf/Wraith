@@ -58,7 +58,6 @@ texture_progress = ExtResource("2_nqvf5")
 
 [node name="GameOver" type="Control" parent="Control" unique_id=1445785317]
 unique_name_in_owner = true
-visible = false
 anchors_preset = 0
 offset_right = 480.0
 offset_bottom = 270.0
@@ -67,7 +66,7 @@ offset_bottom = 270.0
 layout_mode = 0
 offset_right = 480.0
 offset_bottom = 269.0
-color = Color(0, 0, 0, 0.6039216)
+color = Color(0, 0, 0, 0.89411765)
 
 [node name="Label" type="Label" parent="Control/GameOver" unique_id=1125178697]
 modulate = Color(1, 0.043137256, 0.011764706, 1)
@@ -110,6 +109,7 @@ layout_mode = 2
 text = "Quit To Menu"
 
 [node name="Debug_Menu" type="Control" parent="." unique_id=187546164]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 243.0

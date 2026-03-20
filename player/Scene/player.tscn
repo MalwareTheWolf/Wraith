@@ -246,7 +246,7 @@ fill_from = Vector2(0.46818182, 0.45454547)
 size = Vector2(19.33873, 26.18732)
 
 [node name="Player" type="CharacterBody2D" unique_id=183006880]
-z_index = 1
+z_index = 10
 collision_layer = 16
 collision_mask = 3
 floor_constant_speed = true
@@ -361,6 +361,8 @@ hframes = 16
 [node name="AttackArea" type="Area2D" parent="." unique_id=994649293]
 unique_name_in_owner = true
 position = Vector2(21, -21)
+collision_layer = 0
+collision_mask = 96
 script = ExtResource("12_eut4h")
 metadata/_custom_type_script = "uid://buu3vcea6n7iy"
 

@@ -6,6 +6,8 @@
 [ext_resource type="TileSet" uid="uid://caf0b2tt1yave" path="res://World/Tilesets/Castle/Castle.tres" id="4_lbs7d"]
 [ext_resource type="PackedScene" uid="uid://d4xs032nppk8" path="res://World/Props/Interactable/Doors and Switches/door.tscn" id="5_huecw"]
 [ext_resource type="PackedScene" uid="uid://bjthfj4hqgl57" path="res://World/Props/Interactable/Doors and Switches/switch.tscn" id="6_fk514"]
+[ext_resource type="PackedScene" uid="uid://c1f1nio7v8hc8" path="res://Enemies/Scenes/EnemyKnight.tscn" id="7_fk514"]
+[ext_resource type="Script" uid="uid://hmuvjhch5nnj" path="res://General/player_spawn/player_spawn.gd" id="8_qfdjc"]
 
 [node name="02Test" type="Node2D" unique_id=1830475727]
 
@@ -50,3 +52,17 @@ position = Vector2(2049, 338)
 size = 8
 location = 1
 target_level = "uid://ra6vmoyl7847"
+
+[node name="EnemyKnight" parent="." unique_id=2080624072 instance=ExtResource("7_fk514")]
+position = Vector2(1097, 333)
+speed_run = null
+speed_walk = null
+gravity = null
+attack_distance = 50.0
+walk_distance = 200.0
+run_distance = 300.0
+
+[node name="PlayerSpawn" type="Node2D" parent="." unique_id=298331981]
+position = Vector2(535, 283)
+script = ExtResource("8_qfdjc")
+metadata/_custom_type_script = "uid://hmuvjhch5nnj"

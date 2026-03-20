@@ -5,11 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://bwbk2dppx5kup" path="res://General/Level_Transition/level_transition.tscn" id="4_61kuw"]
 [ext_resource type="PackedScene" uid="uid://5k6e6duydusj" path="res://General/player_spawn/player_spawn.tscn" id="4_bc6l6"]
 [ext_resource type="PackedScene" uid="uid://b5shhu35gorq7" path="res://00_Global/Scenes/save_point.tscn" id="5_bc6l6"]
-[ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://00_Global/Scripts/damageable_area.gd" id="7_y3rm2"]
 [ext_resource type="Script" uid="uid://c0n65xuyoaqvo" path="res://00_Global/Audio/Scripts/music_auto_trigger.gd" id="8_i5uu7"]
 [ext_resource type="Script" uid="uid://btmdv5p07ffl5" path="res://General/Scripts/hazard_area.gd" id="8_k1vj7"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_i5uu7"]
+[ext_resource type="PackedScene" uid="uid://dm5nda27wv8ut" path="res://General/Ability_Pickup/ability_pickup.tscn" id="9_k1vj7"]
+[ext_resource type="PackedScene" uid="uid://bequo6osdhfhj" path="res://test_dummy.tscn" id="10_mu2n2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mu2n2"]
 size = Vector2(106, 14)
@@ -45,16 +44,6 @@ position = Vector2(100, -80)
 position = Vector2(267, -98)
 save_lock_time = 3.0
 
-[node name="DamagableArea" type="Area2D" parent="." unique_id=1039092629]
-position = Vector2(197, -74)
-collision_layer = 32
-collision_mask = 0
-script = ExtResource("7_y3rm2")
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="DamagableArea" unique_id=1364555928]
-shape = SubResource("RectangleShape2D_i5uu7")
-debug_color = Color(0, 0.011764706, 1, 0.41960785)
-
 [node name="MusicAutoTrigger" type="Node" parent="." unique_id=2004634586]
 script = ExtResource("8_i5uu7")
 metadata/_custom_type_script = "uid://c0n65xuyoaqvo"
@@ -70,3 +59,9 @@ metadata/_custom_type_script = "uid://btmdv5p07ffl5"
 position = Vector2(392, -75)
 shape = SubResource("RectangleShape2D_mu2n2")
 debug_color = Color(1, 0, 0, 0.41960785)
+
+[node name="AbilityPickup" parent="HazardArea" unique_id=604304752 instance=ExtResource("9_k1vj7")]
+position = Vector2(673, -94)
+
+[node name="TestDummy" parent="." unique_id=1316715917 instance=ExtResource("10_mu2n2")]
+position = Vector2(549, -63)

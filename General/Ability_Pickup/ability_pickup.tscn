@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://dm5nda27wv8ut"]
+
+[ext_resource type="Script" uid="uid://bnj6hhw5gsi03" path="res://00_Global/Scripts/breakable.gd" id="1_ulaj0"]
+[ext_resource type="Script" uid="uid://cwvxag1chns3q" path="res://00_Global/VFX/Scripts/Hit_particle_settings.gd" id="2_c7loj"]
+[ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://00_Global/Scripts/damageable_area.gd" id="3_gnmkg"]
+
+[sub_resource type="Resource" id="Resource_5rd78"]
+script = ExtResource("2_c7loj")
+color = Color(1, 0, 0, 1)
+metadata/_custom_type_script = "uid://cwvxag1chns3q"
+
+[sub_resource type="Resource" id="Resource_oecmb"]
+script = ExtResource("2_c7loj")
+metadata/_custom_type_script = "uid://cwvxag1chns3q"
+
+[sub_resource type="Resource" id="Resource_a7c5d"]
+script = ExtResource("2_c7loj")
+count = 20
+color = Color(1, 0, 0, 1)
+metadata/_custom_type_script = "uid://cwvxag1chns3q"
+
+[sub_resource type="Resource" id="Resource_kji3w"]
+script = ExtResource("2_c7loj")
+count = 20
+metadata/_custom_type_script = "uid://cwvxag1chns3q"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_id5sj"]
+
+[node name="AbilityPickup" type="Node2D" unique_id=604304752]
+z_index = 2
+
+[node name="AbilitySprite" type="Sprite2D" parent="." unique_id=1294155076]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AbilitySprite" unique_id=552073939]
+
+[node name="Breakable" type="Node2D" parent="." unique_id=2134592681]
+script = ExtResource("1_ulaj0")
+fixed_hit_count = true
+hit_particles = Array[ExtResource("2_c7loj")]([SubResource("Resource_5rd78"), SubResource("Resource_oecmb")])
+destroy_particles = Array[ExtResource("2_c7loj")]([SubResource("Resource_a7c5d"), SubResource("Resource_kji3w")])
+metadata/_custom_type_script = "uid://bnj6hhw5gsi03"
+
+[node name="DamageableArea" type="Area2D" parent="Breakable" unique_id=660233858]
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("3_gnmkg")
+metadata/_custom_type_script = "uid://cunkd1wonlvhp"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Breakable/DamageableArea" unique_id=202296981]
+shape = SubResource("CapsuleShape2D_id5sj")

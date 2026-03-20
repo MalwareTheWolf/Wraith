@@ -1,5 +1,5 @@
 @tool
-@icon( "res://general/icons/breakable.svg" )
+@icon( "uid://t2gun6aml4cc" )
 class_name Breakable extends Node2D
 
 signal destroyed

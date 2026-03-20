@@ -1,5 +1,4 @@
-class_name PlayerStateBall
-extends PlayerState
+class_name PlayerStateBall extends PlayerState
 
 const MORPH_AUDIO = preload("uid://btsc86lmk1nis")
 const MORPH_OUT_AUDIO = preload("uid://dhsq6lqs775q5")
