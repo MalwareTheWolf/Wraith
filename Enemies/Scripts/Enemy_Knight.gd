@@ -1,135 +1,245 @@
 extends CharacterBody2D
 
-# --- Nodes ---
+enum State { IDLE, RUN, ATTACK, TAKE_DAMAGE, DEATH }
+
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var player_detector: Area2D = $PlayerDetector
-@onready var floor_detector: RayCast2D = $FloorDetector
+@onready var floor_detector: RayCast2D = get_node_or_null("EnemyStateMachine/FloorDetector")
 @onready var state_label: Label = $StateLabel
+@onready var attack_area: AttackArea = $AttackArea
+@onready var damageable_area: DamageableArea = $DamageableArea
 
-# --- Enemy stats ---
-@export var speed_run: float = 120
-@export var speed_walk: float = 60
-@export var gravity: float = 600
-@export var attack_distance: float = 30
-@export var walk_distance: float = 100
-@export var run_distance: float = 200
+@export var speed_run: float = 140.0
+@export var gravity: float = 600.0
+@export var attack_distance: float = 40.0
+@export var run_distance: float = 220.0
 
-# --- Internal state ---
-var player: Node = null
-var current_state: String = "IDLE"
+@export var max_health: float = 3.0
+@export var damage: float = 1.0
+@export var attack_duration: float = 0.12
+@export var attack_cooldown: float = 0.45
+@export var knockback_force: float = 120.0
+
+var health: float = 0.0
+var current_state: State = State.IDLE
+var player: Node2D = null
+var facing_dir: int = 1
+
 var attack_playing: bool = false
+var attack_on_cooldown: bool = false
+var hurt_playing: bool = false
+var dead: bool = false
 
-var rng := RandomNumberGenerator.new()
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-func _ready():
+func _ready() -> void:
 	rng.randomize()
-	if player_detector:
-		if not player_detector.is_connected("body_entered", Callable(self, "_on_player_entered")):
-			player_detector.body_entered.connect(Callable(self, "_on_player_entered"))
-		if not player_detector.is_connected("body_exited", Callable(self, "_on_player_exited")):
-			player_detector.body_exited.connect(Callable(self, "_on_player_exited"))
-	pass
+	health = max_health
 
-func _physics_process(delta):
-	_handle_gravity(delta)
-	_update_state()
-	_handle_movement(delta)
-	_update_animation()
-	_update_label()
-	pass
+	player_detector.body_entered.connect(_on_player_entered)
+	player_detector.body_exited.connect(_on_player_exited)
+	sprite.animation_finished.connect(_on_animation_finished)
+	damageable_area.damage_taken.connect(_on_damage_taken)
 
-# --- Gravity ---
-func _handle_gravity(delta):
+	if attack_area != null:
+		attack_area.damage = damage
+		attack_area.set_active(false)
+
+func _physics_process(delta: float) -> void:
+	apply_gravity(delta)
+	update_facing()
+	update_state()
+
+	match current_state:
+		State.IDLE:
+			handle_idle()
+		State.RUN:
+			handle_run()
+		State.ATTACK:
+			handle_attack()
+		State.TAKE_DAMAGE:
+			handle_take_damage()
+		State.DEATH:
+			handle_death()
+
+	move_and_slide()
+	update_label()
+
+func apply_gravity(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
-		velocity.y = 0
-	pass
+		velocity.y = 0.0
 
-# --- State updates ---
-func _update_state():
-	if not player or not is_instance_valid(player):
-		current_state = "IDLE"
+func update_facing() -> void:
+	if player != null and is_instance_valid(player) and not dead:
+		var dir_x: float = sign(player.global_position.x - global_position.x)
+		if dir_x != 0.0:
+			facing_dir = int(dir_x)
+
+	sprite.flip_h = facing_dir < 0
+
+	if attack_area != null:
+		attack_area.flip(float(facing_dir))
+
+func update_state() -> void:
+	if dead:
+		current_state = State.DEATH
 		return
 
-	var distance = global_position.distance_to(player.global_position)
+	if hurt_playing:
+		current_state = State.TAKE_DAMAGE
+		return
 
-	if distance <= attack_distance:
-		current_state = "ATTACK"
-	elif distance <= walk_distance:
-		current_state = "WALK"
-	elif distance <= run_distance:
-		current_state = "RUN"
+	if attack_playing:
+		current_state = State.ATTACK
+		return
+
+	if player == null or not is_instance_valid(player):
+		current_state = State.IDLE
+		return
+
+	var dist: float = global_position.distance_to(player.global_position)
+
+	if dist <= attack_distance and not attack_on_cooldown:
+		current_state = State.ATTACK
+	elif dist <= run_distance:
+		current_state = State.RUN
 	else:
-		current_state = "IDLE"
-	pass
+		current_state = State.IDLE
 
-# --- Movement ---
-func _handle_movement(delta):
-	velocity.x = 0
+func handle_idle() -> void:
+	velocity.x = 0.0
+	if sprite.animation != "Idle":
+		sprite.play("Idle")
 
-	if not player or not is_instance_valid(player):
-		move_and_slide()
+func handle_run() -> void:
+	velocity.x = float(facing_dir) * speed_run
+	update_floor_ray()
+
+	if floor_detector != null and not floor_detector.is_colliding():
+		velocity.x = 0.0
+
+	if sprite.animation != "Run":
+		sprite.play("Run")
+
+func handle_attack() -> void:
+	velocity.x = 0.0
+
+	if not attack_playing:
+		start_attack()
+
+func handle_take_damage() -> void:
+	velocity.x = move_toward(velocity.x, 0.0, 25.0)
+
+	if sprite.animation != "Take_Damage":
+		sprite.play("Take_Damage")
+
+func handle_death() -> void:
+	velocity.x = 0.0
+
+	if sprite.animation != "Death":
+		sprite.play("Death")
+
+func start_attack() -> void:
+	attack_playing = true
+	attack_on_cooldown = true
+
+	if attack_area != null:
+		attack_area.damage = damage
+
+	var attack_anim: String = "Attack_" + str(rng.randi_range(1, 3))
+	sprite.play(attack_anim)
+	_do_attack_hit()
+
+func _do_attack_hit() -> void:
+	if attack_area == null:
 		return
 
-	var direction = (player.global_position - global_position).normalized()
-	
-	match current_state:
-		"RUN":
-			velocity.x = direction.x * speed_run
-		"WALK":
-			velocity.x = direction.x * speed_walk
-		"ATTACK", "IDLE":
-			velocity.x = 0
+	attack_area.flip(float(facing_dir))
+	attack_area.activate(attack_duration)
 
-	# Prevent walking off edges
-	if velocity.x != 0 and not floor_detector.is_colliding():
-		velocity.x = 0
+func update_floor_ray() -> void:
+	if floor_detector != null:
+		floor_detector.target_position.x = absf(floor_detector.target_position.x) * float(facing_dir)
 
-	# Flip sprite based on movement
-	if sprite:
-		sprite.flip_h = velocity.x < 0
+func _on_animation_finished() -> void:
+	if sprite.animation.begins_with("Attack_"):
+		attack_playing = false
+		_start_attack_cooldown()
+	elif sprite.animation == "Take_Damage":
+		hurt_playing = false
+		if damageable_area != null:
+			damageable_area.end_invulnerable()
+	elif sprite.animation == "Death":
+		await get_tree().create_timer(1.0).timeout
+		queue_free()
 
-	move_and_slide()
-	pass
+func _start_attack_cooldown() -> void:
+	await get_tree().create_timer(attack_cooldown).timeout
+	attack_on_cooldown = false
 
-# --- Animation ---
-func _update_animation():
-	if not sprite:
+func _on_damage_taken(attack_area_source: AttackArea) -> void:
+	if dead:
 		return
 
-	match current_state:
-		"IDLE":
-			sprite.play("Idle")
-		"WALK":
-			sprite.play("Walk")
-		"RUN":
-			sprite.play("Run")
-		"ATTACK":
-			if not attack_playing:
-				var attack_anim = "Attack_" + str(rng.randi_range(1, 3))
-				sprite.play(attack_anim)
-				attack_playing = true
-				sprite.animation_finished.connect(Callable(self, "_on_attack_finished"))
-	pass
+	if hurt_playing:
+		return
 
-func _on_attack_finished():
+	health -= attack_area_source.damage
+	print("Enemy health: ", health)
+
+	if health <= 0.0:
+		die()
+		return
+
+	hurt_playing = true
+
+	if damageable_area != null:
+		damageable_area.start_invulnerable()
+
+	var source_pos: Vector2 = attack_area_source.global_position
+	var knockback_dir: float = sign(global_position.x - source_pos.x)
+	if knockback_dir == 0.0:
+		knockback_dir = -float(facing_dir)
+
+	velocity.x = knockback_dir * knockback_force
+	sprite.play("Take_Damage")
+
+func die() -> void:
+	if dead:
+		return
+
+	dead = true
+	hurt_playing = false
 	attack_playing = false
-	pass
+	attack_on_cooldown = true
+	current_state = State.DEATH
+	velocity = Vector2.ZERO
 
-# --- Label ---
-func _update_label():
-	if state_label:
-		state_label.text = str(current_state)
-	pass
+	if attack_area != null:
+		attack_area.set_active(false)
 
-# --- Player detection callbacks ---
-func _on_player_entered(body):
+	if player_detector != null:
+		player_detector.monitoring = false
+
+	if damageable_area != null:
+		damageable_area.start_invulnerable()
+		damageable_area.monitoring = false
+
+	sprite.play("Death")
+
+func update_label() -> void:
+	if state_label != null:
+		state_label.text = State.keys()[current_state] + " | HP: " + str(health)
+
+func _on_player_entered(body: Node) -> void:
+	if dead:
+		return
+
 	if body.is_in_group("Player"):
-		player = body
-	pass
+		player = body as Node2D
 
-func _on_player_exited(body):
+func _on_player_exited(body: Node) -> void:
 	if body == player:
 		player = null
-	pass

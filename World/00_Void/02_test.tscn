@@ -18,6 +18,7 @@ tile_set = ExtResource("1_h3ita")
 
 [node name="LevelBounds" type="Node2D" parent="." unique_id=995621983]
 z_index = 256
+position = Vector2(1, 0)
 script = ExtResource("2_en5rc")
 width = 2048
 height = 430
@@ -54,12 +55,8 @@ location = 1
 target_level = "uid://ra6vmoyl7847"
 
 [node name="EnemyKnight" parent="." unique_id=2080624072 instance=ExtResource("7_fk514")]
-position = Vector2(1097, 333)
-speed_run = null
-speed_walk = null
-gravity = null
+position = Vector2(637, 312)
 attack_distance = 50.0
-walk_distance = 200.0
 run_distance = 300.0
 
 [node name="PlayerSpawn" type="Node2D" parent="." unique_id=298331981]
