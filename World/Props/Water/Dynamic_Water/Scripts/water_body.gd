@@ -10,7 +10,7 @@ extends Node2D
 @export var spread: float = 0.5
 
 
-# ---------------- VISUALS ----------------
+# ---------------- VISUALS
 @export_category("Visuals")
 @export var width: int = 300
 @export var spring_number: int = 7
