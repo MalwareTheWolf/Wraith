@@ -44,7 +44,7 @@ signal damage_taken
 @onready var label: Label = $Label
 # Debug label showing state.
 
-
+@onready var laser: laser = $Laser
 
 #TUNABLE STATS
 
@@ -330,7 +330,8 @@ func _physics_process(delta: float) -> void:
 		if new_state != null:
 			change_state(new_state)
 
-
+	look_at(get_global_mouse_position())
+	laser.is_casting = Input.is_action_pressed("laser")
 
 #MOVEMENT INPUT
 
@@ -420,7 +421,6 @@ func lock_movement_with_timer(time: float = movement_lock_time) -> void:
 	lock_movement()
 	await get_tree().create_timer(time).timeout
 	unlock_movement()
-
 
 
 #DEATH / RESPAWN

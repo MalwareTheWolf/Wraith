@@ -494,6 +494,7 @@ position = Vector2(0, -43)
 script = ExtResource("14_a54ke")
 label_settings = ExtResource("14_2a4rr")
 target_path = NodePath("..")
+spawn_offset = Vector2(0, -40)
 metadata/_custom_type_script = "uid://b0pc128i4hj6g"
 
 [node name="DeathSound" type="AudioStreamPlayer2D" parent="." unique_id=814471111]

@@ -1,111 +1,121 @@
 @icon("uid://bvrool5ggsehu")
-class_name DamageNumberSpawner
-extends Node2D
+class_name DamageNumberSpawner extends Node2D
 
 # Spawns floating damage numbers when a DamageableArea is hit.
+# Uses Node2D containers so numbers exist in world space.
 
 # --- TUNABLES ---
+
 @export var label_settings: LabelSettings
+# Visual style for damage numbers.
+
 @export var critical_hit_color: Color = Color.RED
+# Color used for critical hits.
+
 @export var float_height: float = 40.0
+# How far numbers float upward.
+
 @export var duration: float = 0.6
+# Duration of animation.
+
 @export var target_path: NodePath
+# Optional DamageableArea to auto-connect.
+
+@export var spawn_offset: Vector2 = Vector2(0, -20)
+# Offset applied to where damage numbers spawn (negative Y moves them upward).
 
 # --- LIFECYCLE ---
+
 func _ready() -> void:
 	print("[DamageNumberSpawner] _ready called")
 
 	var target: DamageableArea = null
 
+	# Try target_path first
 	if target_path != NodePath():
 		target = get_node_or_null(target_path)
 		if target and target is DamageableArea:
 			print("[DamageNumberSpawner] Connected via target_path")
-		else:
-			print("[DamageNumberSpawner] target_path not valid")
 
-	if target == null and get_parent() and get_parent() is DamageableArea:
+	# Fallback: parent
+	if target == null and get_parent() is DamageableArea:
 		target = get_parent()
 		print("[DamageNumberSpawner] Connected to parent DamageableArea")
 
+	# Connect signal
 	if target:
 		target.damage_taken.connect(_on_damage_taken)
-		print("[DamageNumberSpawner] Successfully connected to DamageableArea")
 	else:
 		print("[DamageNumberSpawner] ERROR: No DamageableArea found!")
 
 # --- SIGNAL HANDLERS ---
-func _on_damage_taken(attack_area: AttackArea) -> void:
-	print("[DamageNumberSpawner] _on_damage_taken triggered")
 
+func _on_damage_taken(attack_area: AttackArea) -> void:
 	if attack_area == null:
-		print("[DamageNumberSpawner] ERROR: attack_area is null")
 		return
 
 	var damage := attack_area.damage
 
-	# Compute spawn position above the DamageableArea
-	var spawn_pos: Vector2 = Vector2.ZERO
-	if attack_area.get_parent() and attack_area.get_parent() is DamageableArea:
-		var area = attack_area.get_parent() as DamageableArea
-		spawn_pos = area.global_position
+	# Spawn exactly at entity position + offset
+	var parent_node := get_parent() as Node2D
+	var spawn_pos: Vector2 = parent_node.global_position + spawn_offset
 
-		var shape_node = area.get_node_or_null("CollisionShape2D")
-		if shape_node and shape_node is CollisionShape2D:
-			var rect = shape_node.shape.get_rect()
-			spawn_pos += Vector2(rect.size.x / 2, -rect.size.y / 2)
-	else:
-		spawn_pos = attack_area.global_position
-
-	print("[DamageNumberSpawner] Damage:", damage, "Spawn Position:", spawn_pos)
 	spawn_label(damage, spawn_pos)
 
 # --- SPAWNING ---
-func spawn_label(number: float, world_pos: Vector2, critical_hit: bool = false) -> void:
-	var label: Label = Label.new()
 
+func spawn_label(number: float, world_pos: Vector2, critical_hit: bool = false) -> void:
+	# Container node in world space
+	var holder := Node2D.new()
+	add_child(holder)
+	holder.global_position = world_pos
+
+	# Label inside holder
+	var label := Label.new()
+	holder.add_child(label)
+
+	# Text formatting
 	label.text = str(int(number)) if number == int(number) else str(number)
 
+	# Apply style
 	if label_settings:
 		label.label_settings = label_settings.duplicate()
 
+	# Critical hit color
 	if critical_hit and label.label_settings:
 		label.label_settings.font_color = critical_hit_color
 
-	label.z_index = 1000
-	add_child(label)
-
-	# Get font height safely
-	var font_height = 20
-	var font = label.get_theme_font("font")
-	if font:
-		font_height = font.get_height()
-
-	# Position above target
-	label.global_position = world_pos + Vector2(0, -font_height)
-
-	label.global_position += Vector2(randf_range(-5.0, 5.0), randf_range(-5.0, 5.0))
-
+	# Wait for size to center pivot
 	await label.resized
-	label.pivot_offset = label.size / 2.0
+	label.position = -label.size / 2
 
-	animate_label(label)
-	print("[DamageNumberSpawner] Spawned label at", label.global_position)
+	# Small random variation
+	holder.position += Vector2(
+		randf_range(-5.0, 5.0),
+		randf_range(-5.0, 5.0)
+	)
+
+	animate_label(holder)
 
 # --- ANIMATION ---
-func animate_label(label: Label) -> void:
+
+func animate_label(holder: Node2D) -> void:
 	var tween = create_tween()
 
-	label.scale = Vector2(0.6, 0.6)
+	# Start smaller for pop effect
+	holder.scale = Vector2(0.6, 0.6)
 
-	var target_pos = label.global_position + Vector2(0, -float_height)
-	tween.tween_property(label, "global_position", target_pos, duration)
+	# Move upward in world space
+	tween.tween_property(holder, "position:y", holder.position.y - float_height, duration)
 
-	tween.parallel().tween_property(label, "modulate:a", 0.0, duration)
-	tween.parallel().tween_property(label, "scale", Vector2(1.2, 1.2), 0.2)
+	# Fade out
+	tween.parallel().tween_property(holder, "modulate:a", 0.0, duration)
 
+	# Scale up slightly for pop
+	tween.parallel().tween_property(holder, "scale", Vector2(1.2, 1.2), 0.2)
+
+	# Free after animation
 	tween.finished.connect(func():
-		print("[DamageNumberSpawner] Label animation finished, freeing")
-		label.queue_free()
+		holder.queue_free()
 	)
 	

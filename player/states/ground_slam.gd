@@ -67,7 +67,7 @@ func physics_process(_delta: float) -> PlayerState:
 			return idle
 	return next_state
 
-func _on_animation_finished(anim_name: String) -> void:
+func _on_animation_finished(_anim_name: String) -> void:
 	# Automatically exit state when animation finishes
 	if player.is_on_floor():
 		player.change_state(idle)

@@ -1,7 +1,6 @@
 extends CanvasLayer
 
 @onready var black_rect: ColorRect = $BlackRect
-@onready var anim_player: AnimationPlayer = $AnimationPlayer
 
 @export var load_time: float = 1.5 # seconds to show "loading"
 @export var static_audio_stream: AudioStream = preload("uid://brf2ppngqgpin")
@@ -17,10 +16,6 @@ func _start(slot: int, is_new_game: bool) -> void:
 	var tween = create_tween()
 	tween.tween_property(black_rect, "modulate:a", 1.0, 0.3)
 	await tween.finished
-
-	# Play loading animation
-	if anim_player:
-		anim_player.play("spin")
 
 	# Play static sound
 	static_player = AudioStreamPlayer.new()

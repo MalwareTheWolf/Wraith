@@ -16,7 +16,7 @@ func _ready() -> void:
 	load_scene_finished.emit()
 
 
-func transition_scene(new_scene: String, target_area: String, player_offset: Vector2, dir: String) -> void:
+func transition_scene(new_scene: String, target_area: String, player_offset: Vector2, _dir: String) -> void:
 	load_scene_started.emit()
 	await get_tree().process_frame
 

@@ -45,13 +45,11 @@ func handle_input(event: InputEvent) -> PlayerState:
 	if event.is_action_pressed("action") and player.can_morph():
 		return ball
 	return next_state
-	pass
 
 # --- What happens each process tick ---
 func process(_delta: float) -> PlayerState:
 	set_jump_frame()
 	return next_state
-	pass
 
 # --- What happens each physics_process tick ---
 func physics_process(_delta: float) -> PlayerState:
@@ -63,7 +61,6 @@ func physics_process(_delta: float) -> PlayerState:
 
 	player.velocity.x = player.direction.x * player.air_velocity
 	return next_state
-	pass
 
 # --- Handles the actual jump ---
 func do_jump() -> void:
