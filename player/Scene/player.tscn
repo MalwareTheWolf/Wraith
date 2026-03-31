@@ -25,6 +25,7 @@
 [ext_resource type="AudioStream" uid="uid://bukw4uv7uxw8t" path="res://00_Global/Audio/land.wav" id="21_sf4bk"]
 [ext_resource type="LabelSettings" uid="uid://botkf58hbf8jm" path="res://DamageNumbers.tres" id="22_aotku"]
 [ext_resource type="Script" uid="uid://b0pc128i4hj6g" path="res://DamageNumberSpawner.gd" id="24_4o3a5"]
+[ext_resource type="Script" uid="uid://cg6me518q1rwe" path="res://Laser.gd" id="26_cuw7j"]
 
 [sub_resource type="Animation" id="Animation_f575y"]
 resource_name = "AFK"
@@ -497,3 +498,15 @@ stream = ExtResource("20_qwku7")
 [node name="LandAudio" type="AudioStreamPlayer2D" parent="AudioStreams" unique_id=336485297]
 unique_name_in_owner = true
 stream = ExtResource("21_sf4bk")
+
+[node name="laser" type="RayCast2D" parent="." unique_id=1901257399]
+position = Vector2(0, -37)
+target_position = Vector2(62, 0)
+collision_mask = 161
+script = ExtResource("26_cuw7j")
+cast_line_width = null
+sight_line_width = null
+cast_speed = null
+metadata/_custom_type_script = "uid://cg6me518q1rwe"
+
+[node name="Line2D" type="Line2D" parent="laser" unique_id=1600820054]

@@ -1,56 +1,58 @@
 @tool
-class_name laser extends RayCast2D
+class_name Laser
+extends RayCast2D
 
-@export var cast_speed := 7000.0
-@export var max_length := 1400.0
-
-
-func _physics_process(delta: float) -> void:
-	target_position.x = move_toward(
-		target_position.x,
-		max_length,
-		cast_speed * delta
-	)
-
-	#var laser_end_position := target_position
-	#force_raycast_update()
-	#if is_colliding():
-	#	laser_end_position = to_local(get_collision_point())
-#	line_2d.points[1] = laser_end_position
-
-@export var is_casting := false: set = set_is_casting
-
-
-func set_is_casting(new_value: bool) -> void:
-	if is_casting == new_value:
-		return
-	is_casting = new_value
-
-	set_physics_process(is_casting)
-
-	if is_casting == false:
-		target_position = Vector2.ZERO
-		disappear()
-	else:
-		appear()
-
-@export var growth_time := 0.1
-
-var tween: Tween = null
+@export var max_length: float = 1400.0
+@export var cast_line_width: float = 4.0      # final thickness when casting
+@export var sight_line_width: float = 1.0     # thin laser sight
+@export var cast_speed: float = 5.0           # width growth per second
+@export var is_casting: bool = false
 
 @onready var line_2d: Line2D = $Line2D
-@onready var line_width := line_2d.width
 
-func appear() -> void:
+# Internal width used for smooth growth
+var current_width: float = 0.0
+
+func _ready() -> void:
+	if not line_2d:
+		push_error("Laser Line2D node not found! Add a Line2D child named 'Line2D'.")
+		return
 	line_2d.visible = true
-	if tween and tween.is_running():
-		tween.kill()
-	tween = create_tween()
-	tween.tween_property(line_2d, "width", line_width, growth_time * 2.0).from(0.0)
+	line_2d.width = sight_line_width
+	line_2d.default_color = Color.RED
+	current_width = sight_line_width
 
-func disappear() -> void:
-	if tween and tween.is_running():
-		tween.kill()
-	tween = create_tween()
-	tween.tween_property(line_2d, "width", line_width, growth_time * 0.0).from_current()
-	tween.tween_callback(line_2d.hide)
+func _physics_process(delta: float) -> void:
+	if not line_2d:
+		return
+
+	# Direction from laser origin to mouse
+	var mouse_dir = (get_global_mouse_position() - global_position).normalized()
+	var laser_end = mouse_dir * max_length
+
+	if is_casting:
+		# Smoothly grow width to cast_line_width
+		current_width = move_toward(current_width, cast_line_width, cast_speed * delta)
+
+		# Update RayCast2D for collision detection
+		target_position = mouse_dir * max_length
+		force_raycast_update()
+
+		if is_colliding() and get_collider() != get_parent():
+			# Only consider collision if it's NOT the player itself
+			laser_end = to_local(get_collision_point())
+			line_2d.default_color = Color.WHITE  # hitting something targetable
+		else:
+			line_2d.default_color = Color.RED
+
+	else:
+		# Laser sight: thin, always red, ignore collisions
+		current_width = sight_line_width
+		line_2d.default_color = Color.RED
+
+	# Apply width and points
+	line_2d.width = current_width
+	line_2d.points = [Vector2.ZERO, laser_end]
+
+	# Update RayCast2D direction (physics)
+	target_position = mouse_dir * max_length
