@@ -15,7 +15,7 @@ signal damage_taken
 @onready var attack_area: AttackArea = $AttackArea
 @onready var damageable_area: DamageableArea = $DamageableArea
 @onready var label: Label = $Label
-@onready var laser: RayCast2D = $laser
+@onready var laser: Laser = $LaserOrigin/laser
 
 
 # --- TUNABLE STATS ---
@@ -193,20 +193,15 @@ func _physics_process(delta: float) -> void:
 
 	# --- LASER LOGIC ---
 	if laser:
-		# Anchor laser to player
-		laser.global_position = global_position
+		# Anchor laser to eye
+		laser.global_position = $LaserOrigin.global_position
 
-		# Set casting state
+		# Update casting
 		laser.is_casting = Input.is_action_pressed("laser")
 
-		# Point laser toward mouse
-		var mouse_pos = get_global_mouse_position()
-		var dir = (mouse_pos - global_position).normalized()
+		# Rotate toward mouse
+		var dir = (get_global_mouse_position() - laser.global_position).normalized()
 		laser.rotation = dir.angle()
-
-		# Update laser length
-		var target_distance = (mouse_pos - global_position).length()
-		laser.target_position = Vector2(target_distance, 0)  # local x-axis for RayCast2D
 
 # --- MOVEMENT INPUT ---
 func update_direction() -> void:

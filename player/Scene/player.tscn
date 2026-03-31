@@ -499,14 +499,21 @@ stream = ExtResource("20_qwku7")
 unique_name_in_owner = true
 stream = ExtResource("21_sf4bk")
 
-[node name="laser" type="RayCast2D" parent="." unique_id=1901257399]
+[node name="LaserOrigin" type="Node2D" parent="." unique_id=1521641682]
 position = Vector2(0, -37)
-target_position = Vector2(62, 0)
+
+[node name="laser" type="RayCast2D" parent="LaserOrigin" unique_id=1901257399]
+target_position = Vector2(210, 0)
 collision_mask = 161
 script = ExtResource("26_cuw7j")
-cast_line_width = null
-sight_line_width = null
-cast_speed = null
+max_length = 210.0
+cast_line_width = 2.0
+sight_line_width = 0.5
+cast_speed = 2.0
 metadata/_custom_type_script = "uid://cg6me518q1rwe"
 
-[node name="Line2D" type="Line2D" parent="laser" unique_id=1600820054]
+[node name="Line2D" type="Line2D" parent="LaserOrigin/laser" unique_id=1600820054]
+points = PackedVector2Array(0, 0, 210, 0)
+width = 0.5
+begin_cap_mode = 2
+end_cap_mode = 2
