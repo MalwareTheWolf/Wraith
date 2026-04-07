@@ -1,180 +1,240 @@
 @tool
-@icon( "res://general/icons/map_node.svg" )
-class_name MapNode extends Control
+class_name MapNode
+extends Control
+
+# Scene this node represents.
+@export_file("*.tscn") var linked_scene: String = ""
+
+# Display info.
+@export var display_name: String = ""
+@export var region_name: String = "wraith_woods"
+
+@export var hide_until_discovered: bool = true
+@export var show_label_in_game: bool = false
+
+# Toggle auto-generation
+@export var auto_generate_openings: bool = true
+
+# Manual openings fallback
+@export_group("Manual Openings")
+@export var openings_top: Array[float] = []
+@export var openings_right: Array[float] = []
+@export var openings_bottom: Array[float] = []
+@export var openings_left: Array[float] = []
+
+# Colors
+@export_group("Colors")
+@export var default_fill_color: Color = Color("000000")
+@export var default_border_color: Color = Color("ffffff")
+@export var current_fill_color: Color = Color("5a1f72")
+@export var current_border_color: Color = Color("ff7cff")
+
+# Internal
+var label: Label
+var transition_blocks: Control
+
+var room_fill_color: Color
+var room_border_color: Color
+var is_current_room: bool = false
+
+const SCALE_FACTOR := 40.0
+var indicator_offset := Vector2.ZERO
 
 
-const SCALE_FACTOR : float = 40
 
-
-#        VARIABLES
-@export_file( "*.tscn" ) var linked_scene : String : set = _on_scene_set
-@export_tool_button( "Update" ) var update_node_action = update_node
-
-@export var entrances_top : Array[ float ] = []
-@export var entrances_right : Array[ float ] = []
-@export var entrances_bottom : Array[ float ] = []
-@export var entrances_left : Array[ float ] = []
-
-var indicator_offset : Vector2 = Vector2.ZERO
-
-@onready var label: Label = $Label
-@onready var transition_blocks: Control = %TransitionBlocks
-
+#READY
 
 func _ready() -> void:
+	ensure_minimum_nodes()
+
 	if Engine.is_editor_hint():
-		pass
-	else:
-		label.queue_free()
+		if label:
+			label.visible = false
+		update_from_scene()
 		create_transition_blocks()
+		queue_redraw()
+		return
 
-		if not SaveManager.is_area_discovered( linked_scene ):
-			visible = false
-		elif SceneManager.current_scene_uid == linked_scene:
-			display_player_location()
-	pass
+	refresh_node()
 
 
-func _on_scene_set( value : String ) -> void:
-	if linked_scene != value:
-		linked_scene = value
-		if Engine.is_editor_hint():
-			update_node()
-	pass
+
+#SETUP
+
+func ensure_minimum_nodes() -> void:
+
+	if not has_node("Label"):
+		var l := Label.new()
+		l.name = "Label"
+		add_child(l)
+
+	if not has_node("TransitionBlocks"):
+		var t := Control.new()
+		t.name = "TransitionBlocks"
+		add_child(t)
+
+	label = get_node("Label") as Label
+	transition_blocks = get_node("TransitionBlocks") as Control
 
 
-func update_node() -> void:
-	var new_size : Vector2 = Vector2( 480, 270 )
-	var transitions : Array[ LevelTransition ] = []
 
-	if ResourceLoader.exists( linked_scene ):
-		var packed_scene : PackedScene = ResourceLoader.load( linked_scene ) as PackedScene
-		if packed_scene:
-			var instance = packed_scene.instantiate()
-			if instance:
-				update_node_label( instance )
+#PATH HELPERS
 
-				for c in instance.get_children():
-					if c is LevelBounds:
-						new_size = Vector2( c.width, c.height )
-						indicator_offset = c.position
-					elif c is LevelTransition:
-						transitions.append( c )
+# Returns a real res:// path even if linked_scene is stored as uid://
+func get_scene_path() -> String:
 
-				instance.queue_free()
+	if linked_scene == "":
+		return ""
 
-	size = new_size / SCALE_FACTOR
-	size = size.round()
+	if linked_scene.begins_with("uid://"):
+		var uid_id: int = ResourceUID.text_to_id(linked_scene)
+		if uid_id != -1:
+			var resolved_path: String = ResourceUID.get_id_path(uid_id)
+			if resolved_path != "":
+				return resolved_path
 
-	create_entrance_data( transitions )
-	create_transition_blocks()
-	pass
+	return linked_scene
 
 
-func update_node_label( scene : Node ) -> void:
-	if not label:
-		label = $Label
 
-	var t : String = scene.scene_file_path
-	t = t.replace( "res://levels/", "" )
-	t = t.replace( ".tscn", "" )
-	label.text = t
-	pass
+#SCENE READ
+
+func update_from_scene() -> void:
+
+	if not auto_generate_openings:
+		return
+
+	var scene_path: String = get_scene_path()
+	if scene_path == "" or not ResourceLoader.exists(scene_path):
+		return
+
+	var transitions: Array = []
+	var new_size: Vector2 = size
+
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		return
+
+	var inst := packed.instantiate()
+	if inst == null:
+		return
+
+	for c in inst.get_children():
+		if c.get_class() == "LevelBounds":
+			new_size = Vector2(c.width, c.height) / SCALE_FACTOR
+			indicator_offset = c.position
+
+		if c.get_class() == "LevelTransition":
+			transitions.append(c)
+
+	inst.queue_free()
+
+	size = new_size.round()
+	generate_openings_from_transitions(transitions)
 
 
-func create_entrance_data( transitions : Array[ LevelTransition ] ) -> void:
-	entrances_bottom.clear()
-	entrances_left.clear()
-	entrances_right.clear()
-	entrances_top.clear()
+
+#AUTO OPENINGS
+
+func generate_openings_from_transitions(transitions: Array) -> void:
+
+	openings_top.clear()
+	openings_right.clear()
+	openings_bottom.clear()
+	openings_left.clear()
 
 	for t in transitions:
-		var pos : Vector2 = ( t.position - indicator_offset ) / SCALE_FACTOR
+		var pos: Vector2 = (t.position - indicator_offset) / SCALE_FACTOR
 
-		if t.location == LevelTransition.SIDE.LEFT:
-			var offset : float = clampf(
-				pos.y - 3,
-				2.0,
-				self.size.y - 5.0
-			)
-			entrances_left.append( offset )
+		match t.location:
+			t.SIDE.LEFT:
+				openings_left.append(pos.y)
+			t.SIDE.RIGHT:
+				openings_right.append(pos.y)
+			t.SIDE.TOP:
+				openings_top.append(pos.x)
+			t.SIDE.BOTTOM:
+				openings_bottom.append(pos.x)
 
-		elif t.location == LevelTransition.SIDE.RIGHT:
-			var offset : float = clampf(
-				pos.y - 3,
-				2.0,
-				self.size.y - 5.0
-			)
-			entrances_right.append( offset )
 
-		elif t.location == LevelTransition.SIDE.TOP:
-			var offset : float = clampf(
-				pos.x - 3,
-				2.0,
-				self.size.x - 5.0
-			)
-			entrances_top.append( offset )
 
-		elif t.location == LevelTransition.SIDE.BOTTOM:
-			var offset : float = clampf(
-				pos.x - 3,
-				2.0,
-				self.size.x - 5.0
-			)
-			entrances_bottom.append( offset )
-	pass
+#REFRESH
 
+func refresh_node() -> void:
+
+	update_from_scene()
+
+	var current_scene := get_tree().current_scene.scene_file_path
+	var scene_path: String = get_scene_path()
+	is_current_room = (current_scene == scene_path)
+
+	var discovered := SaveManager.is_area_discovered(scene_path)
+
+	room_fill_color = default_fill_color
+	room_border_color = default_border_color
+
+	visible = not hide_until_discovered or discovered
+
+	if label:
+		label.visible = false
+
+	create_transition_blocks()
+	queue_redraw()
+
+
+
+#DRAW
+
+func _draw() -> void:
+
+	var rect := Rect2(Vector2.ZERO, size)
+
+	var fill := room_fill_color
+	var border := room_border_color
+
+	if is_current_room:
+		fill = current_fill_color
+		border = current_border_color
+
+	draw_rect(rect, fill, true)
+	draw_rect(rect, border, false, 1.0)
+
+
+
+#OPENINGS DRAW
 
 func create_transition_blocks() -> void:
+
 	if not transition_blocks:
-		transition_blocks = %TransitionBlocks
+		return
 
 	for c in transition_blocks.get_children():
 		c.queue_free()
 
-	for t in entrances_left:
-		var block : ColorRect = add_block()
-		block.size.y = 3
-		block.position.x = 0
-		block.position.y = t
+	for t in openings_left:
+		var b := add_block()
+		b.size = Vector2(2, 6)
+		b.position = Vector2(-1, t - 3)
 
-	for t in entrances_right:
-		var block : ColorRect = add_block()
-		block.size.y = 3
-		block.position.x = self.size.x - 1
-		block.position.y = t
+	for t in openings_right:
+		var b := add_block()
+		b.size = Vector2(2, 6)
+		b.position = Vector2(size.x - 1, t - 3)
 
-	for t in entrances_top:
-		var block : ColorRect = add_block()
-		block.size.x = 3
-		block.position.y = 0
-		block.position.x = t
+	for t in openings_top:
+		var b := add_block()
+		b.size = Vector2(6, 2)
+		b.position = Vector2(t - 3, -1)
 
-	for t in entrances_bottom:
-		var block : ColorRect = add_block()
-		block.size.x = 3
-		block.position.y = self.size.y - 1
-		block.position.x = t
-	pass
+	for t in openings_bottom:
+		var b := add_block()
+		b.size = Vector2(6, 2)
+		b.position = Vector2(t - 3, size.y - 1)
+
 
 
 func add_block() -> ColorRect:
-	var block : ColorRect = ColorRect.new()
-	transition_blocks.add_child( block )
-	block.custom_minimum_size.x = 1
-	block.custom_minimum_size.y = 1
-	return block
-
-
-func display_player_location() -> void:
-	var player : Player = get_tree().get_first_node_in_group( "Player" )
-	var i : Control = %PlayerIndicator
-
-	var pos : Vector2 = position
-	pos += ( ( player.global_position - indicator_offset ) / SCALE_FACTOR )
-
-	var clamp_offset : Vector2 = Vector2( 3, 3 )
-	pos = pos.clamp( position + clamp_offset, position + size - clamp_offset )
-
-	i.position = pos
-	pass
+	var b := ColorRect.new()
+	b.color = room_fill_color
+	transition_blocks.add_child(b)
+	return b

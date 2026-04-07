@@ -16,65 +16,45 @@ signal damage_taken
 
 @onready var sprite: Sprite2D = $Sprite2D
 # Main player sprite.
-
 @onready var collision_stand: CollisionShape2D = $CollisionStand
 # Collision when standing.
-
 @onready var collision_crouch: CollisionShape2D = $CollisionCrouch
 # Collision when crouching.
-
 @onready var da_stand: CollisionShape2D = $DamageableArea/DAStand
 # Damage hitbox when standing.
-
 @onready var da_crouch: CollisionShape2D = $DamageableArea/DACrouch
 # Damage hitbox when crouching.
-
 @onready var one_way_shape_cast: ShapeCast2D = $OneWayShapeCast
 # Used for one-way platform detection.
-
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 # Controls animations.
-
 @onready var attack_area: AttackArea = $AttackArea
 # Attack hitbox.
-
 @onready var damageable_area: DamageableArea = $DamageableArea
 # Area that receives damage.
-
 @onready var label: Label = $Label
 # Debug label showing state.
-
 @onready var laser: Laser = $LaserOrigin/laser
 # Test laser used for aiming and cast debugging.
-
-
 
 #TUNABLE STATS
 
 @export var walk_speed: float = 80.0
 # Ground speed while walking.
-
 @export var run_speed: float = 240.0
 # Ground speed while running.
-
 @export var air_velocity: float = 250.0
 # Horizontal speed while airborne.
-
 @export var max_fall_speed: float = 600.0
 # Maximum downward velocity.
-
 @export var gravity: float = 980.0
 # Gravity force applied every frame.
-
 @export var respawn_position: Vector2
 # Position player returns to on death.
-
 @export var afk_threshold_seconds: float = 6.0
 # Time before AFK state triggers.
-
 @export var movement_lock_time: float = 1.5
 # Default duration for movement lock.
-
 @export var double_tap_threshold: float = 0.25
 # Max time between taps to trigger run.
 
@@ -275,27 +255,23 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not can_move:
 		return
 
-	# Reset AFK timer on input.
 	last_input_time = 0.0
 
-	# Variable jump height.
 	if event.is_action_released("jump") and velocity.y < 0:
 		velocity.y *= 0.5
 
-	# Interaction and pause handling.
 	if event.is_action_pressed("action"):
 		Messages.player_interacted.emit(self)
 
 	elif event.is_action_pressed("pause"):
 
-		if not get_tree().paused:
-			get_tree().paused = true
-
-			var pause_menu = preload("res://pause_menu/pause_menu.tscn").instantiate()
-			add_child(pause_menu)
+		if get_tree().paused:
 			return
 
-	# Let state handle input.
+		var pause_menu = preload("res://World/Testing/pause_menu2.tscn").instantiate()
+		get_tree().current_scene.add_child(pause_menu)
+		return
+
 	if current_state:
 		var new_state = current_state.handle_input(event)
 		if new_state != null:
@@ -418,7 +394,6 @@ func _on_damage_taken(area: AttackArea) -> void:
 #HEALING
 
 func _on_player_healed(amount: float) -> void:
-
 	hp += amount
 
 
@@ -427,7 +402,6 @@ func _on_player_healed(amount: float) -> void:
 
 # Updates whether player can interact.
 func _on_input_hint_changed(prompt_name: String) -> void:
-
 	can_interact = (prompt_name == "interact")
 
 
@@ -446,20 +420,15 @@ func can_morph() -> bool:
 
 # Disables player movement.
 func lock_movement() -> void:
-
 	can_move = false
 	velocity = Vector2.ZERO
 
-
 # Re-enables movement.
 func unlock_movement() -> void:
-
 	can_move = true
-
 
 # Locks movement temporarily.
 func lock_movement_with_timer(time: float = movement_lock_time) -> void:
-
 	lock_movement()
 	await get_tree().create_timer(time).timeout
 	unlock_movement()

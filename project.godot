@@ -32,6 +32,7 @@ Messages="*uid://bg7faxx0f8yw2"
 PlayerHud="*uid://cbsqfqtmhxkwf"
 Audio="*uid://c12f1n65xe0e"
 VisualEffects="*uid://csgw44whwer1v"
+MapManager="*uid://cx23uub0n47yc"
 
 [display]
 

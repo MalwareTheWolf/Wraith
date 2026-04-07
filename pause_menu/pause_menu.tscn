@@ -151,10 +151,10 @@ entrances_right = Array[float]([2.0])
 [node name="MapNode5" parent="Control/PauseScreen/Map" unique_id=1384046313 instance=ExtResource("1_5hbt6")]
 modulate = Color(0.7196835, 0.24297374, 0.7240258, 1)
 layout_mode = 0
-offset_left = 95.0
-offset_top = 72.0
-offset_right = 107.0
-offset_bottom = 79.0
+offset_left = 118.0
+offset_top = 32.0
+offset_right = 130.0
+offset_bottom = 39.0
 linked_scene = "uid://bx34wg1j70fqf"
 entrances_right = Array[float]([2.0])
 entrances_left = Array[float]([2.0])
@@ -167,6 +167,7 @@ offset_top = 33.0
 offset_right = 111.0
 offset_bottom = 44.0
 linked_scene = "uid://c8nen6n2gbt20"
+entrances_right = Array[float]([6.0])
 entrances_left = Array[float]([5.3500004])
 
 [node name="PlayerIndicator" type="Control" parent="Control/PauseScreen/Map" unique_id=1280206204]

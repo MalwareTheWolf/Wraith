@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cb6mwupp2lujb"]
 
+[ext_resource type="Script" uid="uid://dbvfyuihcnxqj" path="res://World/Testing/pause_menu_2.gd" id="1_c520y"]
 [ext_resource type="Texture2D" uid="uid://c5b2iurrwibiw" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/SpriteSheet/Silver Book SpriteSheet.png" id="2_xkhrs"]
 [ext_resource type="Texture2D" uid="uid://dxbfhkjxpw6su" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Page Flip/Style 2/Left/1.png" id="3_fetaf"]
 [ext_resource type="Texture2D" uid="uid://h6mep703hpwc" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Page Flip/Style 2/Left/2.png" id="4_1yvsg"]
@@ -37,9 +38,10 @@
 [ext_resource type="Texture2D" uid="uid://37nb4tfn2q3b" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Disappear/8.png" id="36_3ox2x"]
 [ext_resource type="Texture2D" uid="uid://cuk0oktjy3py0" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Disappear/9.png" id="37_mbpu0"]
 [ext_resource type="Texture2D" uid="uid://b3ho1d17217i6" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Disappear/10.png" id="38_5fy4p"]
+[ext_resource type="Script" uid="uid://dkrtqorus64cn" path="res://World/Testing/map.gd" id="38_eyvp0"]
 [ext_resource type="Texture2D" uid="uid://cgjxp0b3h7scp" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Resources/Decoration/37.png" id="39_uokgq"]
-[ext_resource type="Texture2D" uid="uid://cphbpxkjjec6l" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Resources/Decoration/49.png" id="40_awqao"]
 [ext_resource type="Texture2D" uid="uid://b388x5xd40g0g" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/2.png" id="40_j3x5l"]
+[ext_resource type="Script" uid="uid://b6f6csr7oprof" path="res://pause_menu/scripts/map_node.gd" id="41_c520y"]
 [ext_resource type="Texture2D" uid="uid://dktovbmqiouwe" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/3.png" id="41_pumkj"]
 [ext_resource type="Texture2D" uid="uid://dj3myjw2ypuur" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/7.png" id="42_d7tlm"]
 [ext_resource type="Texture2D" uid="uid://da4jrveo4253i" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/5.png" id="43_bwkjv"]
@@ -257,22 +259,60 @@ animations = [{
 "speed": 9.0
 }]
 
-[sub_resource type="Theme" id="Theme_c520y"]
+[sub_resource type="Gradient" id="Gradient_rd7dy"]
+offsets = PackedFloat32Array(0, 0.45833334, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0.67243624, 1, 1, 0, 0.101960786, 1, 0)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u1wm4"]
-texture = ExtResource("40_awqao")
-texture_margin_left = 12.0
-texture_margin_top = 12.0
-texture_margin_right = 12.0
-texture_margin_bottom = 12.0
-expand_margin_left = 12.0
-expand_margin_top = 12.0
-expand_margin_right = 12.0
-expand_margin_bottom = 12.0
-region_rect = Rect2(10, 106, 224, 24)
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_c520y"]
+gradient = SubResource("Gradient_rd7dy")
+width = 5
+height = 5
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Animation" id="Animation_uwtdo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_rd7dy"]
+resource_name = "default"
+length = 0.7
+loop_mode = 2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.4862745, 0.6039216, 1, 0.7764706)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_u1wm4"]
+_data = {
+&"RESET": SubResource("Animation_uwtdo"),
+&"default": SubResource("Animation_rd7dy")
+}
 
 [node name="BookMenu" type="CanvasLayer" unique_id=245289131]
 process_mode = 3
+script = ExtResource("1_c520y")
 
 [node name="MainNode" type="Control" parent="." unique_id=1610476167]
 layout_mode = 3
@@ -301,45 +341,130 @@ offset_top = 25.0
 offset_right = 442.0
 offset_bottom = 250.0
 mouse_filter = 2
+script = ExtResource("38_eyvp0")
 
-[node name="Map_Selected" type="TextureRect" parent="MainNode/Pages/Map" unique_id=112585264]
+[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Map" unique_id=27697814]
+z_index = 1
+layout_mode = 0
+offset_left = -68.0
+offset_top = -49.0
+offset_right = 175.0
+offset_bottom = 166.0
+texture = ExtResource("39_uokgq")
+
+[node name="Map_Selected" type="TextureRect" parent="MainNode/Pages/Map" unique_id=957511669]
 layout_mode = 0
 offset_left = -56.000004
 offset_top = -93.0
 offset_right = 863.99994
 offset_bottom = 547.0
 scale = Vector2(0.6, 0.6)
-theme = SubResource("Theme_c520y")
-theme_type_variation = &"Main"
 texture = ExtResource("40_j3x5l")
 
-[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Map/Map_Selected" unique_id=1169169464]
-z_index = 1
+[node name="RegionLabel" type="Label" parent="MainNode/Pages/Map" unique_id=1144593296]
 layout_mode = 0
-offset_left = 411.66666
-offset_top = 6.666664
-offset_right = 654.6666
-offset_bottom = 221.66666
-texture = ExtResource("39_uokgq")
+offset_left = 17.0
+offset_top = 192.0
+offset_right = 57.0
+offset_bottom = 215.0
 
-[node name="Label" type="Label" parent="MainNode/Pages/Map/Map_Selected" unique_id=621832423]
-z_index = 1
+[node name="RoomLabel" type="Label" parent="MainNode/Pages/Map" unique_id=351444245]
 layout_mode = 0
-offset_left = 210.0
-offset_top = 303.3333
-offset_right = 250.0
-offset_bottom = 322.3333
-text = "Map"
+offset_left = 132.0
+offset_top = 194.0
+offset_right = 172.0
+offset_bottom = 217.0
 
-[node name="Panel" type="Panel" parent="MainNode/Pages/Map/Map_Selected" unique_id=829168031]
+[node name="MapPanel" type="Panel" parent="MainNode/Pages/Map" unique_id=891190144]
+clip_contents = true
 layout_mode = 0
-offset_left = 165.0
-offset_top = 315.0
-offset_right = 293.0
-offset_bottom = 315.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_u1wm4")
+offset_left = 10.0
+offset_top = 52.0
+offset_right = 181.0
+offset_bottom = 186.0
+
+[node name="MapContainer" type="Control" parent="MainNode/Pages/Map/MapPanel" unique_id=1455759376]
+anchors_preset = 0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 193.0
+offset_bottom = 179.0
+
+[node name="MapNode" type="Control" parent="MainNode/Pages/Map/MapPanel/MapContainer" unique_id=1516838688]
+anchors_preset = 0
+offset_right = 36.0
+offset_bottom = 7.0
+script = ExtResource("41_c520y")
+linked_scene = "uid://cnlg81cbb56ha"
+display_name = "1"
+entrances_top = Array[float]([])
+entrances_right = Array[float]([2.5])
+entrances_bottom = Array[float]([])
+entrances_left = Array[float]([])
+default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
+metadata/_custom_type_script = "uid://b6f6csr7oprof"
+
+[node name="MapNode2" type="Control" parent="MainNode/Pages/Map/MapPanel/MapContainer" unique_id=570741857]
+anchors_preset = 0
+offset_left = 38.0
+offset_right = 74.0
+offset_bottom = 7.0
+script = ExtResource("41_c520y")
+linked_scene = "uid://c8nen6n2gbt20"
+display_name = "2"
+entrances_top = Array[float]([])
+entrances_right = Array[float]([0.0])
+entrances_bottom = Array[float]([])
+entrances_left = Array[float]([0.0])
+default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
+metadata/_custom_type_script = "uid://b6f6csr7oprof"
+
+[node name="MapNode3" type="Control" parent="MainNode/Pages/Map/MapPanel/MapContainer" unique_id=1276950283]
+anchors_preset = 0
+offset_left = 76.0
+offset_right = 112.0
+offset_bottom = 7.0
+script = ExtResource("41_c520y")
+linked_scene = "uid://ra6vmoyl7847"
+display_name = "3"
+entrances_top = Array[float]([])
+entrances_right = Array[float]([])
+entrances_bottom = Array[float]([])
+entrances_left = Array[float]([])
+default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
+metadata/_custom_type_script = "uid://b6f6csr7oprof"
+
+[node name="PlayerIndicator" type="Control" parent="MainNode/Pages/Map/MapPanel" unique_id=1570839486]
+unique_name_in_owner = true
+light_mask = 0
+anchors_preset = 0
+offset_left = 3.0
+offset_top = 15.0
+offset_right = 3.0
+offset_bottom = 15.0
+
+[node name="TextureRect" type="TextureRect" parent="MainNode/Pages/Map/MapPanel/PlayerIndicator" unique_id=586495441]
+light_mask = 0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_c520y")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainNode/Pages/Map/MapPanel/PlayerIndicator" unique_id=880077210]
+libraries/ = SubResource("AnimationLibrary_u1wm4")
+autoplay = &"default"
 
 [node name="Player" type="Control" parent="MainNode/Pages" unique_id=456343279]
+visible = false
 anchors_preset = 0
 offset_left = 27.0
 offset_top = 25.0
@@ -366,6 +491,7 @@ scale = Vector2(0.6, 0.6)
 texture = ExtResource("41_pumkj")
 
 [node name="System" type="Control" parent="MainNode/Pages" unique_id=778480112]
+visible = false
 anchors_preset = 0
 offset_left = 27.0
 offset_top = 25.0
