@@ -129,6 +129,9 @@ tracks/0/keys = {
 "values": [216, 217, 218, 219, 220, 221, 240, 241, 242]
 }
 
+[sub_resource type="Animation" id="Animation_kkr2g"]
+resource_name = "Ground_Slam"
+
 [sub_resource type="Animation" id="Animation_h2vqo"]
 resource_name = "Idle"
 length = 0.8
@@ -302,6 +305,7 @@ _data = {
 &"Dash": SubResource("Animation_sf4bk"),
 &"Death": SubResource("Animation_qwku7"),
 &"Fall": SubResource("Animation_kq2ai"),
+&"Ground_Slam": SubResource("Animation_kkr2g"),
 &"Idle": SubResource("Animation_h2vqo"),
 &"Jump": SubResource("Animation_era1q"),
 &"Morph_In": SubResource("Animation_4o3a5"),
@@ -347,7 +351,6 @@ collision_layer = 16
 collision_mask = 3
 floor_constant_speed = true
 script = ExtResource("1_oul6g")
-move_speed = 200.0
 
 [node name="States" type="Node" parent="." unique_id=1752412975]
 
@@ -529,7 +532,7 @@ stream = ExtResource("21_sf4bk")
 position = Vector2(0, -37)
 
 [node name="laser" type="RayCast2D" parent="LaserOrigin" unique_id=1901257399]
-target_position = Vector2(185.11092, -99.16626)
+target_position = Vector2(-209.79057, 9.3763895)
 collision_mask = 161
 script = ExtResource("26_cuw7j")
 max_length = 210.0
@@ -539,7 +542,7 @@ cast_speed = 2.0
 metadata/_custom_type_script = "uid://cg6me518q1rwe"
 
 [node name="Line2D" type="Line2D" parent="LaserOrigin/laser" unique_id=1600820054]
-points = PackedVector2Array(0, 0, 185.11092, -99.16626)
+points = PackedVector2Array(0, 0, -209.79057, 9.3763895)
 width = 0.5
 begin_cap_mode = 2
 end_cap_mode = 2

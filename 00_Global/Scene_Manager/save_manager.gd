@@ -207,7 +207,7 @@ func setup_player() -> void:
 	# Restore stats and abilities.
 	player.max_hp = save_data.get("max_hp", 20)
 	player.hp = save_data.get("hp", 20)
-
+	player.run = save_data.get("run", false)
 	player.dash = save_data.get("dash", false)
 	player.double_jump = save_data.get("double_jump", false)
 	player.ground_slam = save_data.get("ground_slam", false)
