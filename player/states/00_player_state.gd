@@ -7,18 +7,19 @@ var next_state : PlayerState
 
 #region /// state references
 @onready var idle: PlayerStateIdle = %Idle
+@onready var walk: PlayerStateWalk = %Walk
 @onready var run: PlayerStateRun = %Run
 @onready var jump: PlayerStateJump = %Jump
 @onready var fall: PlayerStateFall = %Fall
 @onready var crouch: PlayerStateCrouch = %Crouch
 @onready var attack: PlayerStateAttack = %Attack
+@onready var cast: PlayerStateCast = %Cast
 @onready var take_damage: PlayerStateTakeDamage = %TakeDamage
 @onready var death: PlayerStateDeath = %Death
 @onready var dash: PlayerStateDash = %Dash
 @onready var ball: PlayerStateBall = %Ball
 @onready var ground_slam: PlayerStateGroundSlam = %GroundSlam
 @onready var afk: PlayerStateAFK = %AFK
-
 #endregion
 
 
