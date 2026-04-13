@@ -110,7 +110,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"close",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -139,7 +139,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"flip_left_3",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -168,7 +168,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"flip_right_2",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -188,7 +188,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"open",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -223,7 +223,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"tabs_appear",
-"speed": 9.0
+"speed": 7.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -258,7 +258,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"tabs_disappear",
-"speed": 9.0
+"speed": 7.0
 }]
 
 [sub_resource type="Gradient" id="Gradient_rd7dy"]
@@ -330,6 +330,8 @@ position = Vector2(245.04218, 123.87514)
 scale = Vector2(0.6581183, 0.5996098)
 sprite_frames = SubResource("SpriteFrames_ivfh1")
 animation = &"open"
+frame = 4
+frame_progress = 1.0
 
 [node name="Pages" type="Control" parent="MainNode" unique_id=1194215389]
 anchors_preset = 0
@@ -346,7 +348,7 @@ offset_right = 442.0
 offset_bottom = 250.0
 mouse_filter = 2
 script = ExtResource("38_eyvp0")
-indicator_offset = Vector2(-9, 5)
+indicator_offset = Vector2(0, 4)
 
 [node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Map" unique_id=27697814]
 z_index = 1
@@ -403,8 +405,7 @@ script = ExtResource("41_c520y")
 linked_scene = "uid://cnlg81cbb56ha"
 display_name = "1"
 hide_until_discovered = true
-openings_top = Array[float]([6.0])
-openings_right = Array[float]([6.0])
+openings_right = Array[float]([3.0])
 default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
 metadata/_custom_type_script = "uid://b6f6csr7oprof"
 
@@ -738,16 +739,16 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="System" type="Control" parent="MainNode/Tabs" unique_id=1755492927]
+[node name="Inventory" type="Control" parent="MainNode/Tabs" unique_id=632013596]
 anchors_preset = 0
 offset_left = 6.0
-offset_top = 156.00003
+offset_top = 74.0
 offset_right = 46.0
-offset_bottom = 196.00003
-scale = Vector2(0.52386254, 0.45522967)
+offset_bottom = 114.0
+scale = Vector2(0.5234807, 0.45895767)
 mouse_filter = 2
 
-[node name="SystemButton" type="Button" parent="MainNode/Tabs/System" unique_id=1629415007]
+[node name="InventoryButton" type="Button" parent="MainNode/Tabs/Inventory" unique_id=340779953]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0)
 z_index = 20
@@ -758,7 +759,7 @@ offset_bottom = 40.0
 [node name="Spells" type="Control" parent="MainNode/Tabs" unique_id=1980123817]
 anchors_preset = 0
 offset_left = 6.0
-offset_top = 101.0
+offset_top = 100.99999
 offset_right = 46.0
 offset_bottom = 141.0
 scale = Vector2(0.5235573, 0.45606428)
@@ -772,16 +773,33 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Inventory" type="Control" parent="MainNode/Tabs" unique_id=632013596]
+[node name="LoadorQuit" type="Control" parent="MainNode/Tabs" unique_id=1474678763]
 anchors_preset = 0
 offset_left = 6.0
-offset_top = 74.0
+offset_top = 100.99999
 offset_right = 46.0
-offset_bottom = 114.0
-scale = Vector2(0.5234807, 0.45895767)
+offset_bottom = 141.0
+scale = Vector2(0.5235573, 0.45606428)
 mouse_filter = 2
 
-[node name="InventoryButton" type="Button" parent="MainNode/Tabs/Inventory" unique_id=340779953]
+[node name="LoadorQuitButton" type="Button" parent="MainNode/Tabs/LoadorQuit" unique_id=133870739]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+z_index = 20
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="System" type="Control" parent="MainNode/Tabs" unique_id=1755492927]
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 156.00003
+offset_right = 46.0
+offset_bottom = 196.00003
+scale = Vector2(0.52386254, 0.45522967)
+mouse_filter = 2
+
+[node name="SystemButton" type="Button" parent="MainNode/Tabs/System" unique_id=1629415007]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0)
 z_index = 20

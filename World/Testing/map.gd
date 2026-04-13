@@ -24,22 +24,29 @@ func _ready() -> void:
 
 # Refreshes all map room nodes and labels.
 func refresh_page() -> void:
-
 	player_indicator.visible = false
 
-	var current_scene_path: String = get_tree().current_scene.scene_file_path
+	var current_scene_path: String = ""
+	var current_scene_uid: String = ""
 	var current_node: MapNode = null
+
+	if get_tree().current_scene:
+		current_scene_path = get_tree().current_scene.scene_file_path
+
+	current_scene_uid = SceneManager.current_scene_uid
 
 	for child in map_container.get_children():
 		if child is MapNode:
-			var resolved_scene_path: String = child.get_scene_path()
-			child.refresh_node()
+			var room_node: MapNode = child as MapNode
+			room_node.refresh_node()
 
-			if resolved_scene_path == current_scene_path:
-				current_node = child
+			if room_node.linked_scene == current_scene_uid:
+				current_node = room_node
+			elif room_node.get_scene_path() == current_scene_path:
+				current_node = room_node
 
 	if current_node:
-		room_label.text = current_node.display_name if current_node.display_name != "" else current_node.get_scene_path().get_file().trim_suffix(".tscn")
+		room_label.text = get_room_display_name(current_node)
 		region_label.text = format_region_name(current_node.region_name)
 		move_player_indicator_to_room(current_node)
 	else:
@@ -50,23 +57,47 @@ func refresh_page() -> void:
 
 #INDICATOR
 
-# Snaps the indicator to the center of the current room node, then applies manual offset.
+# Places the indicator at the player's real position inside the current room.
 func move_player_indicator_to_room(room_node: MapNode) -> void:
+	var player: Node2D = get_tree().get_first_node_in_group("Player") as Node2D
 
-	var room_center: Vector2 = room_node.position + (room_node.size * 0.5)
-	var marker_half: Vector2 = player_indicator.size * 0.5
+	if player == null:
+		player_indicator.visible = false
+		return
 
-	player_indicator.position = room_center - marker_half + indicator_offset
+	player_indicator.position = room_node.get_player_marker_position(
+		player.global_position,
+		player_indicator.size
+	) + indicator_offset
+
 	player_indicator.visible = true
 
 
 
 #HELPERS
 
+# Gets the display name for the current room.
+func get_room_display_name(room_node: MapNode) -> String:
+	if room_node.display_name.strip_edges() != "":
+		return room_node.display_name
+
+	var scene_path: String = room_node.get_scene_path()
+
+	if scene_path == "":
+		return "Unknown"
+
+	return format_region_name(scene_path.get_file().trim_suffix(".tscn"))
+
+
 # Formats region name for display.
 func format_region_name(value: String) -> String:
-
 	if value == "":
 		return ""
 
-	return value.replace("_", " ").capitalize()
+	var parts: PackedStringArray = value.replace("_", " ").split(" ")
+	var result: Array[String] = []
+
+	for part in parts:
+		result.append(part.capitalize())
+
+	return " ".join(result)

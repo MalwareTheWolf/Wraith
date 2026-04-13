@@ -22,6 +22,7 @@
 [ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://00_Global/Scripts/damageable_area.gd" id="14_o7381"]
 [ext_resource type="Script" uid="uid://bpm3k3kx3kdib" path="res://player/Scene/walk.gd" id="15_kkr2g"]
 [ext_resource type="Script" uid="uid://duloxbquahug7" path="res://player/scripts/player_sprite.gd" id="15_sf4bk"]
+[ext_resource type="Script" uid="uid://cnbpnysbwlv0l" path="res://player/Scene/LaserState.gd" id="16_kkr2g"]
 [ext_resource type="AudioStream" uid="uid://du6gtwm2l5epc" path="res://00_Global/Audio/hit.wav" id="19_f575y"]
 [ext_resource type="AudioStream" uid="uid://1ma2paybglqb" path="res://00_Global/Audio/jump.wav" id="20_qwku7"]
 [ext_resource type="AudioStream" uid="uid://bukw4uv7uxw8t" path="res://00_Global/Audio/land.wav" id="21_sf4bk"]
@@ -60,6 +61,23 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [480, 481, 482, 483, 484, 485]
+}
+
+[sub_resource type="Animation" id="Animation_cp23r"]
+resource_name = "Cast"
+length = 0.55
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.099999994, 0.19999999, 0.3, 0.39999998, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [504, 505, 506, 507, 508, 509]
 }
 
 [sub_resource type="Animation" id="Animation_8u50t"]
@@ -297,6 +315,7 @@ tracks/0/keys = {
 _data = {
 &"AFK": SubResource("Animation_f575y"),
 &"Attack": SubResource("Animation_cmacy"),
+&"Cast": SubResource("Animation_cp23r"),
 &"Crouch": SubResource("Animation_8u50t"),
 &"CrouchWalk": SubResource("Animation_lp0h7"),
 &"Dash": SubResource("Animation_sf4bk"),
@@ -341,13 +360,25 @@ fill_from = Vector2(0.46818182, 0.45454547)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_era1q"]
 size = Vector2(19.783432, 26.18732)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kkr2g"]
+size = Vector2(2, 100)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kkr2g"]
+lifetime_randomness = 0.32
+particle_flag_disable_z = true
+initial_velocity_min = 30.0
+initial_velocity_max = 90.0
+gravity = Vector3(0, 98, 0)
+scale_min = 2.0
+scale_max = 5.0
+color = Color(1, 0, 0, 1)
+
 [node name="Player" type="CharacterBody2D" unique_id=183006880]
 z_index = 10
 collision_layer = 16
 collision_mask = 3
 floor_constant_speed = true
 script = ExtResource("1_oul6g")
-move_speed = 200.0
 
 [node name="States" type="Node" parent="." unique_id=1752412975]
 
@@ -409,6 +440,10 @@ script = ExtResource("14_1wfy1")
 [node name="Walk" type="Node" parent="States" unique_id=1754527418]
 unique_name_in_owner = true
 script = ExtResource("15_kkr2g")
+
+[node name="Laser" type="Node" parent="States" unique_id=446077681]
+unique_name_in_owner = true
+script = ExtResource("16_kkr2g")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1448383656]
 z_index = -1
@@ -526,20 +561,40 @@ unique_name_in_owner = true
 stream = ExtResource("21_sf4bk")
 
 [node name="LaserOrigin" type="Node2D" parent="." unique_id=1521641682]
-position = Vector2(0, -37)
+position = Vector2(12, -21)
 
 [node name="laser" type="RayCast2D" parent="LaserOrigin" unique_id=1901257399]
-target_position = Vector2(185.11092, -99.16626)
+target_position = Vector2(214.31839, 17.10647)
 collision_mask = 161
 script = ExtResource("26_cuw7j")
-max_length = 210.0
-cast_line_width = 2.0
+max_length = 215.0
+cast_line_width = 1.0
 sight_line_width = 0.5
 cast_speed = 2.0
+hitbox_width = null
 metadata/_custom_type_script = "uid://cg6me518q1rwe"
 
 [node name="Line2D" type="Line2D" parent="LaserOrigin/laser" unique_id=1600820054]
-points = PackedVector2Array(0, 0, 185.11092, -99.16626)
+points = PackedVector2Array(0, 0, 214.31839, 17.10647)
 width = 0.5
-begin_cap_mode = 2
 end_cap_mode = 2
+
+[node name="AttackArea" type="Area2D" parent="LaserOrigin/laser" unique_id=397814672]
+collision_layer = 0
+collision_mask = 97
+script = ExtResource("12_eut4h")
+damage = 0.1
+metadata/_custom_type_script = "uid://buu3vcea6n7iy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LaserOrigin/laser/AttackArea" unique_id=296823318]
+position = Vector2(51.501, 0.5)
+rotation = 1.5702968
+shape = SubResource("RectangleShape2D_kkr2g")
+debug_color = Color(0.9372549, 0, 0, 0.41960785)
+
+[node name="CollisionParticles2D" type="GPUParticles2D" parent="LaserOrigin/laser" unique_id=762718129]
+amount = 16
+lifetime = 0.34
+explosiveness = 1.0
+randomness = 0.5
+process_material = SubResource("ParticleProcessMaterial_kkr2g")

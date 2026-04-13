@@ -152,7 +152,7 @@ func _build_action_row(action: StringName) -> Control:
 	add_button.focus_mode = Control.FOCUS_ALL
 	add_button.add_theme_font_size_override("font_size", UI_FONT_SIZE)
 	add_button.pressed.connect(_begin_rebind.bind(action, -1, true))
-		flow.add_child(add_button)
+	flow.add_child(add_button)
 
 	var divider := HSeparator.new()
 	outer.add_child(divider)

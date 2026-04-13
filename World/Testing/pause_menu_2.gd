@@ -81,31 +81,31 @@ func _input(event: InputEvent) -> void:
 # Connects all button signals.
 func connect_buttons() -> void:
 
-	if map_button:
+	if map_button and not map_button.pressed.is_connected(_on_map_pressed):
 		map_button.pressed.connect(_on_map_pressed)
 
-	if player_button:
+	if player_button and not player_button.pressed.is_connected(_on_player_pressed):
 		player_button.pressed.connect(_on_player_pressed)
 
-	if system_button:
+	if system_button and not system_button.pressed.is_connected(_on_system_pressed):
 		system_button.pressed.connect(_on_system_pressed)
 
-	if spells_button:
+	if spells_button and not spells_button.pressed.is_connected(_on_spells_pressed):
 		spells_button.pressed.connect(_on_spells_pressed)
 
-	if inventory_button:
+	if inventory_button and not inventory_button.pressed.is_connected(_on_inventory_pressed):
 		inventory_button.pressed.connect(_on_inventory_pressed)
 
-	if audio_button:
+	if audio_button and not audio_button.pressed.is_connected(_on_audio_pressed):
 		audio_button.pressed.connect(_on_audio_pressed)
 
-	if video_button:
+	if video_button and not video_button.pressed.is_connected(_on_video_pressed):
 		video_button.pressed.connect(_on_video_pressed)
 
-	if graphics_button:
+	if graphics_button and not graphics_button.pressed.is_connected(_on_graphics_pressed):
 		graphics_button.pressed.connect(_on_graphics_pressed)
 
-	if controls_button:
+	if controls_button and not controls_button.pressed.is_connected(_on_controls_pressed):
 		controls_button.pressed.connect(_on_controls_pressed)
 
 
@@ -130,6 +130,7 @@ func play_open_sequence() -> void:
 	is_open = true
 	show_page(default_page)
 	set_tab_buttons_enabled(true)
+
 
 # Closes menu and unpauses the game.
 func close_pause_menu() -> void:
@@ -164,6 +165,7 @@ func hide_all_pages() -> void:
 	for page in pages.get_children():
 		page.visible = false
 
+
 # Shows one page.
 func show_page(page_name: String) -> void:
 
@@ -189,6 +191,7 @@ func show_page(page_name: String) -> void:
 			inventory_page.visible = true
 
 	current_page = page_name
+
 
 # Enables or disables main tab buttons.
 func set_tab_buttons_enabled(value: bool) -> void:
@@ -242,9 +245,9 @@ func turn_page(new_page: String) -> void:
 	set_tab_buttons_enabled(true)
 	is_turning_page = false
 
+
 # Determines page turn direction.
 func should_flip_left(from_page: String, to_page: String) -> bool:
-
 	var order: Array[String] = ["Player", "Map", "Spells", "Inventory", "System"]
 	return order.find(to_page) < order.find(from_page)
 
@@ -255,14 +258,18 @@ func should_flip_left(from_page: String, to_page: String) -> bool:
 func _on_map_pressed() -> void:
 	turn_page("Map")
 
+
 func _on_player_pressed() -> void:
 	turn_page("Player")
+
 
 func _on_system_pressed() -> void:
 	turn_page("System")
 
+
 func _on_spells_pressed() -> void:
 	turn_page("Spells")
+
 
 func _on_inventory_pressed() -> void:
 	turn_page("Inventory")
@@ -275,13 +282,16 @@ func _on_audio_pressed() -> void:
 	if system_tabs:
 		system_tabs.current_tab = 0
 
+
 func _on_video_pressed() -> void:
 	if system_tabs:
 		system_tabs.current_tab = 1
 
+
 func _on_graphics_pressed() -> void:
 	if system_tabs:
 		system_tabs.current_tab = 2
+
 
 func _on_controls_pressed() -> void:
 	if system_tabs:
