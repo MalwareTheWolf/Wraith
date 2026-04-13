@@ -1,15 +1,15 @@
 @icon("res://player/states/state.svg")
-class_name PlayerStateCast
+class_name PlayerStateLaser
 extends PlayerState
 
-# Shared spell cast state.
-# Cast animation is the laser ability while right mouse is held.
+# Continuous Dark Laser channel state.
+# Keeps laser active while input is held.
 
 
 #TUNABLES
 
-@export var cast_move_speed: float = 80.0
-# Movement speed while casting.
+@export var laser_move_speed: float = 40.0
+# Reduced movement speed while channeling.
 
 
 
@@ -20,12 +20,11 @@ func init() -> void:
 
 
 func enter() -> void:
-	if player.animation_player:
-		player.animation_player.play("Cast")
+	print("ENTER LASER")
 
 
 func exit() -> void:
-	pass
+	print("EXIT LASER")
 
 
 
@@ -45,18 +44,21 @@ func handle_input(event: InputEvent) -> PlayerState:
 #PROCESS
 
 func process(_delta: float) -> PlayerState:
-	# Falling always overrides.
-	if not player.is_on_floor():
-		return fall
-
 	var cast_held := Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 
-	# Release exits cast immediately.
+	# Stop channel if released.
 	if not cast_held:
-		if player.direction.x != 0:
+		print("LASER RELEASED")
+		if not player.is_on_floor():
+			return fall
+		elif player.direction.x != 0:
 			return walk
 		else:
 			return idle
+
+	# Falling can still override.
+	if not player.is_on_floor():
+		return fall
 
 	return null
 
@@ -66,7 +68,7 @@ func process(_delta: float) -> PlayerState:
 
 func physics_process(_delta: float) -> PlayerState:
 	if player.is_on_floor():
-		player.velocity.x = player.direction.x * cast_move_speed
+		player.velocity.x = player.direction.x * laser_move_speed
 	else:
 		player.velocity.x = player.direction.x * player.air_velocity
 

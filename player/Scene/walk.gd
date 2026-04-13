@@ -6,6 +6,7 @@ func init() -> void:
 	pass
 
 func enter() -> void:
+	print("ENTER WALK")
 	if player.animation_player:
 		player.animation_player.play("Walk")
 
@@ -25,7 +26,8 @@ func handle_input(event: InputEvent) -> PlayerState:
 	if event.is_action_pressed("action") and player.can_morph():
 		return ball
 
-	if event.is_action_pressed("laser"):
+	if event.is_action_pressed("Cast"):
+		print("WALK -> CAST")
 		return cast
 
 	return null

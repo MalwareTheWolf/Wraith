@@ -35,7 +35,8 @@ signal damage_taken
 @onready var label: Label = $Label
 # Debug label showing state.
 @onready var laser: Laser = $LaserOrigin/laser
-# Test laser used for aiming and cast debugging.
+# Built-in laser used for aiming and channeling.
+
 
 #TUNABLE STATS
 
@@ -104,6 +105,9 @@ var previous_state: PlayerState
 var idle: PlayerState
 var take_damage: PlayerState
 var death: PlayerState
+
+var cast_finished: bool = false
+# True once shared Cast animation finishes.
 
 
 
@@ -187,6 +191,15 @@ func _ready() -> void:
 	# Connect damage handling.
 	if damageable_area:
 		damageable_area.damage_taken.connect(_on_damage_taken)
+
+	# Listen for shared cast animation finishing.
+	if animation_player:
+		animation_player.animation_finished.connect(_on_animation_finished)
+
+	# Initialize built-in laser.
+	if laser:
+		laser.is_casting = false
+		laser.is_channeling = false
 
 	hp = max_hp
 	_update_label()
@@ -325,13 +338,35 @@ func _physics_process(delta: float) -> void:
 		if new_state != null:
 			change_state(new_state)
 
-	# Update test laser.
-	if laser:
-		laser.global_position = $LaserOrigin.global_position
-		laser.is_casting = Input.is_action_pressed("laser")
+	# Update built-in laser.
+	update_laser()
 
-		var dir = (get_global_mouse_position() - laser.global_position).normalized()
-		laser.rotation = dir.angle()
+
+
+#LASER
+
+# Updates built-in laser position and state flags.
+func update_laser() -> void:
+	if not laser:
+		return
+
+	# Use original laser origin node.
+	laser.global_position = $LaserOrigin.global_position
+
+	# Keep laser node unrotated.
+	laser.rotation = 0.0
+
+	# Cast drives everything.
+	laser.is_casting = current_state is PlayerStateCast
+	laser.is_channeling = current_state is PlayerStateCast
+
+
+#ANIMATION
+
+# Handles animation finished callbacks.
+func _on_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "Cast":
+		cast_finished = true
 
 
 
@@ -446,6 +481,11 @@ func die(reason: String = "unknown") -> void:
 	velocity = Vector2.ZERO
 	direction = Vector2.ZERO
 	wants_to_run = false
+	cast_finished = false
+
+	if laser:
+		laser.is_casting = false
+		laser.is_channeling = false
 
 	if current_state:
 		current_state.exit()

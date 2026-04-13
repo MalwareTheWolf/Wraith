@@ -47,7 +47,8 @@
 [ext_resource type="Texture2D" uid="uid://da4jrveo4253i" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/5.png" id="43_bwkjv"]
 [ext_resource type="Texture2D" uid="uid://d4k5u2cmo7v1l" path="res://Not Being used/Humble Gift - Paper UI System v1.1/Sprites/Content/1 Items/15.png" id="43_eyvp0"]
 [ext_resource type="Texture2D" uid="uid://qalqbwx8id5u" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/4.png" id="44_4j7rg"]
-[ext_resource type="Texture2D" uid="uid://bb5268a1mqxwx" path="res://Pocket Inventory Series #1 Adventure Book/Pocket Inventory Series #1 Adventure Book v1.4/Silver Book/Sprites/Book Animated/Book Tabs/With icons/Tabs/6.png" id="46_u1wm4"]
+[ext_resource type="Script" uid="uid://sx55uyqj27u3" path="res://World/Testing/AudioPage.gd" id="46_u1wm4"]
+[ext_resource type="Script" uid="uid://dheq2rx63iiu8" path="res://World/Testing/controls.gd" id="47_8lor0"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q5gmu"]
 atlas = ExtResource("2_xkhrs")
@@ -222,7 +223,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"tabs_appear",
-"speed": 12.0
+"speed": 7.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -257,7 +258,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"tabs_disappear",
-"speed": 12.0
+"speed": 7.0
 }]
 
 [sub_resource type="Gradient" id="Gradient_rd7dy"]
@@ -314,6 +315,7 @@ _data = {
 [node name="BookMenu" type="CanvasLayer" unique_id=245289131]
 process_mode = 3
 script = ExtResource("1_c520y")
+default_page = "Map"
 
 [node name="MainNode" type="Control" parent="." unique_id=1610476167]
 layout_mode = 3
@@ -324,11 +326,11 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Book" type="AnimatedSprite2D" parent="MainNode" unique_id=502813243]
-position = Vector2(246.00002, 122)
+position = Vector2(245.04218, 123.87514)
 scale = Vector2(0.6581183, 0.5996098)
 sprite_frames = SubResource("SpriteFrames_ivfh1")
-animation = &"tabs_disappear"
-frame = 9
+animation = &"open"
+frame = 4
 frame_progress = 1.0
 
 [node name="Pages" type="Control" parent="MainNode" unique_id=1194215389]
@@ -346,6 +348,7 @@ offset_right = 442.0
 offset_bottom = 250.0
 mouse_filter = 2
 script = ExtResource("38_eyvp0")
+indicator_offset = Vector2(0, 4)
 
 [node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Map" unique_id=27697814]
 z_index = 1
@@ -401,6 +404,8 @@ offset_bottom = 7.0
 script = ExtResource("41_c520y")
 linked_scene = "uid://cnlg81cbb56ha"
 display_name = "1"
+hide_until_discovered = true
+openings_right = Array[float]([3.0])
 default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
 metadata/_custom_type_script = "uid://b6f6csr7oprof"
 
@@ -412,6 +417,7 @@ offset_bottom = 7.0
 script = ExtResource("41_c520y")
 linked_scene = "uid://c8nen6n2gbt20"
 display_name = "2"
+hide_until_discovered = true
 default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
 metadata/_custom_type_script = "uid://b6f6csr7oprof"
 
@@ -423,6 +429,7 @@ offset_bottom = 7.0
 script = ExtResource("41_c520y")
 linked_scene = "uid://ra6vmoyl7847"
 display_name = "3"
+hide_until_discovered = true
 default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
 metadata/_custom_type_script = "uid://b6f6csr7oprof"
 
@@ -430,10 +437,6 @@ metadata/_custom_type_script = "uid://b6f6csr7oprof"
 unique_name_in_owner = true
 light_mask = 0
 anchors_preset = 0
-offset_left = 3.0
-offset_top = 15.0
-offset_right = 3.0
-offset_bottom = 15.0
 
 [node name="TextureRect" type="TextureRect" parent="MainNode/Pages/Map/MapPanel/PlayerIndicator" unique_id=586495441]
 light_mask = 0
@@ -482,105 +485,6 @@ offset_bottom = 547.0
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("41_pumkj")
 
-[node name="Inventory" type="Control" parent="MainNode/Pages" unique_id=91456350]
-visible = false
-anchors_preset = 0
-offset_left = 27.0
-offset_top = 25.0
-offset_right = 442.0
-offset_bottom = 250.0
-mouse_filter = 2
-
-[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Inventory" unique_id=1336666386]
-z_index = 1
-layout_mode = 0
-offset_left = -68.0
-offset_top = -49.0
-offset_right = 175.0
-offset_bottom = 166.0
-texture = ExtResource("39_uokgq")
-
-[node name="Inventory_Selected" type="TextureRect" parent="MainNode/Pages/Inventory" unique_id=268081226]
-layout_mode = 0
-offset_left = -56.000004
-offset_top = -93.0
-offset_right = 863.99994
-offset_bottom = 547.0
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("44_4j7rg")
-
-[node name="Spells" type="Control" parent="MainNode/Pages" unique_id=1743649646]
-visible = false
-anchors_preset = 0
-offset_left = 27.0
-offset_top = 25.0
-offset_right = 442.0
-offset_bottom = 250.0
-mouse_filter = 2
-
-[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Spells" unique_id=2031193049]
-z_index = 1
-layout_mode = 0
-offset_left = -68.0
-offset_top = -49.0
-offset_right = 175.0
-offset_bottom = 166.0
-texture = ExtResource("39_uokgq")
-
-[node name="Spells_Selected" type="TextureRect" parent="MainNode/Pages/Spells" unique_id=858497884]
-layout_mode = 0
-offset_left = -56.000004
-offset_top = -93.0
-offset_right = 863.99994
-offset_bottom = 547.0
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("43_bwkjv")
-
-[node name="Load_Quit" type="Control" parent="MainNode/Pages" unique_id=1042124738]
-visible = false
-anchors_preset = 0
-offset_left = 27.0
-offset_top = 25.0
-offset_right = 442.0
-offset_bottom = 250.0
-mouse_filter = 2
-
-[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Load_Quit" unique_id=1731698800]
-z_index = 1
-layout_mode = 0
-offset_left = -68.0
-offset_top = -49.0
-offset_right = 175.0
-offset_bottom = 166.0
-texture = ExtResource("39_uokgq")
-
-[node name="Spells_Selected" type="TextureRect" parent="MainNode/Pages/Load_Quit" unique_id=86549902]
-layout_mode = 0
-offset_left = -56.000004
-offset_top = -93.0
-offset_right = 863.99994
-offset_bottom = 547.0
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("46_u1wm4")
-
-[node name="LoadLastSave" type="Button" parent="MainNode/Pages/Load_Quit" unique_id=1820699814]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 9.0
-offset_top = 88.0
-offset_right = 188.0
-offset_bottom = 121.0
-text = "Load Last Save"
-
-[node name="QuitToMenu" type="Button" parent="MainNode/Pages/Load_Quit" unique_id=628373902]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 232.0
-offset_top = 87.0
-offset_right = 411.0
-offset_bottom = 120.0
-text = "Quit To Menu"
-
 [node name="System" type="Control" parent="MainNode/Pages" unique_id=778480112]
 anchors_preset = 0
 offset_left = 27.0
@@ -614,7 +518,7 @@ offset_top = -1.0
 offset_right = 414.0
 offset_bottom = 227.0
 tab_alignment = 1
-current_tab = 1
+current_tab = 3
 tabs_visible = false
 drag_to_rearrange_enabled = true
 tab_2/icon = ExtResource("43_eyvp0")
@@ -622,6 +526,7 @@ tab_2/icon = ExtResource("43_eyvp0")
 [node name="Audio" type="Control" parent="MainNode/Pages/System/TabContainer" unique_id=469277589]
 visible = false
 layout_mode = 2
+script = ExtResource("46_u1wm4")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainNode/Pages/System/TabContainer/Audio" unique_id=1902608494]
@@ -632,21 +537,21 @@ offset_bottom = 226.0
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Master Vol" type="Label" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=863010192]
+[node name="MasterVol" type="Label" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=863010192]
 layout_mode = 2
 text = "Master Volume"
 
 [node name="MasterSilder" type="HSlider" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=904289291]
 layout_mode = 2
 
-[node name="Music Vol" type="Label" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=1397223442]
+[node name="MusicVol" type="Label" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=1397223442]
 layout_mode = 2
 text = "Music Volume"
 
-[node name="Music Slider" type="HSlider" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=659708267]
+[node name="MusicSlider" type="HSlider" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=659708267]
 layout_mode = 2
 
-[node name="SFX Vol" type="Label" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=1734753277]
+[node name="SFXVol" type="Label" parent="MainNode/Pages/System/TabContainer/Audio/VBoxContainer" unique_id=1734753277]
 layout_mode = 2
 text = "SFX Volume"
 
@@ -654,6 +559,7 @@ text = "SFX Volume"
 layout_mode = 2
 
 [node name="Video" type="Control" parent="MainNode/Pages/System/TabContainer" unique_id=205315236]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -675,26 +581,40 @@ offset_bottom = 19.0
 text = "Graphics"
 
 [node name="Controls" type="Control" parent="MainNode/Pages/System/TabContainer" unique_id=405777482]
-visible = false
 layout_mode = 2
+script = ExtResource("47_8lor0")
 metadata/_tab_index = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainNode/Pages/System/TabContainer/Controls" unique_id=731810]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainNode/Pages/System/TabContainer/Controls" unique_id=2107621918]
 layout_mode = 0
 offset_right = 189.0
 offset_bottom = 227.0
-alignment = 2
 
-[node name="HScrollBar" type="HScrollBar" parent="MainNode/Pages/System/TabContainer/Controls/HBoxContainer" unique_id=28907835]
+[node name="HeaderRow" type="HBoxContainer" parent="MainNode/Pages/System/TabContainer/Controls/VBoxContainer" unique_id=588380347]
 layout_mode = 2
-theme_override_constants/padding_bottom = 210
+alignment = 1
 
-[node name="Controls" type="Label" parent="MainNode/Pages/System/TabContainer/Controls" unique_id=1094198104]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 19.0
+[node name="Title" type="Label" parent="MainNode/Pages/System/TabContainer/Controls/VBoxContainer/HeaderRow" unique_id=1094198104]
+layout_mode = 2
+text = "Controls"
 
-[node name="Settings Sections" type="VBoxContainer" parent="MainNode/Pages/System" unique_id=800099476]
+[node name="ResetDefault" type="Button" parent="MainNode/Pages/System/TabContainer/Controls/VBoxContainer/HeaderRow" unique_id=1807475465]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainNode/Pages/System/TabContainer/Controls/VBoxContainer" unique_id=1145237999]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionList" type="VBoxContainer" parent="MainNode/Pages/System/TabContainer/Controls/VBoxContainer/ScrollContainer" unique_id=804049393]
+custom_minimum_size = Vector2(0, 800)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CaptureLabel" type="Label" parent="MainNode/Pages/System/TabContainer/Controls/VBoxContainer" unique_id=144216412]
+layout_mode = 2
+theme_override_font_sizes/font_size = 5
+
+[node name="Settings_Sections" type="VBoxContainer" parent="MainNode/Pages/System" unique_id=800099476]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -707,21 +627,75 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="Audio_Button" type="Button" parent="MainNode/Pages/System/Settings Sections" unique_id=922110661]
+[node name="Audio_Button" type="Button" parent="MainNode/Pages/System/Settings_Sections" unique_id=922110661]
 layout_mode = 2
 text = "Audio"
 
-[node name="Video_Button" type="Button" parent="MainNode/Pages/System/Settings Sections" unique_id=1347006810]
+[node name="Video_Button" type="Button" parent="MainNode/Pages/System/Settings_Sections" unique_id=1347006810]
 layout_mode = 2
 text = "Video"
 
-[node name="Graphics_Button" type="Button" parent="MainNode/Pages/System/Settings Sections" unique_id=163734100]
+[node name="Graphics_Button" type="Button" parent="MainNode/Pages/System/Settings_Sections" unique_id=163734100]
 layout_mode = 2
 text = "Graphics"
 
-[node name="Controls_Button" type="Button" parent="MainNode/Pages/System/Settings Sections" unique_id=1915898493]
+[node name="Controls_Button" type="Button" parent="MainNode/Pages/System/Settings_Sections" unique_id=1915898493]
 layout_mode = 2
 text = "Controls"
+
+[node name="Spells" type="Control" parent="MainNode/Pages" unique_id=1743649646]
+visible = false
+anchors_preset = 0
+offset_left = 27.0
+offset_top = 25.0
+offset_right = 442.0
+offset_bottom = 250.0
+mouse_filter = 2
+
+[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Spells" unique_id=2031193049]
+z_index = 1
+layout_mode = 0
+offset_left = -68.0
+offset_top = -49.0
+offset_right = 175.0
+offset_bottom = 166.0
+texture = ExtResource("39_uokgq")
+
+[node name="Spells_Selected" type="TextureRect" parent="MainNode/Pages/Spells" unique_id=858497884]
+layout_mode = 0
+offset_left = -56.000004
+offset_top = -93.0
+offset_right = 863.99994
+offset_bottom = 547.0
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("43_bwkjv")
+
+[node name="Inventory" type="Control" parent="MainNode/Pages" unique_id=91456350]
+visible = false
+anchors_preset = 0
+offset_left = 27.0
+offset_top = 25.0
+offset_right = 442.0
+offset_bottom = 250.0
+mouse_filter = 2
+
+[node name="CurrentPage" type="TextureRect" parent="MainNode/Pages/Inventory" unique_id=1336666386]
+z_index = 1
+layout_mode = 0
+offset_left = -68.0
+offset_top = -49.0
+offset_right = 175.0
+offset_bottom = 166.0
+texture = ExtResource("39_uokgq")
+
+[node name="Inventory_Selected" type="TextureRect" parent="MainNode/Pages/Inventory" unique_id=268081226]
+layout_mode = 0
+offset_left = -56.000004
+offset_top = -93.0
+offset_right = 863.99994
+offset_bottom = 547.0
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("44_4j7rg")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="MainNode" unique_id=1581184465]
 
@@ -765,40 +739,6 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="System" type="Control" parent="MainNode/Tabs" unique_id=1755492927]
-anchors_preset = 0
-offset_left = 6.0
-offset_top = 156.00003
-offset_right = 46.0
-offset_bottom = 196.00003
-scale = Vector2(0.52386254, 0.45522967)
-mouse_filter = 2
-
-[node name="SystemButton" type="Button" parent="MainNode/Tabs/System" unique_id=1629415007]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0)
-z_index = 20
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Spells" type="Control" parent="MainNode/Tabs" unique_id=1980123817]
-anchors_preset = 0
-offset_left = 6.0
-offset_top = 101.0
-offset_right = 46.0
-offset_bottom = 141.0
-scale = Vector2(0.5235573, 0.45606428)
-mouse_filter = 2
-
-[node name="SpellsButton" type="Button" parent="MainNode/Tabs/Spells" unique_id=1168681294]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0)
-z_index = 20
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="Inventory" type="Control" parent="MainNode/Tabs" unique_id=632013596]
 anchors_preset = 0
 offset_left = 6.0
@@ -816,17 +756,53 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="LoadQuit" type="Control" parent="MainNode/Tabs" unique_id=1530711953]
+[node name="Spells" type="Control" parent="MainNode/Tabs" unique_id=1980123817]
 anchors_preset = 0
-offset_left = 5.9578247
-offset_top = 128.12488
-offset_right = 26.957825
-offset_bottom = 147.12488
+offset_left = 6.0
+offset_top = 100.99999
+offset_right = 46.0
+offset_bottom = 141.0
+scale = Vector2(0.5235573, 0.45606428)
+mouse_filter = 2
 
-[node name="LoadQuitButton" type="Button" parent="MainNode/Tabs/LoadQuit" unique_id=1876904525]
+[node name="SpellsButton" type="Button" parent="MainNode/Tabs/Spells" unique_id=1168681294]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0)
+z_index = 20
 layout_mode = 0
-offset_left = -1.0
-offset_right = 21.0
-offset_bottom = 18.999992
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LoadorQuit" type="Control" parent="MainNode/Tabs" unique_id=1474678763]
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 100.99999
+offset_right = 46.0
+offset_bottom = 141.0
+scale = Vector2(0.5235573, 0.45606428)
+mouse_filter = 2
+
+[node name="LoadorQuitButton" type="Button" parent="MainNode/Tabs/LoadorQuit" unique_id=133870739]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+z_index = 20
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="System" type="Control" parent="MainNode/Tabs" unique_id=1755492927]
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 156.00003
+offset_right = 46.0
+offset_bottom = 196.00003
+scale = Vector2(0.52386254, 0.45522967)
+mouse_filter = 2
+
+[node name="SystemButton" type="Button" parent="MainNode/Tabs/System" unique_id=1629415007]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+z_index = 20
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

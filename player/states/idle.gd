@@ -7,6 +7,8 @@ func enter() -> void:
 	if not player:
 		return
 
+	print("ENTER IDLE")
+
 	# Play Idle animation
 	if player.animation_player:
 		player.animation_player.play("Idle")
@@ -38,6 +40,9 @@ func handle_input(_event: InputEvent) -> PlayerState:
 		return attack
 	if _event.is_action_pressed("jump"):
 		return jump
+	if _event.is_action_pressed("Cast"):
+		print("IDLE -> CAST")
+		return cast
 	if _event.is_action_pressed("action") and player.can_morph():
 		return ball
 	return null

@@ -14,6 +14,7 @@ var next_state : PlayerState
 @onready var crouch: PlayerStateCrouch = %Crouch
 @onready var attack: PlayerStateAttack = %Attack
 @onready var cast: PlayerStateCast = %Cast
+@onready var laser: PlayerStateLaser = %Laser
 @onready var take_damage: PlayerStateTakeDamage = %TakeDamage
 @onready var death: PlayerStateDeath = %Death
 @onready var dash: PlayerStateDash = %Dash
