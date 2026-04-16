@@ -1,14 +1,18 @@
 [gd_scene format=4 uid="uid://ra6vmoyl7847"]
 
 [ext_resource type="TileSet" uid="uid://c168e1m37miya" path="res://World/Tilesets/Outside/Void.tres" id="1_hsl1n"]
+[ext_resource type="Script" uid="uid://dvosl7at5isi7" path="res://World/00_Void/03_Win.gd" id="1_j7i6p"]
 [ext_resource type="TileSet" uid="uid://caf0b2tt1yave" path="res://World/Tilesets/Castle/Castle.tres" id="2_l5p33"]
 [ext_resource type="PackedScene" uid="uid://d4xs032nppk8" path="res://World/Props/Interactable/Doors and Switches/door.tscn" id="3_yr2kf"]
 [ext_resource type="PackedScene" uid="uid://bjthfj4hqgl57" path="res://World/Props/Interactable/Doors and Switches/switch.tscn" id="4_3jrca"]
 [ext_resource type="PackedScene" uid="uid://bwbk2dppx5kup" path="res://General/Level_Transition/level_transition.tscn" id="5_l5p33"]
 [ext_resource type="Script" uid="uid://c66y0kemubeet" path="res://General/Scripts/level_bounds.gd" id="6_yr2kf"]
 [ext_resource type="Script" uid="uid://hmuvjhch5nnj" path="res://General/player_spawn/player_spawn.gd" id="7_yr2kf"]
+[ext_resource type="PackedScene" uid="uid://6kv734qs2eaa" path="res://General/Ability_Pickup/win_pickup.tscn" id="8_q5qo4"]
 
-[node name="Node2D" type="Node2D" unique_id=1328225990]
+[node name="Node2D" type="Node2D" unique_id=1328225990 node_paths=PackedStringArray("win_pickup")]
+script = ExtResource("1_j7i6p")
+win_pickup = NodePath("WinPickup")
 
 [node name="LevelBounds" type="Node2D" parent="." unique_id=1589799291]
 z_index = 256
@@ -50,3 +54,6 @@ target_level = "uid://c8nen6n2gbt20"
 position = Vector2(160, 250)
 script = ExtResource("7_yr2kf")
 metadata/_custom_type_script = "uid://hmuvjhch5nnj"
+
+[node name="WinPickup" parent="." unique_id=604304752 instance=ExtResource("8_q5qo4")]
+position = Vector2(688, 213)

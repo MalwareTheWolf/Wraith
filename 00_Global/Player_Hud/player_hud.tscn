@@ -177,10 +177,12 @@ autowrap_mode = 2
 
 [node name="WIN" type="Control" parent="." unique_id=442216047]
 visible = false
+z_index = 10
 layout_mode = 3
 anchors_preset = 0
 offset_right = 481.0
 offset_bottom = 268.0
+mouse_filter = 1
 
 [node name="QuitButton2" type="Button" parent="WIN" unique_id=2105250625]
 unique_name_in_owner = true
@@ -195,6 +197,7 @@ text = "Quit To Menu"
 layout_mode = 0
 offset_right = 480.0
 offset_bottom = 269.0
+mouse_filter = 2
 color = Color(1, 1, 1, 0.74509805)
 
 [node name="Label" type="Label" parent="WIN/ColorRect" unique_id=2031534051]

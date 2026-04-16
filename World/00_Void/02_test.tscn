@@ -37,9 +37,10 @@ tile_set = ExtResource("4_lbs7d")
 position = Vector2(2023.9999, 328.00003)
 scale = Vector2(1.6182345, 1.3650405)
 
-[node name="Switch" parent="Door" unique_id=1440813296 instance=ExtResource("6_fk514")]
+[node name="Switch" parent="Door" unique_id=1440813296 node_paths=PackedStringArray("required_enemy") instance=ExtResource("6_fk514")]
 position = Vector2(-30.897827, 7.32576)
 scale = Vector2(0.61795735, 0.73257893)
+required_enemy = NodePath("../../EnemyKnight")
 
 [node name="Label" type="Label" parent="." unique_id=870881623]
 offset_left = 1073.0

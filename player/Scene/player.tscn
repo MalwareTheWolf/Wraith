@@ -360,8 +360,11 @@ fill_from = Vector2(0.46818182, 0.45454547)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_era1q"]
 size = Vector2(19.783432, 26.18732)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cp23r"]
+size = Vector2(11, 41)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kkr2g"]
-size = Vector2(2, 100)
+size = Vector2(215.00002, 6)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kkr2g"]
 lifetime_randomness = 0.32
@@ -517,6 +520,19 @@ scale = Vector2(2.2487, -0.38186407)
 shape = SubResource("RectangleShape2D_era1q")
 debug_color = Color(1, 0, 0, 0.41960785)
 
+[node name="DashAttackArea" type="Area2D" parent="." unique_id=564981745]
+unique_name_in_owner = true
+position = Vector2(1, -38)
+collision_layer = 0
+collision_mask = 32
+script = ExtResource("12_eut4h")
+metadata/_custom_type_script = "uid://buu3vcea6n7iy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DashAttackArea" unique_id=553369764]
+position = Vector2(-0.5, 17.5)
+shape = SubResource("RectangleShape2D_cp23r")
+debug_color = Color(1, 0, 0, 0.41960785)
+
 [node name="DamageableArea" type="Area2D" parent="." unique_id=512661750]
 unique_name_in_owner = true
 collision_layer = 16
@@ -564,35 +580,40 @@ stream = ExtResource("21_sf4bk")
 position = Vector2(12, -21)
 
 [node name="laser" type="RayCast2D" parent="LaserOrigin" unique_id=1901257399]
-target_position = Vector2(214.31839, 17.10647)
+target_position = Vector2(195.83133, -88.74172)
 collision_mask = 161
 script = ExtResource("26_cuw7j")
 max_length = 215.0
 cast_line_width = 1.0
 sight_line_width = 0.5
 cast_speed = 2.0
-hitbox_width = null
+damage_interval = 1.0
 metadata/_custom_type_script = "uid://cg6me518q1rwe"
 
 [node name="Line2D" type="Line2D" parent="LaserOrigin/laser" unique_id=1600820054]
-points = PackedVector2Array(0, 0, 214.31839, 17.10647)
+points = PackedVector2Array(0, 0, 195.83133, -88.74172)
 width = 0.5
 end_cap_mode = 2
 
 [node name="AttackArea" type="Area2D" parent="LaserOrigin/laser" unique_id=397814672]
+visible = false
+position = Vector2(97.915665, -44.37086)
+rotation = -0.42547357
 collision_layer = 0
 collision_mask = 97
+monitoring = false
 script = ExtResource("12_eut4h")
 damage = 0.1
 metadata/_custom_type_script = "uid://buu3vcea6n7iy"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LaserOrigin/laser/AttackArea" unique_id=296823318]
-position = Vector2(51.501, 0.5)
-rotation = 1.5702968
 shape = SubResource("RectangleShape2D_kkr2g")
+disabled = true
 debug_color = Color(0.9372549, 0, 0, 0.41960785)
 
 [node name="CollisionParticles2D" type="GPUParticles2D" parent="LaserOrigin/laser" unique_id=762718129]
+position = Vector2(195.83133, -88.74172)
+emitting = false
 amount = 16
 lifetime = 0.34
 explosiveness = 1.0

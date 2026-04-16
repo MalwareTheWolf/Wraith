@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://b5shhu35gorq7" path="res://00_Global/Scenes/save_point.tscn" id="5_bc6l6"]
 [ext_resource type="Script" uid="uid://c0n65xuyoaqvo" path="res://00_Global/Audio/Scripts/music_auto_trigger.gd" id="8_i5uu7"]
 [ext_resource type="Script" uid="uid://btmdv5p07ffl5" path="res://General/Scripts/hazard_area.gd" id="8_k1vj7"]
-[ext_resource type="PackedScene" uid="uid://dm5nda27wv8ut" path="res://General/Ability_Pickup/ability_pickup.tscn" id="9_k1vj7"]
 [ext_resource type="Script" uid="uid://b0pc128i4hj6g" path="res://DamageNumberSpawner.gd" id="10_m4gdq"]
 [ext_resource type="PackedScene" uid="uid://bequo6osdhfhj" path="res://test_dummy.tscn" id="10_mu2n2"]
 
@@ -60,9 +59,6 @@ metadata/_custom_type_script = "uid://btmdv5p07ffl5"
 position = Vector2(392, -75)
 shape = SubResource("RectangleShape2D_mu2n2")
 debug_color = Color(1, 0, 0, 0.41960785)
-
-[node name="AbilityPickup" parent="HazardArea" unique_id=604304752 instance=ExtResource("9_k1vj7")]
-position = Vector2(673, -94)
 
 [node name="TestDummy" parent="." unique_id=1316715917 instance=ExtResource("10_mu2n2")]
 position = Vector2(549, -63)

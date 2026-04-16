@@ -1,147 +1,125 @@
 class_name PlayerStateDash
 extends PlayerState
 
-# Dash state.
-# Handles fast horizontal movement, invulnerability, and visual effects.
-
-
-#CONSTANTS
-
 const DASH_AUDIO = preload("uid://fp3pia3qydwj")
 
+@export var duration: float = 0.25
+@export var speed: float = 300.0
+@export var effect_delay: float = 0.05
+@export var dash_damage: float = 1.0
 
-#TUNABLES
+# Set this to the physics layer number your enemies use.
+@export var enemy_collision_layer: int = 3
 
-@export var duration : float = 0.25
-# Total dash duration.
-
-@export var speed : float = 300.0
-# Base dash speed.
-
-@export var effect_delay : float = 0.05
-# Time between ghost effects.
-
-
-#RUNTIME
-
-var dir : float = 1.0
-# Direction of dash.
-
-var time : float = 0.0
-# Remaining dash time.
-
-var effect_time : float = 0.0
-# Timer for ghost effect.
-
-
-#NODE REFERENCES
+var dir: float = 1.0
+var time: float = 0.0
+var effect_time: float = 0.0
+var cached_enemy_mask_enabled: bool = false
 
 @onready var damageable_area: DamageableArea = %DamageableArea
-# Reference to damageable area for invulnerability.
+@onready var dash_attack_area: AttackArea = %DashAttackArea
 
 
-#LIFECYCLE
-
-# What happens when this state is initialized?
 func init() -> void:
 	pass
 
 
-# What happens when we enter this state?
 func enter() -> void:
-
-	# Play dash animation.
 	if player.animation_player:
 		player.animation_player.play("Dash")
 
 	time = duration
 	effect_time = 0.0
 
-	# Determine dash direction.
 	get_dash_direction()
 
-	# Grant temporary invulnerability.
 	damageable_area.make_invulnerable(duration)
 
-	# Play dash sound.
 	Audio.play_spatial_sound(DASH_AUDIO, player.global_position)
 
-	# Disable gravity during dash.
 	player.gravity_multiplier = 0.0
-	player.velocity.y = 0
-
-	# Consume dash.
+	player.velocity.y = 0.0
 	player.dash_count += 1
 
-	# Visual flash effect (FIXED: replaces broken tween_color).
+	_disable_enemy_collision()
+	_enable_dash_attack()
+
 	var tween: Tween = create_tween()
-	tween.tween_property(player.sprite, "modulate", Color(1,1,1,0.5), duration * 0.5)
-	tween.tween_property(player.sprite, "modulate", Color(1,1,1,1), duration * 0.5)
+	tween.tween_property(player.sprite, "modulate", Color(1, 1, 1, 0.5), duration * 0.5)
+	tween.tween_property(player.sprite, "modulate", Color(1, 1, 1, 1), duration * 0.5)
 
 
-# What happens when we exit this state?
 func exit() -> void:
-
-	# Restore gravity.
 	player.gravity_multiplier = 1.0
+	_restore_enemy_collision()
+	_disable_dash_attack()
 
 
-#INPUT
-
-# What happens when an input is pressed?
-func handle_input(_event : InputEvent) -> PlayerState:
-
-	# Allow morph during dash (if enabled).
+func handle_input(_event: InputEvent) -> PlayerState:
 	if _event.is_action_pressed("action") and player.can_morph():
 		return ball
 
 	return null
 
 
-#PROCESS
-
-# What happens each process tick in this state?
 func process(_delta: float) -> PlayerState:
-
 	time -= _delta
 
-	# End dash when time runs out.
-	if time <= 0:
-
+	if time <= 0.0:
 		if player.is_on_floor():
 			return idle
 		else:
 			return fall
 
-	# Handle ghost trail effect.
 	effect_time -= _delta
 
-	if effect_time < 0:
+	if effect_time < 0.0:
 		effect_time = effect_delay
 		player.sprite.ghost()
 
 	return null
 
 
-#PHYSICS
-
-# What happens each physics_process tick in this state?
 func physics_process(_delta: float) -> PlayerState:
-
-	# Apply dash velocity (slight decay over time).
 	player.velocity.x = (speed * (time / duration) + speed) * dir
-
+	_update_dash_attack_facing()
 	return null
 
 
-#HELPERS
-
-# Determines dash direction based on input/sprite.
 func get_dash_direction() -> void:
-
-	# Prefer input direction.
 	dir = sign(player.direction.x)
 
-	# Fallback to sprite facing.
-	if dir == 0:
+	if dir == 0.0:
 		dir = -1.0 if player.sprite.flip_h else 1.0
+
+
+func _enable_dash_attack() -> void:
+	if dash_attack_area == null:
+		return
+
+	dash_attack_area.damage = dash_damage
+	dash_attack_area.flip(dir)
+	dash_attack_area.set_active(true)
+
+
+func _disable_dash_attack() -> void:
+	if dash_attack_area == null:
+		return
+
+	dash_attack_area.set_active(false)
+
+
+func _update_dash_attack_facing() -> void:
+	if dash_attack_area == null:
+		return
+
+	dash_attack_area.flip(dir)
+
+
+func _disable_enemy_collision() -> void:
+	cached_enemy_mask_enabled = player.get_collision_mask_value(enemy_collision_layer)
+	player.set_collision_mask_value(enemy_collision_layer, false)
+
+
+func _restore_enemy_collision() -> void:
+	player.set_collision_mask_value(enemy_collision_layer, cached_enemy_mask_enabled)
