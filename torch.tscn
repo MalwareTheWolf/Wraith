@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://clr4a35xeqb0t"]
+
+[ext_resource type="Script" uid="uid://dgrbynp7atc7p" path="res://torch.gd" id="1_w3qnr"]
+[ext_resource type="Texture2D" uid="uid://qdmmsg6j8ahm" path="res://World/Tilesets/Castle/Decoratives.png" id="2_kx7w4"]
+[ext_resource type="Texture2D" uid="uid://61vgboas486o" path="res://World/Tilesets/Castle/torch1.png" id="3_72pgl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wfdi7"]
+atlas = ExtResource("3_72pgl")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vkaj5"]
+atlas = ExtResource("3_72pgl")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cfb3y"]
+atlas = ExtResource("3_72pgl")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cfxwm"]
+atlas = ExtResource("3_72pgl")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vsxk6"]
+atlas = ExtResource("3_72pgl")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjfty"]
+atlas = ExtResource("3_72pgl")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hm310"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wfdi7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vkaj5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cfb3y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cfxwm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vsxk6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yjfty")
+}],
+"loop": true,
+"name": &"default",
+"speed": 13.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_jl6w5"]
+offsets = PackedFloat32Array(0, 0.64457834)
+colors = PackedColorArray(0.856778, 0.6607426, 7.70092e-07, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_oslys"]
+gradient = SubResource("Gradient_jl6w5")
+fill = 1
+fill_from = Vector2(0.46521738, 0.4826087)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_twb5c"]
+
+[node name="Torch" type="Node2D" unique_id=1431532899]
+script = ExtResource("1_w3qnr")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1662432327]
+z_index = 5
+position = Vector2(0, -1)
+texture = ExtResource("2_kx7w4")
+hframes = 8
+vframes = 15
+frame = 5
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1527345207]
+z_index = 4
+sprite_frames = SubResource("SpriteFrames_hm310")
+autoplay = "default"
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1677988862]
+enabled = false
+energy = 1.5
+range_layer_max = 5
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 0.80784315)
+texture = SubResource("GradientTexture2D_oslys")
+texture_scale = 7.0
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1835240797]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1209785381]
+scale = Vector2(1.4346442, 1.4438988)
+shape = SubResource("CircleShape2D_twb5c")

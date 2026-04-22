@@ -47,7 +47,7 @@ outline_color = Color(0, 0, 0, 1)
 size = Vector2(20, 3)
 
 [sub_resource type="Gradient" id="Gradient_ya7di"]
-offsets = PackedFloat32Array(0, 0.5641026)
+offsets = PackedFloat32Array(0, 0.85542166)
 colors = PackedColorArray(1, 0, 0, 1, 0.011087579, 0.011087578, 0.01108758, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_8u50t"]
@@ -62,7 +62,7 @@ size = Vector2(19.783432, 26.18732)
 size = Vector2(11, 41)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kkr2g"]
-size = Vector2(214.99998, 6)
+size = Vector2(215, 6)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kkr2g"]
 lifetime_randomness = 0.32
@@ -74,6 +74,9 @@ scale_min = 2.0
 scale_max = 5.0
 color = Color(1, 0, 0, 1)
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_cp23r"]
+polygon = PackedVector2Array(-1, -39, -5, -31, -6, -18, -5, -5, 4, -4, 8, -18, 5, -30, 2, -39)
+
 [node name="Player" type="CharacterBody2D" unique_id=183006880]
 z_index = 10
 collision_layer = 16
@@ -82,7 +85,8 @@ floor_constant_speed = true
 script = ExtResource("1_oul6g")
 walk_speed = 100.0
 run_speed = 200.0
-air_velocity = 225.0
+air_velocity = 230.0
+gravity = 970.0
 
 [node name="States" type="Node" parent="." unique_id=1752412975]
 
@@ -93,7 +97,7 @@ script = ExtResource("2_rkbax")
 [node name="Jump" type="Node" parent="States" unique_id=1870161882]
 unique_name_in_owner = true
 script = ExtResource("3_qjkh3")
-jump_velocity = 400.0
+jump_velocity = 430.0
 
 [node name="Fall" type="Node" parent="States" unique_id=113319824]
 unique_name_in_owner = true
@@ -196,8 +200,11 @@ position = Vector2(1, -35)
 script = ExtResource("8_lp0h7")
 
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=1290377337]
+modulate = Color(1, 0, 0, 1)
+z_index = 101
 position = Vector2(1, -37)
 color = Color(1, 0, 0, 1)
+energy = 2.05
 texture = SubResource("GradientTexture2D_8u50t")
 
 [node name="InputHints" type="Node2D" parent="." unique_id=941693109]
@@ -285,7 +292,7 @@ stream = ExtResource("21_sf4bk")
 position = Vector2(12, -21)
 
 [node name="laser" type="RayCast2D" parent="LaserOrigin" unique_id=1901257399]
-target_position = Vector2(212.50775, -32.641293)
+target_position = Vector2(54.19976, -208.05621)
 collision_mask = 161
 script = ExtResource("26_cuw7j")
 max_length = 215.0
@@ -296,14 +303,15 @@ damage_interval = 1.0
 metadata/_custom_type_script = "uid://cg6me518q1rwe"
 
 [node name="Line2D" type="Line2D" parent="LaserOrigin/laser" unique_id=1600820054]
-points = PackedVector2Array(0, 0, 212.50775, -32.641293)
+position = Vector2(0, 1)
+points = PackedVector2Array(0, 0, 54.19976, -208.05621)
 width = 0.5
 end_cap_mode = 2
 
 [node name="AttackArea" type="Area2D" parent="LaserOrigin/laser" unique_id=397814672]
 visible = false
-position = Vector2(106.253876, -16.320646)
-rotation = -0.15240933
+position = Vector2(27.09988, -104.02811)
+rotation = -1.3159549
 collision_layer = 0
 collision_mask = 97
 monitoring = false
@@ -317,10 +325,13 @@ disabled = true
 debug_color = Color(0.9372549, 0, 0, 0.41960785)
 
 [node name="CollisionParticles2D" type="GPUParticles2D" parent="LaserOrigin/laser" unique_id=762718129]
-position = Vector2(212.50775, -32.641293)
+position = Vector2(54.19976, -208.05621)
 emitting = false
 amount = 16
 lifetime = 0.34
 explosiveness = 1.0
 randomness = 0.5
 process_material = SubResource("ParticleProcessMaterial_kkr2g")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="." unique_id=1935564433]
+occluder = SubResource("OccluderPolygon2D_cp23r")

@@ -438,7 +438,8 @@ map_scale = 50.0
 linked_scene = "uid://ra6vmoyl7847"
 display_name = "3"
 hide_until_discovered = true
-openings_left = Array[float]([15.559999])
+openings_right = Array[float]([15.68])
+openings_left = Array[float]([15.6])
 default_border_color = Color(0.82605994, 0.82606006, 0.8260599, 1)
 metadata/_custom_type_script = "uid://b6f6csr7oprof"
 
@@ -892,3 +893,5 @@ z_index = 20
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="ConflictDialog" type="ConfirmationDialog" parent="MainNode" unique_id=1914637193]

@@ -44,6 +44,8 @@ func _ready() -> void:
 	rng.randomize()
 	health = max_health
 
+	add_to_group("Enemies")
+
 	if state_label != null:
 		state_label.visible = show_state_label
 

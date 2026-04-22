@@ -41,6 +41,7 @@ tile_set = ExtResource("1_pcrhc")
 position = Vector2(1442, -62)
 size = 8
 location = 1
+door_id = null
 target_level = "uid://c8nen6n2gbt20"
 
 [node name="PlayerSpawn" parent="." unique_id=1914222064 instance=ExtResource("4_bc6l6")]

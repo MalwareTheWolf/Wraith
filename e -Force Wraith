@@ -1,0 +1,185 @@
+[33mcommit ee9eb9fc5c968c7ebf0849f0fd1df506de559f8f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 20 20:39:45 2026 -0400
+
+    Fixed an issue where players woulf fall off the map, made the player less free in the air, found an issue in 06 where jumping up would put the player at the top of 05 and not the bottom, created a layout to easily copy and paste and quickly make levels, made areas in 03 only reachable by double jump which is not accessible yet, started planning on creating a multifunctional enemy spawner
+
+[33mcommit b31b2e09034aafd8a6c7c99132015b30927431ad[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 20 20:16:56 2026 -0400
+
+    encountering issues with miniscenes/videos being too big or too blurry when shrunk. no known fix yet. Fixed a problem where the knight could run at the player and touch them and not do damage. increased the speed at which the knight attacks. ound and planned 4 more enemies and possibly a pet for the player. Fixed some collisions issues with terrain. Made maps 4, 5, and 6 there are at least 5-7 more planned before week 15. Fixed an issue where input hints were not showing AND impoved it to work when the player re binds buttons via menu. ATM testing what happens with multiple bindings on one action has not been tested
+
+[33mcommit 304c37b2c05e1b5a924754a6edf0c136c7176121[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Fri Apr 17 15:42:30 2026 -0400
+
+    Added abilities / spells page working on creating mini scenes for videos for the description of each ability. Each ability will have a description and video. Abilities that are not unlocked wont be visible. Preparing to add levels 4,5,6,7,8. Identified 3-5 new enemies to make.
+
+[33mcommit f8f84c9c4483570438a92bfbafceb0228dadffe5[m
+Merge: 3341763 6c31b72
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Thu Apr 16 16:00:50 2026 -0400
+
+    Merge branch 'main' of https://github.com/MalwareTheWolf/Wraith
+
+[33mcommit 6c31b724a1aacfb4c73025f4a4584ee74ccc44d9[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 13 23:15:09 2026 -0400
+
+    Enemy getting stuck after recieving damage appears to be fixed
+
+[33mcommit a67f8b726a9b8c5d56c13a3b930906c4b9718a0f[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 13 23:10:49 2026 -0400
+
+    Dash now does damage, Players no longer get stuck or collide with enemies, issue identified where enemies get stuck in attack state and cant move if recieving damage during attack state
+
+[33mcommit 43d8c00731f78ea03c70f434dfcffddfc13c7725[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 13 23:02:15 2026 -0400
+
+    Laser damage adjusted for now laser is automatically unlocked, Identified an issue where the laser can be exploited to keep knocking enemies back, added a win sate by breaking the crystal heart on level 03
+
+[33mcommit 3341763eb8691c50e210d7d907385ba70a40236c[m
+Merge: a3c360f 315ca8d
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 13 17:00:06 2026 -0400
+
+    Resolved conflicts by keeping incoming version
+
+[33mcommit 315ca8d8c23aefe141024d924781aff8ce3efc2f[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Apr 13 14:16:45 2026 -0400
+
+    More Work On laser ability. VFX for laser not done. Ran into issues so hardcoded some fixes.
+
+[33mcommit 52f2336ecd440dac7c41b984393fd533c0068ff8[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Thu Apr 9 14:15:51 2026 -0400
+
+    Added control binding, map improvements
+
+[33mcommit a3c360f98dafdeaef6a47c3af8e53a2d2edea164[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Tue Apr 7 18:27:37 2026 -0400
+
+    More menu addition load last save and quit to menu fully implemented
+
+[33mcommit a78cbc5593019b8f1ce6d8ef2c812db267899ade[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Tue Apr 7 14:41:23 2026 -0400
+
+    Map additions and issues
+
+[33mcommit 824d432881a5a429391f33c8998b8b46543ddf7c[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Tue Apr 7 11:42:12 2026 -0400
+
+    Morph Mostly finished just need to adjust audio, run is now locked behind an unlock, walk is now default movement, debug menu improved open it with  and navigate the different unlockable abilities with the arrow keys. Also minor improvements to animations and prep for casting animation
+
+[33mcommit 75d50a73f45bbd0724720ff07c05927e868010c3[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Tue Mar 31 18:24:02 2026 -0400
+
+    Got further along with the laser feature/ability
+
+[33mcommit 79a2332470d9dea4cd60062fe09d4dbb2042f85c[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 30 20:36:34 2026 -0400
+
+    Starting to get a handle on added lasers
+
+[33mcommit bac4c06387fbb2c1925ff2d0aaa3c718d90e8250[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 30 19:12:13 2026 -0400
+
+    fixed a crash,Disabled some unfinished features, Fixed a bug where the player reacted strangey to the mouses position
+
+[33mcommit 3321965ad067b18cee42a73ab5d0f56beeaf8436[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Fri Mar 27 15:03:33 2026 -0400
+
+    made ome fixes to damage numbers, started playing with ways to create spells and lasers
+
+[33mcommit db5ba78e550f269205869f8b272cb697da98ccbd[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Thu Mar 26 20:32:43 2026 -0400
+
+    Started to implement damage numbers
+
+[33mcommit ec4483a80790f6747c21c63adb3d5f36377b0a04[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 23 20:33:12 2026 -0400
+
+    Improved Deubugging statistics, Started Morph ability and ground slam, Created debugging menu improvments
+
+[33mcommit 276998cb5c8ad9a79e34ea334a48ddae708c281c[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 23 19:30:04 2026 -0400
+
+    Fully Added Dash state, Minor dash state improvments next push, Fixed issue with jump animation, Create a script for the debug menu which can be accessed by pressing
+
+[33mcommit 20e39df5a9b5b6da4830bb2ffa51aa303d344cb1[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 23 12:58:49 2026 -0400
+
+    Various minor improvments
+
+[33mcommit 542f5b49205a2b502b2e24d74347edf65c8eb747[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 23 12:49:49 2026 -0400
+
+    Temporarily changed interact to E until input hints are improved
+
+[33mcommit a4ea9e6eef5d7fb0e40bc7439b2073b47d2d9b39[m
+Author: MalwareTheWolf <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 23 12:40:43 2026 -0400
+
+    First enemy added
+
+[33mcommit df8840c452cbbd5ef1398bb6fffe326363b8d322[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Fri Mar 20 15:52:52 2026 -0400
+
+    Enemy Prototype added, various bugs recorded
+
+[33mcommit 1be3eb683f0c68f634232166390680d6c24add85[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Thu Mar 19 18:24:33 2026 -0400
+
+    take_damage state fixed, Death state fixed,added more audio, made an AFK animation
+
+[33mcommit 5c0b2fed2274d4dc7d7994fd772ac8879fec5dc0[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Tue Mar 17 20:19:16 2026 -0400
+
+    more states work, issues with damage areas
+
+[33mcommit 91975e840c83ab286ae906b7367a568a78a3e32a[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Tue Mar 17 19:52:00 2026 -0400
+
+    added multiple player states, Death, ball, dash, ground slam, added more audio
+
+[33mcommit f99eb7f814f35fc2fe8d1816abb11032ef70928a[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Fri Mar 13 16:02:22 2026 -0400
+
+    more stuff
+
+[33mcommit c9cc7697b70fda94251f272e116afc21cd7b3236[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Thu Mar 12 18:55:10 2026 -0400
+
+    main menu sounds heartbeat intensifies as you go through the menu
+
+[33mcommit 1faa0229f8f9737b3936496ee7019600423a4038[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Tue Mar 10 20:38:13 2026 -0400
+
+    more audio prep, more pause menu work,
+
+[33mcommit e3c54ad95bb48eb0cdd891699fec6860c666ef8b[m
+Author: Malware <MalwareTheWolf@outlook.com>
+Date:   Mon Mar 9 20:45:24

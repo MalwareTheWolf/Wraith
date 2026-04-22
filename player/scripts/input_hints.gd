@@ -9,7 +9,6 @@ const VFRAMES: int = 24
 
 var current_prompt: String = ""
 
-
 func _ready() -> void:
 	visible = false
 
@@ -31,7 +30,6 @@ func _ready() -> void:
 
 	_refresh_hint()
 
-
 func _exit_tree() -> void:
 	if Messages.input_hint_changed.is_connected(_on_input_hint_changed):
 		Messages.input_hint_changed.disconnect(_on_input_hint_changed)
@@ -42,15 +40,12 @@ func _exit_tree() -> void:
 	if InputSettings.device_changed.is_connected(_on_device_changed):
 		InputSettings.device_changed.disconnect(_on_device_changed)
 
-
 func _on_device_changed(_new_device: int) -> void:
 	_refresh_hint()
-
 
 func _on_input_hint_changed(prompt_name: String) -> void:
 	current_prompt = prompt_name
 	_refresh_hint()
-
 
 func _refresh_hint() -> void:
 	if icon_sprite == null:
@@ -79,7 +74,6 @@ func _refresh_hint() -> void:
 	icon_sprite.frame = frame_index
 	visible = true
 
-
 func _prompt_to_action(prompt_name: String) -> StringName:
 	match prompt_name.to_lower():
 		"interact":
@@ -107,10 +101,8 @@ func _prompt_to_action(prompt_name: String) -> StringName:
 		_:
 			return &""
 
-
 func _frame(col: int, row: int) -> int:
 	return row * HFRAMES + col
-
 
 func _get_frame_for_event(event: InputEvent) -> int:
 	if event is InputEventMouseButton:
@@ -126,7 +118,6 @@ func _get_frame_for_event(event: InputEvent) -> int:
 		return _get_key_frame((event as InputEventKey).physical_keycode)
 
 	return -1
-
 
 func _get_mouse_frame(button_index: MouseButton) -> int:
 	match button_index:
@@ -147,38 +138,36 @@ func _get_mouse_frame(button_index: MouseButton) -> int:
 		_:
 			return -1
 
-
 func _get_joy_button_frame(button_index: int) -> int:
 	match button_index:
 		0:
-			return _frame(0, 20) # South / Cross / A
+			return _frame(0, 20)
 		1:
-			return _frame(1, 20) # East / Circle / B
+			return _frame(1, 20)
 		2:
-			return _frame(2, 20) # West / Square / X
+			return _frame(2, 20)
 		3:
-			return _frame(3, 20) # North / Triangle / Y
+			return _frame(3, 20)
 		4:
-			return _frame(8, 20) # LB / L1
+			return _frame(8, 20)
 		5:
-			return _frame(9, 20) # RB / R1
+			return _frame(9, 20)
 		6:
-			return _frame(8, 21) # Back / Select / Menu fallback
+			return _frame(8, 21)
 		7:
-			return _frame(9, 21) # Start fallback
+			return _frame(9, 21)
 		10:
-			return _frame(13, 19) # stick press fallback
+			return _frame(13, 19)
 		11:
-			return _frame(14, 19) # dpad up
+			return _frame(14, 19)
 		12:
-			return _frame(15, 19) # dpad down
+			return _frame(15, 19)
 		13:
-			return _frame(16, 19) # dpad left
+			return _frame(16, 19)
 		14:
-			return _frame(17, 19) # dpad right
+			return _frame(17, 19)
 		_:
 			return -1
-
 
 func _get_joy_motion_frame(event: InputEventJoypadMotion) -> int:
 	match event.axis:
@@ -191,19 +180,17 @@ func _get_joy_motion_frame(event: InputEventJoypadMotion) -> int:
 				return _frame(1, 21)
 			return _frame(2, 21)
 		2:
-			return _frame(10, 20) # LT / L2 fallback
+			return _frame(10, 20)
 		3:
-			return _frame(11, 20) # RT / R2 fallback
+			return _frame(11, 20)
 		_:
 			return -1
-
 
 func _get_key_frame(keycode: Key) -> int:
 	match keycode:
 		KEY_ESCAPE:
 			return _frame(30, 0)
 
-		# Number row
 		KEY_1:
 			return _frame(16, 1)
 		KEY_2:
@@ -225,7 +212,6 @@ func _get_key_frame(keycode: Key) -> int:
 		KEY_0:
 			return _frame(25, 1)
 
-		# QWERTY row
 		KEY_Q:
 			return _frame(17, 2)
 		KEY_W:
@@ -247,7 +233,6 @@ func _get_key_frame(keycode: Key) -> int:
 		KEY_P:
 			return _frame(26, 2)
 
-		# ASDF row
 		KEY_A:
 			return _frame(18, 3)
 		KEY_S:
@@ -267,7 +252,6 @@ func _get_key_frame(keycode: Key) -> int:
 		KEY_L:
 			return _frame(26, 3)
 
-		# Bottom row
 		KEY_Z:
 			return _frame(19, 4)
 		KEY_X:

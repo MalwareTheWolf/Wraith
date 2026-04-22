@@ -36,10 +36,15 @@ const ABILITY_ACTIONS: Dictionary = {
 	"morph": &"morph"
 }
 
+const PROTECTED_ACTIONS: Array[StringName] = [
+	&"pause",
+	&"action",
+	&"Cast"
+]
+
 func _ready() -> void:
 	cache_defaults()
 	load_bindings()
-
 
 func _input(event: InputEvent) -> void:
 	var previous_device: InputDevice = current_device
@@ -54,14 +59,12 @@ func _input(event: InputEvent) -> void:
 	if current_device != previous_device:
 		device_changed.emit(current_device)
 
-
 func cache_defaults() -> void:
 	default_bindings.clear()
 
 	for action in _get_all_known_actions():
 		if InputMap.has_action(action):
 			default_bindings[action] = _duplicate_events(InputMap.action_get_events(action))
-
 
 func _get_all_known_actions() -> Array[StringName]:
 	var actions: Array[StringName] = []
@@ -76,7 +79,6 @@ func _get_all_known_actions() -> Array[StringName]:
 			actions.append(action)
 
 	return actions
-
 
 func get_visible_actions() -> Array[StringName]:
 	var actions: Array[StringName] = []
@@ -99,7 +101,6 @@ func get_visible_actions() -> Array[StringName]:
 
 	return actions
 
-
 func get_action_group(action: StringName) -> String:
 	match String(action):
 		"left", "right", "up", "down", "jump", "dash", "morph":
@@ -111,10 +112,8 @@ func get_action_group(action: StringName) -> String:
 		_:
 			return "Other"
 
-
 func get_current_device_label() -> String:
 	return "Keyboard / Mouse" if current_device == InputDevice.KEYBOARD_MOUSE else "Controller"
-
 
 func save_bindings() -> void:
 	var config := ConfigFile.new()
@@ -139,7 +138,6 @@ func save_bindings() -> void:
 
 	bindings_changed.emit()
 
-
 func load_bindings() -> void:
 	var config := ConfigFile.new()
 	var err := config.load(SETTINGS_PATH)
@@ -160,8 +158,8 @@ func load_bindings() -> void:
 			if event != null:
 				InputMap.action_add_event(action, event)
 
+	_ensure_protected_actions_have_binding()
 	bindings_changed.emit()
-
 
 func reset_to_defaults(save: bool = true) -> void:
 	for action in _get_all_known_actions():
@@ -179,49 +177,95 @@ func reset_to_defaults(save: bool = true) -> void:
 	else:
 		bindings_changed.emit()
 
-
-func add_binding(action: StringName, event: InputEvent) -> void:
+func add_binding(action: StringName, event: InputEvent) -> bool:
 	if not InputMap.has_action(action):
-		return
+		return false
 	if not is_event_allowed(event):
-		return
+		return false
 	if action_has_exact_event(action, event):
-		return
+		return false
+	if not can_bind_event(event, action, -1):
+		return false
 
 	InputMap.action_add_event(action, event)
 	save_bindings()
+	return true
 
-
-func replace_binding(action: StringName, index: int, event: InputEvent) -> void:
+func replace_binding(action: StringName, index: int, event: InputEvent) -> bool:
 	if not InputMap.has_action(action):
-		return
+		return false
 	if not is_event_allowed(event):
-		return
+		return false
 
 	var events: Array[InputEvent] = InputMap.action_get_events(action)
 	if index < 0 or index >= events.size():
-		return
+		return false
+
+	if not can_bind_event(event, action, index):
+		return false
 
 	var old_event: InputEvent = events[index]
 	InputMap.action_erase_event(action, old_event)
 
 	if not action_has_exact_event(action, event):
 		InputMap.action_add_event(action, event)
+	else:
+		InputMap.action_add_event(action, old_event)
+		return false
 
 	save_bindings()
+	return true
 
-
-func remove_binding(action: StringName, index: int) -> void:
+func remove_binding(action: StringName, index: int) -> bool:
 	if not InputMap.has_action(action):
-		return
+		return false
 
 	var events: Array[InputEvent] = InputMap.action_get_events(action)
 	if index < 0 or index >= events.size():
-		return
+		return false
+
+	if not can_remove_binding(action, index):
+		return false
 
 	InputMap.action_erase_event(action, events[index])
 	save_bindings()
+	return true
 
+func can_remove_binding(action: StringName, index: int) -> bool:
+	if not InputMap.has_action(action):
+		return false
+
+	var events: Array[InputEvent] = InputMap.action_get_events(action)
+	if index < 0 or index >= events.size():
+		return false
+
+	if is_protected_action(action) and events.size() <= 1:
+		return false
+
+	return true
+
+func can_bind_event(event: InputEvent, action: StringName, index: int = -1) -> bool:
+	if not is_event_allowed(event):
+		return false
+
+	var conflicts := find_conflicts(event, action, index)
+	return conflicts.is_empty()
+
+func is_protected_action(action: StringName) -> bool:
+	return PROTECTED_ACTIONS.has(action)
+
+func _ensure_protected_actions_have_binding() -> void:
+	for action in PROTECTED_ACTIONS:
+		if not InputMap.has_action(action):
+			continue
+
+		var events: Array[InputEvent] = InputMap.action_get_events(action)
+		if events.size() > 0:
+			continue
+
+		var defaults: Array = default_bindings.get(action, [])
+		for event in defaults:
+			InputMap.action_add_event(action, event)
 
 func get_bindings(action: StringName) -> Array[InputEvent]:
 	if not InputMap.has_action(action):
@@ -240,7 +284,6 @@ func get_bindings(action: StringName) -> Array[InputEvent]:
 
 	return filtered
 
-
 func get_preferred_binding(action: StringName) -> InputEvent:
 	var device_bindings: Array[InputEvent] = get_bindings(action)
 	if device_bindings.size() > 0:
@@ -255,14 +298,11 @@ func get_preferred_binding(action: StringName) -> InputEvent:
 
 	return null
 
-
 func is_keyboard_mouse_event(event: InputEvent) -> bool:
 	return event is InputEventKey or event is InputEventMouseButton
 
-
 func is_controller_event(event: InputEvent) -> bool:
 	return event is InputEventJoypadButton or event is InputEventJoypadMotion
-
 
 func get_action_display_name(action: StringName) -> String:
 	match String(action):
@@ -285,7 +325,6 @@ func get_action_display_name(action: StringName) -> String:
 		"morph": return "Morph"
 		_: return String(action).capitalize()
 
-
 func find_conflicts(event: InputEvent, ignored_action: StringName = &"", ignored_index: int = -1) -> Array[Dictionary]:
 	var results: Array[Dictionary] = []
 
@@ -305,7 +344,6 @@ func find_conflicts(event: InputEvent, ignored_action: StringName = &"", ignored
 				})
 
 	return results
-
 
 func is_event_allowed(event: InputEvent) -> bool:
 	if event is InputEventKey:
@@ -340,7 +378,6 @@ func is_event_allowed(event: InputEvent) -> bool:
 
 	return false
 
-
 func event_to_text(event: InputEvent) -> String:
 	if event is InputEventKey:
 		var key_event := event as InputEventKey
@@ -368,7 +405,6 @@ func event_to_text(event: InputEvent) -> String:
 		return "Pad Axis %d %s" % [motion.axis, sign_text]
 
 	return "Unknown"
-
 
 func serialize_event(event: InputEvent) -> Dictionary:
 	if event is InputEventKey:
@@ -402,7 +438,6 @@ func serialize_event(event: InputEvent) -> Dictionary:
 
 	return {}
 
-
 func deserialize_event(data: Dictionary) -> InputEvent:
 	match data.get("type", ""):
 		"key":
@@ -430,13 +465,11 @@ func deserialize_event(data: Dictionary) -> InputEvent:
 
 	return null
 
-
 func action_has_exact_event(action: StringName, new_event: InputEvent) -> bool:
 	for event in InputMap.action_get_events(action):
 		if events_equal(event, new_event):
 			return true
 	return false
-
 
 func events_equal(a: InputEvent, b: InputEvent) -> bool:
 	if a == null or b == null:
@@ -461,7 +494,6 @@ func events_equal(a: InputEvent, b: InputEvent) -> bool:
 		)
 
 	return false
-
 
 func _duplicate_events(events: Array) -> Array:
 	var out: Array = []

@@ -50,6 +50,7 @@ import/blender/enabled=false
 [global_group]
 
 Player=""
+Enemies=""
 
 [input]
 
@@ -159,6 +160,7 @@ Cast={
 2d_physics/layer_6="Enemy"
 2d_physics/layer_7="Breakable"
 2d_physics/layer_8="Abiity Break"
+2d_physics/layer_9="Invisible Floor"
 
 [rendering]
 

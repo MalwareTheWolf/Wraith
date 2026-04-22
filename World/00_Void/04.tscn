@@ -22,11 +22,15 @@ tile_map_data = PackedByteArray("AAAAAA4AAQAcAAIAAAAAAA8AAQAcAAMAAAAAABAAAQAcAAQ
 tile_set = ExtResource("2_30742")
 
 [node name="LevelTransition" parent="." unique_id=1066819676 instance=ExtResource("3_ltpdf")]
-position = Vector2(4, 257)
-size = 8
+position = Vector2(3, 223)
+size = 6
+door_id = null
+target_level = "uid://ra6vmoyl7847"
+target_side = 1
 
 [node name="LevelTransition2" parent="." unique_id=1258059216 instance=ExtResource("3_ltpdf")]
-position = Vector2(1915, 255)
-size = 8
+position = Vector2(1916, 222)
+size = 6
 location = 1
+door_id = null
 target_level = "uid://85gqajqxdpcp"
