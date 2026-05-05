@@ -18,6 +18,8 @@ enum BossState {
 	PHASE_TWO,
 	DEAD
 }
+@export_group("Boss Music")
+@export var music_outro_seconds: float = 7.0
 
 @export_group("Debug")
 @export var debug_enabled: bool = true
@@ -64,6 +66,12 @@ enum BossState {
 @export var jump_y_difference: float = 38.0
 @export var platform_jump_x_range: float = 150.0
 @export var jump_cooldown: float = 1.4
+@export var close_attack_distance: float = 95.0
+@export var overlap_distance: float = 28.0
+@export var jump_reaction_delay: float = 0.55
+@export var jump_response_chance: int = 35
+@export var jump_min_y_difference: float = 85.0
+@export var jump_min_x_distance: float = 80.0
 
 @export_group("Boss AI")
 @export var attack_cooldown: float = 1.0
@@ -126,14 +134,14 @@ var last_debug_state: BossState = BossState.IDLE
 var rest_locked: bool = false
 var player: Node2D = null
 var player_inside_detector: bool = false
-
+var music_ending: bool = false
 var active: bool = false
 var intro_playing: bool = false
 var dead: bool = false
 var attacking: bool = false
 var can_attack: bool = true
 var phase_two: bool = false
-
+var jump_response_pending: bool = false
 var facing_dir: int = 1
 var last_facing_debug_dir: int = 0
 var sprite_faces_right_by_default: bool = true
@@ -217,8 +225,12 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if player == null:
-		move_and_slide()
-		return
+		player = find_player()
+
+		if player == null:
+			debug_print("ACTIVE but player is still NULL. Boss cannot move.")
+			move_and_slide()
+			return
 
 	if active and rest_locked:
 		velocity.x = 0.0
@@ -229,19 +241,40 @@ func _physics_process(delta: float) -> void:
 		if heal_cancel_recovering:
 			velocity.x = move_toward(velocity.x, 0.0, 700.0 * delta)
 
-	move_and_slide()
-	return
+		move_and_slide()
+		return
+
+	debug_print("Before AI | active:%s intro:%s attacking:%s rest:%s player:%s velocity:%s" % [
+		active,
+		intro_playing,
+		attacking,
+		rest_locked,
+		player,
+		velocity
+	])
 
 	boss_ai()
+
+	debug_print("After AI | state:%s velocity:%s" % [
+		BossState.keys()[state],
+		velocity
+	])
+
 	move_and_slide()
-
-
+	
 func boss_ai() -> void:
-	var distance: float = global_position.distance_to(player.global_position)
+	if player == null:
+		return
+
 	var x_distance: float = abs(player.global_position.x - global_position.x)
 	var y_difference: float = player.global_position.y - global_position.y
+	var distance: float = global_position.distance_to(player.global_position)
 
 	movement.face_player()
+
+	if x_distance <= overlap_distance:
+		movement.step_out_of_player()
+		return
 
 	if not has_reached_half_hp_once and current_hp <= max_hp * holy_unlock_hp_threshold:
 		has_reached_half_hp_once = true
@@ -251,18 +284,18 @@ func boss_ai() -> void:
 		healing.enter_phase_two()
 		return
 
-	# During combo cooldown, do not jump or attack.
-	# Just keep pressure by chasing.
 	if attack_spacing_locked:
-		movement.chase_player(distance)
+		if x_distance > close_attack_distance:
+			movement.chase_player(distance)
+		else:
+			movement.hold_idle()
 		return
 
-	# Jump only when player is above and boss is not cooling down.
-	if movement.should_jump_to_player(y_difference, x_distance):
-		movement.jump_to_player()
+	if should_queue_jump_response(y_difference, x_distance):
+		queue_jump_response()
 		return
 
-	if distance > chase_until_distance:
+	if x_distance > close_attack_distance:
 		movement.chase_player(distance)
 		return
 
@@ -276,15 +309,16 @@ func boss_ai() -> void:
 		return
 
 	if can_attack:
-		var roll: int = randi() % 100
+		debug_print("Close enough. Attacking instead of idling. X:%s" % x_distance)
 
-		if roll < attack_decision_chance:
-			if has_reached_half_hp_once:
-				attacks.execute_combo(attacks.pick_unlocked_combo())
-			else:
-				attacks.execute_combo(attacks.pick_phase_one_combo())
+		if has_reached_half_hp_once:
+			attacks.execute_combo(attacks.pick_unlocked_combo())
 		else:
-			movement.chase_player(distance)
+			attacks.execute_combo(attacks.pick_phase_one_combo())
+
+		return
+
+	movement.hold_idle()
 
 
 func can_start_boss_fight() -> bool:
@@ -305,10 +339,13 @@ func start_boss_fight() -> void:
 		debug_print("Boss fight blocked. Missing flag: dialog_%s" % required_dialog_id)
 		return
 
+	player = find_player()
+
+	if player == null:
+		debug_print("WARNING: Boss fight started but player is NULL.")
+
 	active = true
 	intro_playing = true
-
-	# Always unlock fight flags when the boss starts.
 	rest_locked = false
 	attacking = false
 	attack_spacing_locked = false
@@ -320,11 +357,12 @@ func start_boss_fight() -> void:
 	state = BossState.INTRO
 	velocity = Vector2.ZERO
 
-	debug_print("Boss fight flags reset. rest_locked:%s attacking:%s spacing:%s can_attack:%s" % [
+	debug_print("Boss fight flags reset. rest_locked:%s attacking:%s spacing:%s can_attack:%s player:%s" % [
 		rest_locked,
 		attacking,
 		attack_spacing_locked,
-		can_attack
+		can_attack,
+		player
 	])
 
 	boss_started.emit()
@@ -338,7 +376,8 @@ func start_boss_fight() -> void:
 
 	await get_tree().create_timer(intro_duration).timeout
 
-	# Unlock again after intro in case anything changed during the wait.
+	player = find_player()
+
 	intro_playing = false
 	rest_locked = false
 	attacking = false
@@ -349,7 +388,7 @@ func start_boss_fight() -> void:
 	state = BossState.IDLE
 	velocity = Vector2.ZERO
 
-	debug_print("Intro finished. Boss unlocked.")
+	debug_print("Intro finished. Boss unlocked. Player:%s" % player)
 	debug_print("BOSS FIGHT STARTED")
 
 
@@ -370,12 +409,15 @@ func _on_player_detector_body_exited(body: Node2D) -> void:
 func find_player() -> Node2D:
 	var lower_player: Node = get_tree().get_first_node_in_group("player")
 	if lower_player is Node2D:
+		debug_print("Found player by group 'player': %s" % lower_player.name)
 		return lower_player as Node2D
 
 	var upper_player: Node = get_tree().get_first_node_in_group("Player")
 	if upper_player is Node2D:
+		debug_print("Found player by group 'Player': %s" % upper_player.name)
 		return upper_player as Node2D
 
+	debug_print("No player found in groups 'player' or 'Player'.")
 	return null
 
 
@@ -426,13 +468,14 @@ func die() -> void:
 	active = false
 	intro_playing = false
 	attacking = false
+	rest_locked = false
+	attack_spacing_locked = false
 	state = BossState.DEAD
 
-	movement.stop_velocity()
+	movement.stop_all_velocity()
 	attacks.disable_all_hitboxes()
 
-	if boss_music_player != null and boss_music_player.playing:
-		boss_music_player.stop()
+	play_music_outro()
 
 	sprite.play("death")
 	boss_defeated.emit()
@@ -453,7 +496,71 @@ func update_sprite_offset() -> void:
 
 	sprite.offset = offset
 
+func should_queue_jump_response(y_difference: float, x_distance: float) -> bool:
+	if jump_response_pending:
+		return false
+
+	if not can_jump_attack:
+		return false
+
+	if not is_on_floor():
+		return false
+
+	if y_difference > -jump_min_y_difference:
+		return false
+
+	if x_distance < jump_min_x_distance:
+		return false
+
+	var roll: int = randi() % 100
+	return roll < jump_response_chance
+
+
+func queue_jump_response() -> void:
+	jump_response_pending = true
+	debug_print("Delayed jump response queued.")
+
+	await get_tree().create_timer(jump_reaction_delay).timeout
+
+	jump_response_pending = false
+
+	if dead or not active or intro_playing or attacking or rest_locked:
+		return
+
+	if player == null:
+		return
+
+	var x_distance: float = abs(player.global_position.x - global_position.x)
+	var y_difference: float = player.global_position.y - global_position.y
+
+	if y_difference <= -jump_min_y_difference and x_distance >= jump_min_x_distance:
+		movement.jump_to_player()
 
 func debug_print(message: String) -> void:
 	if debug_enabled:
 		print("[JoannaBoss] ", message)
+
+func play_music_outro() -> void:
+	if boss_music_player == null:
+		return
+
+	if music_ending:
+		return
+
+	music_ending = true
+
+	if not boss_music_player.playing:
+		return
+
+	var stream_length: float = 0.0
+
+	if boss_music_player.stream != null:
+		stream_length = boss_music_player.stream.get_length()
+
+	if stream_length > music_outro_seconds:
+		boss_music_player.seek(max(stream_length - music_outro_seconds, 0.0))
+
+	await get_tree().create_timer(music_outro_seconds).timeout
+
+	if boss_music_player != null:
+		boss_music_player.stop()

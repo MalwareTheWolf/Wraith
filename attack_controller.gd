@@ -32,7 +32,17 @@ func pick_attack_without_repeat(attacks: Array[String]) -> String:
 
 
 func pick_phase_one_combo() -> Array[String]:
-	var possible: Array[String] = [
+	var possible: Array[String] = []
+
+	if not boss.is_on_floor():
+		possible.append("air_attack")
+
+		if boss.player != null and boss.player.global_position.y < boss.global_position.y - 30.0:
+			possible.append("air_above_attack")
+
+		return [pick_from_bag(possible, phase_one_attack_bag, "phase one air")]
+
+	possible = [
 		"dash",
 		"combo_1",
 		"air_attack",
@@ -46,7 +56,17 @@ func pick_phase_one_combo() -> Array[String]:
 
 
 func pick_unlocked_combo() -> Array[String]:
-	var possible: Array[String] = [
+	var possible: Array[String] = []
+
+	if not boss.is_on_floor():
+		possible.append("air_attack")
+
+		if boss.player != null and boss.player.global_position.y < boss.global_position.y - 30.0:
+			possible.append("air_above_attack")
+
+		return [pick_from_bag(possible, holy_attack_bag, "unlocked air")]
+
+	possible = [
 		"dash",
 		"combo_1",
 		"air_attack",
@@ -67,7 +87,7 @@ func pick_unlocked_combo() -> Array[String]:
 
 	match chosen:
 		"holy_dash":
-			return ["holy_dash", "combo_1"]
+			return ["holy_dash"]
 		"holy_projectile":
 			return ["holy_projectile"]
 		_:
@@ -225,6 +245,7 @@ func do_thrust_attack() -> void:
 
 	disable_all_hitboxes()
 
+	boss.thrust_hitbox.position.y = 0.0
 	boss.thrust_hitbox.damage = boss.thrust_damage
 	boss.thrust_hitbox.flip(float(boss.facing_dir))
 	boss.thrust_hitbox.activate(boss.thrust_active_time)
@@ -288,6 +309,7 @@ func do_combo_1() -> void:
 
 	boss.combo_hitbox.set_active(false)
 
+	boss.thrust_hitbox.position.y = 0.0
 	boss.thrust_hitbox.damage = boss.thrust_damage
 	boss.thrust_hitbox.flip(float(boss.facing_dir))
 	boss.thrust_hitbox.set_active(true)
@@ -303,15 +325,15 @@ func do_combo_1() -> void:
 
 func do_holy_dash_attack() -> void:
 	if not boss.has_reached_half_hp_once:
-		await do_combo_1()
+		await do_dash_attack()
 		return
 
 	boss.state = boss.BossState.ATTACK
 	boss.movement.face_player()
 
 	var dir: int = boss.facing_dir
-	var desired_x: float = boss.player.global_position.x + float(dir) * boss.dash_overshoot_distance
 	var dash_time: float = 0.0
+	var desired_x: float = boss.player.global_position.x + float(dir) * boss.dash_overshoot_distance
 
 	boss.movement.stop_velocity()
 	boss.sprite.play("holy_dash_attack")
@@ -324,7 +346,7 @@ func do_holy_dash_attack() -> void:
 	boss.dash_hitbox.flip(float(dir))
 	boss.dash_hitbox.set_active(true)
 
-	while abs(boss.global_position.x - desired_x) > 10.0 and not boss.dead:
+	while abs(boss.global_position.x - desired_x) > 8.0 and not boss.dead:
 		if boss.movement.is_wall_in_dash_direction(dir):
 			break
 

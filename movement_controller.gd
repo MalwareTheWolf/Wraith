@@ -66,6 +66,18 @@ func face_direction(dir: int) -> void:
 		boss.last_facing_debug_dir = dir
 		boss.debug_print("Facing changed. Dir:%s FlipH:%s" % [dir, boss.sprite.flip_h])
 
+func hold_idle() -> void:
+	if boss.rest_locked:
+		return
+
+	boss.velocity.x = 0.0
+	boss.was_running = false
+
+	if boss.state != boss.BossState.IDLE:
+		boss.state = boss.BossState.IDLE
+
+	if boss.sprite.animation != "idle":
+		boss.sprite.play("idle")
 
 func chase_player(distance: float) -> void:
 	if boss.rest_locked:
@@ -75,17 +87,30 @@ func chase_player(distance: float) -> void:
 		return
 
 	var diff_x: float = boss.player.global_position.x - boss.global_position.x
+	var abs_x: float = abs(diff_x)
 
-	if abs(diff_x) <= boss.facing_deadzone:
-		boss.velocity.x = 0.0
-		boss.sprite.play("idle")
+	if abs_x <= boss.chase_until_distance:
+		hold_idle()
 		return
 
 	var dir: int = int(sign(diff_x))
 
+	if dir == 0:
+		hold_idle()
+		return
+
 	face_direction(dir)
 
-	if distance >= boss.run_distance:
+	var run_switch_distance: float = boss.run_distance
+	var walk_switch_distance: float = boss.run_distance * 0.75
+
+	if boss.state == boss.BossState.RUN:
+		if distance > walk_switch_distance:
+			boss.velocity.x = float(boss.facing_dir) * boss.run_speed
+			boss.sprite.play("run")
+			return
+
+	if distance >= run_switch_distance:
 		boss.state = boss.BossState.RUN
 		boss.velocity.x = float(boss.facing_dir) * boss.run_speed
 
@@ -102,21 +127,41 @@ func chase_player(distance: float) -> void:
 
 
 func should_jump_to_player(y_difference: float, x_distance: float) -> bool:
+	if boss.jump_response_pending:
+		return false
+
 	if not boss.can_jump_attack:
 		return false
 
 	if not boss.is_on_floor():
 		return false
 
-	if y_difference < -boss.jump_y_difference and x_distance <= boss.platform_jump_x_range:
-		boss.debug_print("Jumping up toward platform player. Y diff:%s X:%s" % [y_difference, x_distance])
+	if y_difference < -boss.jump_min_y_difference and x_distance >= boss.jump_min_x_distance:
 		return true
 
 	return false
 
+func step_out_of_player() -> void:
+	if boss.player == null:
+		return
+
+	var diff_x: float = boss.global_position.x - boss.player.global_position.x
+	var dir: int = int(sign(diff_x))
+
+	if dir == 0:
+		dir = -boss.facing_dir
+
+	face_direction(-dir)
+
+	boss.state = boss.BossState.WALK
+	boss.velocity.x = float(dir) * boss.walk_speed
+
+	if boss.sprite.animation != "walk":
+		boss.sprite.play("walk")
+
+	boss.debug_print("Too close to player. Stepping out. Dir:%s" % dir)
 
 func jump_to_player() -> void:
-
 	if boss.rest_locked:
 		return
 
@@ -132,7 +177,7 @@ func jump_to_player() -> void:
 	if dir != 0:
 		face_direction(dir)
 
-	boss.velocity.x = float(boss.facing_dir) * boss.run_speed * 1.15
+	boss.velocity.x = float(boss.facing_dir) * boss.run_speed * 1.35
 	boss.velocity.y = boss.platform_jump_velocity
 
 	boss.sprite.play("jump")

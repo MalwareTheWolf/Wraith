@@ -85,7 +85,7 @@ func do_heal(heal_type: String) -> void:
 
 	boss.sprite.play(heal_anim)
 
-	while boss.sprite.is_playing() and not boss.heal_interrupted and not boss.dead:
+	while boss.sprite.animation == heal_anim and boss.sprite.is_playing() and not boss.heal_interrupted and not boss.dead:
 		await boss.get_tree().process_frame
 
 	if boss.dead:

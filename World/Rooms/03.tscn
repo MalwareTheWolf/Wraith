@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://ra6vmoyl7847"]
 
 [ext_resource type="TileSet" uid="uid://caf0b2tt1yave" path="res://World/Tilesets/Castle/Castle.tres" id="2_l5p33"]
+[ext_resource type="Script" uid="uid://hmuvjhch5nnj" path="res://General/player_spawn/player_spawn.gd" id="4_xb3je"]
 [ext_resource type="PackedScene" uid="uid://bwbk2dppx5kup" path="res://General/Level_Transition/level_transition.tscn" id="5_l5p33"]
 [ext_resource type="Script" uid="uid://c66y0kemubeet" path="res://General/Scripts/level_bounds.gd" id="6_yr2kf"]
 
@@ -52,3 +53,8 @@ position = Vector2(544, -622)
 size = 6
 location = 2
 door_id = 2
+
+[node name="PlayerSpawn" type="Node2D" parent="." unique_id=1781315966]
+position = Vector2(94, 210)
+script = ExtResource("4_xb3je")
+metadata/_custom_type_script = "uid://hmuvjhch5nnj"
