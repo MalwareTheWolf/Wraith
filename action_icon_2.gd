@@ -15,3 +15,4 @@ func set_button(action_name: String, mode: int) -> void:
 			animation_player.play("tap")
 		2:
 			animation_player.play("hold")
+#1
