@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://vnhdso56a1b8" path="res://cinematic_trigger.tscn" id="9_ddbib"]
 [ext_resource type="PackedScene" uid="uid://dilrr7557hhlq" path="res://skull_wolf.tscn" id="10_rfk4n"]
 [ext_resource type="AudioStream" uid="uid://dyjull4uk4oe1" path="res://00_Global/Audio/dragon-studio-free-dog-barking-sounds-427411.wav" id="10_vfa4r"]
+[ext_resource type="Script" uid="uid://hmuvjhch5nnj" path="res://General/player_spawn/player_spawn.gd" id="12_vfa4r"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b35bu"]
 size = Vector2(28, 15.25)
@@ -24,7 +25,7 @@ size = Vector2(44, 118)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xtwau"]
 size = Vector2(1375, 20)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_658y2"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_rfk4n"]
 resource_local_to_scene = true
 radius = 25.612497
 
@@ -134,17 +135,24 @@ debug_color = Color(1, 0, 0, 0.41960785)
 
 [node name="CinematicTrigger" parent="." unique_id=153867829 node_paths=PackedStringArray("actor") instance=ExtResource("9_ddbib")]
 position = Vector2(602, -11)
+cutscene_id = "tut3"
 actor = NodePath("../SkullWolf")
+invert_exit_flip = false
 run_audio = ExtResource("10_vfa4r")
 
 [node name="CollisionShape2D" parent="CinematicTrigger" index="0" unique_id=1321430435]
 position = Vector2(-380, 343)
-shape = SubResource("CircleShape2D_658y2")
+shape = SubResource("CircleShape2D_rfk4n")
 
 [node name="EndMarker" parent="CinematicTrigger" index="1" unique_id=1576124191]
 position = Vector2(1531, 460)
 
 [node name="SkullWolf" parent="." unique_id=1783231622 instance=ExtResource("10_rfk4n")]
 position = Vector2(1895, 449)
+
+[node name="PlayerSpawn" type="Node2D" parent="." unique_id=1621798551]
+position = Vector2(226, 250)
+script = ExtResource("12_vfa4r")
+metadata/_custom_type_script = "uid://hmuvjhch5nnj"
 
 [editable path="CinematicTrigger"]

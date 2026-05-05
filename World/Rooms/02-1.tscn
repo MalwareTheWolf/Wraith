@@ -104,6 +104,7 @@ position = Vector2(363, 301)
 
 [node name="CinematicTrigger" parent="." unique_id=153867829 node_paths=PackedStringArray("actor") instance=ExtResource("9_5m2fj")]
 position = Vector2(536, 180)
+cutscene_id = "tut2"
 actor = NodePath("../SkullWolf")
 invert_exit_flip = false
 run_audio = ExtResource("10_cqthd")

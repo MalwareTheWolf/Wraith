@@ -80,6 +80,26 @@ func _ready() -> void:
 	add_child(audio_player)
 	audio_player.bus = audio_bus
 
+	_cleanup_if_already_played()
+
+
+func _cleanup_if_already_played() -> void:
+	var flag_id := "cutscene_" + cutscene_id
+
+	if not SaveManager.has_flag(flag_id):
+		return
+
+	has_triggered = true
+	cutscene_active = false
+	actor_running = false
+	monitoring = false
+
+	if actor:
+		actor.queue_free()
+
+	if secondary_actor:
+		secondary_actor.queue_free()
+
 
 func _input(event: InputEvent) -> void:
 	if not cutscene_active:
@@ -120,6 +140,7 @@ func _on_body_entered(body: Node) -> void:
 	var flag_id := "cutscene_" + cutscene_id
 
 	if SaveManager.has_flag(flag_id):
+		_cleanup_if_already_played()
 		return
 
 	has_triggered = true

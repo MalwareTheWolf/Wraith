@@ -61,17 +61,17 @@ enum BossState {
 @export var gravity: float = 980.0
 @export var max_fall_speed: float = 600.0
 @export var run_distance: float = 180.0
-@export var chase_until_distance: float = 35.0
+@export var chase_until_distance: float = 15.0
 @export var facing_deadzone: float = 10.0
 @export var jump_y_difference: float = 38.0
 @export var platform_jump_x_range: float = 150.0
 @export var jump_cooldown: float = 1.4
-@export var close_attack_distance: float = 95.0
-@export var overlap_distance: float = 28.0
+@export var close_attack_distance: float = 55.0
+@export var overlap_distance: float = 22.0
 @export var jump_reaction_delay: float = 0.55
 @export var jump_response_chance: int = 35
-@export var jump_min_y_difference: float = 85.0
-@export var jump_min_x_distance: float = 80.0
+@export var jump_min_y_difference: float = 110.0
+@export var jump_min_x_distance: float = 100.0
 
 @export_group("Boss AI")
 @export var attack_cooldown: float = 1.0
