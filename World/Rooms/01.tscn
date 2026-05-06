@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://c66y0kemubeet" path="res://General/Scripts/level_bounds.gd" id="3_4tv7a"]
 [ext_resource type="PackedScene" uid="uid://bwbk2dppx5kup" path="res://General/Level_Transition/level_transition.tscn" id="4_61kuw"]
 [ext_resource type="PackedScene" uid="uid://5k6e6duydusj" path="res://General/player_spawn/player_spawn.tscn" id="4_bc6l6"]
+[ext_resource type="AudioStream" uid="uid://4fhedsa23ogg" path="res://00_Global/Audio/Deep Breath - 48kHz.wav" id="6_qtaxo"]
 [ext_resource type="Texture2D" uid="uid://f2as7a1o1vgv" path="res://World/Tilesets/Backgrounds/parallax-demon-woods-bg.png" id="7_3q642"]
 [ext_resource type="Texture2D" uid="uid://caypydoy6ho4p" path="res://World/Tilesets/Backgrounds/parallax-demon-woods-far-trees.png" id="8_cd4vs"]
 [ext_resource type="Script" uid="uid://c0n65xuyoaqvo" path="res://00_Global/Audio/Scripts/music_auto_trigger.gd" id="8_i5uu7"]
@@ -61,6 +62,7 @@ scale = Vector2(1.0514697, 1.0504154)
 
 [node name="MusicAutoTrigger" type="Node" parent="." unique_id=2004634586]
 script = ExtResource("8_i5uu7")
+track = ExtResource("6_qtaxo")
 metadata/_custom_type_script = "uid://c0n65xuyoaqvo"
 
 [node name="HazardArea" type="Area2D" parent="." unique_id=211673039]
@@ -143,6 +145,7 @@ position = Vector2(481, -165)
 cutscene_id = "tut1"
 actor = NodePath("../SkullWolf")
 actor_follow_time = 0.5
+invert_exit_flip = false
 run_audio = ExtResource("13_l8ccu")
 
 [node name="CollisionShape2D" parent="CinematicTrigger" index="0" unique_id=1321430435]

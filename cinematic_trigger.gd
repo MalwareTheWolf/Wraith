@@ -47,7 +47,7 @@ enum ActorChoice {
 @export var trigger_once: bool = true
 
 @export var skip_action: String = "jump"
-@export var allow_skip: bool = true
+@export var allow_skip: bool = false
 
 @export var run_audio: AudioStream
 @export var death_audio: AudioStream
@@ -180,9 +180,19 @@ func _begin_cutscene() -> bool:
 	cutscene_active = true
 	skip_requested = false
 
+	await _wait_for_player_to_land()
+
 	player.set_control_enabled(false)
 
 	return true
+
+
+func _wait_for_player_to_land() -> void:
+	if player == null:
+		return
+
+	while player is CharacterBody2D and not player.is_on_floor():
+		await get_tree().physics_frame
 
 
 func _end_cutscene() -> void:
@@ -202,7 +212,7 @@ func start_run_away_sequence() -> void:
 		push_warning("RUN_AWAY needs Actor.")
 		return
 
-	if not _begin_cutscene():
+	if not await _begin_cutscene():
 		return
 
 	await _move_camera_to(actor.global_position, camera_focus_time)
@@ -238,7 +248,7 @@ func start_attack_and_exit_sequence() -> void:
 		push_warning("ATTACK_AND_EXIT needs Actor and Secondary Actor.")
 		return
 
-	if not _begin_cutscene():
+	if not await _begin_cutscene():
 		return
 
 	var focus_node := _get_actor_choice(camera_target)

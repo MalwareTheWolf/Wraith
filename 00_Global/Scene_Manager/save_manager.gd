@@ -1,82 +1,35 @@
 extends Node
 
 # Handles saving, loading, and restoring player progress.
-# Supports multiple save slots, abilities, discovered areas, and config.
 
 
-#CONSTANTS
+# CONSTANTS
 
-# Path for configuration settings file.
 const CONFIG_FILE_PATH = "user://settings.cfg"
-
-# Default scene loaded for new games.
 const DEFAULT_SCENE_PATH: String = "uid://cnlg81cbb56ha"
-
-# Available save slots.
 const SLOTS: Array[String] = ["save_01", "save_02", "save_03"]
 
 
+# RUNTIME DATA
 
-#RUNTIME DATA
-
-# Currently selected save slot index.
 var current_slot: int = 0
-
-# Dictionary storing all save data.
 var save_data: Dictionary
 
-# List of discovered scene IDs.
 var discovered_areas: Array = []
-
-# Persistent data for world objects.
 var persistent_data: Dictionary = {}
 
 
+# INITIALIZATION
 
-#LIFECYCLE
-
+# Loads config and connects scene tracking.
 func _ready() -> void:
-
-	# Load config and track scene changes.
 	load_configuration()
 	SceneManager.scene_entered.connect(_on_scene_entered)
 
-	set_process_input(true)
 
+# NEW GAME
 
-
-#DEBUG INPUT
-
-func _input(event: InputEvent) -> void:
-
-	# Debug shortcuts for saving/loading and slot selection.
-	if OS.is_debug_build() and event is InputEventKey and event.pressed:
-
-		match event.keycode:
-
-			KEY_F5:
-				save_game()
-
-			KEY_F7:
-				load_game()
-
-			KEY_1:
-				current_slot = 0
-				print("Current slot:", current_slot)
-
-			KEY_2:
-				current_slot = 1
-				print("Current slot:", current_slot)
-
-			KEY_3:
-				current_slot = 2
-				print("Current slot:", current_slot)
-
-
-
-#NEW GAME
-
-# Creates a new save file with default values.
+# Creates a new save with all abilities unlocked.
 func create_new_game_save(slot: int = 0) -> void:
 
 	current_slot = slot
@@ -84,142 +37,113 @@ func create_new_game_save(slot: int = 0) -> void:
 	discovered_areas.clear()
 	persistent_data.clear()
 
-	# Start with default scene discovered.
 	discovered_areas.append(DEFAULT_SCENE_PATH)
 
-	# Initialize save data.
 	save_data = {
 		"scene_path": DEFAULT_SCENE_PATH,
 		"x": 100.0,
 		"y": -80.0,
 		"hp": 20.0,
 		"max_hp": 20.0,
-		"run": false,
-		"dash": false,
-		"double_jump": false,
-		"lightning": false,
-		"Chain_lightning": false,
-		"dark_blast": false,
-		"heavy_attack": false,
-		"power_up": false,
-		"ground_slam": false,
-		"morph": false,
+
+		"run": true,
+		"dash": true,
+		"double_jump": true,
+		"ground_slam": true,
+		"morph": true,
+		"power_up": true,
+
 		"discovered_areas": discovered_areas,
 		"persistent_data": persistent_data
 	}
 
 	write_to_save_file()
-
-	# Immediately load new save.
 	load_game()
 
-	print("Created new game save at slot:", current_slot)
 
+# SAVE GAME
 
-
-#SAVE / LOAD
-
-# Saves current player and world state.
+# Saves player position, stats, and abilities.
 func save_game() -> void:
 
 	var player: Player = get_tree().get_first_node_in_group("Player")
 
 	if player == null:
-		print("No player found")
 		return
 
-	# Collect player data.
 	save_data = {
 		"scene_path": SceneManager.current_scene_uid,
 		"x": player.global_position.x,
 		"y": player.global_position.y,
 		"hp": player.hp,
 		"max_hp": player.max_hp,
+
 		"run": player.run,
 		"dash": player.dash,
 		"double_jump": player.double_jump,
-		"lightning": player.lightning,
-		"Chain_lightning": player.Chain_lightning,
-		"dark_blast": player.dark_blast,
-		"heavy_attack": player.heavy_attack,
-		"power_up": player.power_up,
 		"ground_slam": player.ground_slam,
 		"morph": player.morph,
+		"power_up": player.power_up,
+
 		"discovered_areas": discovered_areas,
 		"persistent_data": persistent_data
 	}
 
 	write_to_save_file()
 
-	print("Game saved to slot:", current_slot)
 
+# LOAD GAME
 
-
-# Loads save file and restores state.
+# Loads saved scene and restores player state.
 func load_game() -> void:
 
 	if not FileAccess.file_exists(get_file_name()):
-		print("No save file found at slot:", current_slot)
 		return
 
 	var save_file = FileAccess.open(get_file_name(), FileAccess.READ)
-
 	save_data = JSON.parse_string(save_file.get_line())
 
-	# Restore world data.
 	discovered_areas = save_data.get("discovered_areas", [])
 	persistent_data = save_data.get("persistent_data", {})
 
 	var scene_path: String = save_data.get("scene_path", DEFAULT_SCENE_PATH)
 
-	# Load scene and wait until ready.
 	SceneManager.transition_scene(scene_path, "", Vector2.ZERO, "up")
 	await SceneManager.new_scene_ready
 
 	setup_player()
 
 
+# PLAYER RESTORE
 
-#PLAYER RESTORE
-
-# Applies saved data to player after scene loads.
+# Applies saved values to player.
 func setup_player() -> void:
 
 	var player: Player = null
 
-	# Wait until player exists.
 	while not player:
 		player = get_tree().get_first_node_in_group("Player")
 		await get_tree().process_frame
 
-	# Restore stats and abilities.
 	player.max_hp = save_data.get("max_hp", 20)
 	player.hp = save_data.get("hp", 20)
-	player.run = save_data.get("run", false)
-	player.dash = save_data.get("dash", false)
-	player.double_jump = save_data.get("double_jump", false)
-	player.ground_slam = save_data.get("ground_slam", false)
-	player.morph = save_data.get("morph", false)
 
-	player.lightning = save_data.get("lightning", false)
-	player.Chain_lightning = save_data.get("Chain_lightning", false)
-	player.dark_blast = save_data.get("dark_blast", false)
-	player.heavy_attack = save_data.get("heavy_attack", false)
-	player.power_up = save_data.get("power_up", false)
+	player.run = true
+	player.dash = true
+	player.double_jump = true
+	player.ground_slam = true
+	player.morph = true
+	player.power_up = true
 
-	# Restore position.
 	player.global_position = Vector2(
 		save_data.get("x", 0),
 		save_data.get("y", 0)
 	)
 
-	print("Player restored at:", player.global_position)
 
+# FILE HANDLING
 
-
-#FILE HANDLING
-
-# Returns file path for current slot.
+# Returns save file path.
 func get_file_name() -> String:
 	return "user://" + SLOTS[current_slot] + ".sav"
 
@@ -228,51 +152,43 @@ func get_file_name() -> String:
 func write_to_save_file() -> void:
 
 	var save_file = FileAccess.open(get_file_name(), FileAccess.WRITE)
-
 	save_file.store_line(JSON.stringify(save_data))
 	save_file.close()
 
 
-# Checks if a save file exists.
+# Checks if a save exists.
 func save_file_exists(slot: int) -> bool:
 	return FileAccess.file_exists("user://" + SLOTS[slot] + ".sav")
 
 
+# DISCOVERY
 
-#DISCOVERED AREAS
-
-# Tracks newly entered scenes.
+# Tracks visited scenes.
 func _on_scene_entered(scene_uid: String) -> void:
 
 	if not discovered_areas.has(scene_uid):
 		discovered_areas.append(scene_uid)
 
 
-# Checks if a scene has been discovered.
-func is_area_discovered(scene_uid: String) -> bool:
-	return discovered_areas.has(scene_uid)
+# FLAGS
 
-#ONE-TIME FLAGS
-
+# Checks if a persistent flag exists.
 func has_flag(flag_id: String) -> bool:
-	if flag_id.strip_edges() == "":
-		return false
-
 	return persistent_data.get(flag_id, false)
 
 
+# Sets a persistent flag.
 func set_flag(flag_id: String, value: bool = true, save_after: bool = true) -> void:
-	if flag_id.strip_edges() == "":
-		return
 
 	persistent_data[flag_id] = value
 
 	if save_after:
 		save_game()
 
-#CONFIGURATION
 
-# Saves audio settings.
+# CONFIG
+
+# Saves audio config.
 func save_configuration() -> void:
 
 	var config := ConfigFile.new()
@@ -284,23 +200,19 @@ func save_configuration() -> void:
 	config.save(CONFIG_FILE_PATH)
 
 
-# Loads audio settings or sets defaults.
+# Loads audio config.
 func load_configuration() -> void:
 
 	var config := ConfigFile.new()
 	var err = config.load(CONFIG_FILE_PATH)
 
-	# Use defaults if config missing.
 	if err != OK:
-
 		AudioServer.set_bus_volume_linear(2, 0.8)
 		AudioServer.set_bus_volume_linear(3, 1.0)
 		AudioServer.set_bus_volume_linear(4, 1.0)
-
 		save_configuration()
 		return
 
-	# Apply saved values.
 	AudioServer.set_bus_volume_linear(2, config.get_value("audio", "music", 0.8))
 	AudioServer.set_bus_volume_linear(3, config.get_value("audio", "sfx", 1.0))
 	AudioServer.set_bus_volume_linear(4, config.get_value("audio", "ui", 1.0))
