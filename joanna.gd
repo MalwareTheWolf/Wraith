@@ -18,11 +18,11 @@ enum BossState {
 	PHASE_TWO,
 	DEAD
 }
+
 @export_group("Boss Music")
 @export var music_outro_seconds: float = 7.0
 
-@export_group("Debug")
-@export var debug_enabled: bool = true
+@export_group("Detection")
 @export var fallback_detection_range: float = 250.0
 
 @export_group("Stats")
@@ -120,17 +120,14 @@ enum BossState {
 @onready var attack_timer: Timer = $attack_timer
 @onready var player_detector: Area2D = $PlayerDetector
 @onready var floor_detector: RayCast2D = $FloorDetector
-@onready var state_label: Label = $StateLabel
 @onready var boss_music_player: AudioStreamPlayer = $BossMusicPlayer
 
 @onready var movement: JoannaMovementController = $MovementController
 @onready var attacks: JoannaAttackController = $AttackController
 @onready var healing: JoannaHealingController = $HealingController
-@onready var debug_controller: JoannaDebugController = $DebugController
 
 var current_hp: float = 0.0
 var state: BossState = BossState.IDLE
-var last_debug_state: BossState = BossState.IDLE
 var rest_locked: bool = false
 var player: Node2D = null
 var player_inside_detector: bool = false
@@ -143,7 +140,6 @@ var can_attack: bool = true
 var phase_two: bool = false
 var jump_response_pending: bool = false
 var facing_dir: int = 1
-var last_facing_debug_dir: int = 0
 var sprite_faces_right_by_default: bool = true
 
 var can_jump_attack: bool = true
@@ -190,20 +186,13 @@ func _ready() -> void:
 	health_changed.emit(current_hp, max_hp)
 	sprite.play("idle")
 
-	debug_print("READY. Joanna loaded.")
-	debug_print("HP: %s/%s" % [current_hp, max_hp])
-	debug_print("Detected sprite faces right by default: %s" % sprite_faces_right_by_default)
-
 
 func _physics_process(delta: float) -> void:
 	if dead:
-		debug_controller.update_state_label()
 		return
 
 	movement.apply_gravity(delta)
 	update_sprite_offset()
-	debug_controller.update_state_label()
-	debug_controller.debug_state_change()
 
 	if player == null:
 		player = find_player()
@@ -228,7 +217,6 @@ func _physics_process(delta: float) -> void:
 		player = find_player()
 
 		if player == null:
-			debug_print("ACTIVE but player is still NULL. Boss cannot move.")
 			move_and_slide()
 			return
 
@@ -244,24 +232,10 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	debug_print("Before AI | active:%s intro:%s attacking:%s rest:%s player:%s velocity:%s" % [
-		active,
-		intro_playing,
-		attacking,
-		rest_locked,
-		player,
-		velocity
-	])
-
 	boss_ai()
-
-	debug_print("After AI | state:%s velocity:%s" % [
-		BossState.keys()[state],
-		velocity
-	])
-
 	move_and_slide()
-	
+
+
 func boss_ai() -> void:
 	if player == null:
 		return
@@ -278,7 +252,6 @@ func boss_ai() -> void:
 
 	if not has_reached_half_hp_once and current_hp <= max_hp * holy_unlock_hp_threshold:
 		has_reached_half_hp_once = true
-		debug_print("Holy attacks unlocked permanently.")
 
 	if not phase_two and current_hp < max_hp and current_hp <= max_hp * phase_two_hp_threshold:
 		healing.enter_phase_two()
@@ -309,8 +282,6 @@ func boss_ai() -> void:
 		return
 
 	if can_attack:
-		debug_print("Close enough. Attacking instead of idling. X:%s" % x_distance)
-
 		if has_reached_half_hp_once:
 			attacks.execute_combo(attacks.pick_unlocked_combo())
 		else:
@@ -336,13 +307,9 @@ func start_boss_fight() -> void:
 		return
 
 	if not can_start_boss_fight():
-		debug_print("Boss fight blocked. Missing flag: dialog_%s" % required_dialog_id)
 		return
 
 	player = find_player()
-
-	if player == null:
-		debug_print("WARNING: Boss fight started but player is NULL.")
 
 	active = true
 	intro_playing = true
@@ -357,20 +324,10 @@ func start_boss_fight() -> void:
 	state = BossState.INTRO
 	velocity = Vector2.ZERO
 
-	debug_print("Boss fight flags reset. rest_locked:%s attacking:%s spacing:%s can_attack:%s player:%s" % [
-		rest_locked,
-		attacking,
-		attack_spacing_locked,
-		can_attack,
-		player
-	])
-
 	boss_started.emit()
 
 	if boss_music_player != null and not boss_music_player.playing:
 		boss_music_player.play()
-
-	debug_print("BOSS INTRO STARTED")
 
 	sprite.play("idle")
 
@@ -387,9 +344,6 @@ func start_boss_fight() -> void:
 
 	state = BossState.IDLE
 	velocity = Vector2.ZERO
-
-	debug_print("Intro finished. Boss unlocked. Player:%s" % player)
-	debug_print("BOSS FIGHT STARTED")
 
 
 func _on_player_detector_body_entered(body: Node2D) -> void:
@@ -409,15 +363,12 @@ func _on_player_detector_body_exited(body: Node2D) -> void:
 func find_player() -> Node2D:
 	var lower_player: Node = get_tree().get_first_node_in_group("player")
 	if lower_player is Node2D:
-		debug_print("Found player by group 'player': %s" % lower_player.name)
 		return lower_player as Node2D
 
 	var upper_player: Node = get_tree().get_first_node_in_group("Player")
 	if upper_player is Node2D:
-		debug_print("Found player by group 'Player': %s" % upper_player.name)
 		return upper_player as Node2D
 
-	debug_print("No player found in groups 'player' or 'Player'.")
 	return null
 
 
@@ -436,17 +387,12 @@ func take_damage(amount: float) -> void:
 	if dead:
 		return
 
-	var previous_hp: float = current_hp
-
 	current_hp -= amount
 	current_hp = max(current_hp, 0.0)
 	health_changed.emit(current_hp, max_hp)
 
-	debug_print("HP changed: %s -> %s / %s" % [previous_hp, current_hp, max_hp])
-
 	if current_hp <= max_hp * holy_unlock_hp_threshold and not has_reached_half_hp_once:
 		has_reached_half_hp_once = true
-		debug_print("Holy attacks unlocked from damage threshold.")
 
 	if current_hp <= 0.0:
 		die()
@@ -496,6 +442,7 @@ func update_sprite_offset() -> void:
 
 	sprite.offset = offset
 
+
 func should_queue_jump_response(y_difference: float, x_distance: float) -> bool:
 	if jump_response_pending:
 		return false
@@ -518,7 +465,6 @@ func should_queue_jump_response(y_difference: float, x_distance: float) -> bool:
 
 func queue_jump_response() -> void:
 	jump_response_pending = true
-	debug_print("Delayed jump response queued.")
 
 	await get_tree().create_timer(jump_reaction_delay).timeout
 
@@ -536,9 +482,6 @@ func queue_jump_response() -> void:
 	if y_difference <= -jump_min_y_difference and x_distance >= jump_min_x_distance:
 		movement.jump_to_player()
 
-func debug_print(message: String) -> void:
-	if debug_enabled:
-		print("[JoannaBoss] ", message)
 
 func play_music_outro() -> void:
 	if boss_music_player == null:

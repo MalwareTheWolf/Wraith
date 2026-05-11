@@ -41,7 +41,7 @@ enum ActorChoice {
 @export var flip_exit_actor_while_moving: bool = true
 @export var invert_exit_flip: bool = true
 
-@export var secondary_attack_y_offset: float = -30.0
+@export var secondary_attack_y_offset: float = 0.0
 
 @export var disappear_at_end: bool = true
 @export var trigger_once: bool = true

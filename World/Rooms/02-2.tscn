@@ -27,7 +27,7 @@ size = Vector2(44, 118)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xtwau"]
 size = Vector2(1375, 20)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_rfk4n"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_7is66"]
 resource_local_to_scene = true
 radius = 25.612497
 
@@ -144,7 +144,7 @@ run_audio = ExtResource("10_vfa4r")
 
 [node name="CollisionShape2D" parent="CinematicTrigger" index="0" unique_id=1321430435]
 position = Vector2(-380, 343)
-shape = SubResource("CircleShape2D_rfk4n")
+shape = SubResource("CircleShape2D_7is66")
 
 [node name="EndMarker" parent="CinematicTrigger" index="1" unique_id=1576124191]
 position = Vector2(1531, 460)
@@ -161,7 +161,7 @@ metadata/_custom_type_script = "uid://hmuvjhch5nnj"
 position = Vector2(57, 525)
 
 [node name="TutorialPromptTrigger" parent="." unique_id=1209031352 instance=ExtResource("14_d1jcu")]
-position = Vector2(838, 270)
+position = Vector2(931, 415)
 prompt_id = "DJ"
 description_text = "Double Jump"
 connector_text = ""
