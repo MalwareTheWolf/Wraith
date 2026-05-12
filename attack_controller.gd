@@ -1,456 +1,387 @@
 class_name JoannaAttackController
 extends Node
 
+#ATTACK CONTROLLER
+#Handles attack selection, hitbox activation, dash attacks, combo attacks, holy attacks, and attack cooldowns.
+
+
+#NODE REFERENCES
+
 @onready var boss = get_parent()
 
-var phase_one_attack_bag: Array[String] = []
-var holy_attack_bag: Array[String] = []
 
-func pick_attack_without_repeat(attacks: Array[String]) -> String:
-	if attacks.is_empty():
-		return ""
+#ATTACK LISTS
 
-	if attacks.size() <= 1:
-		boss.last_attack_name = attacks[0]
-		return attacks[0]
+var phase_one_combos: Array[String] = [
+	"thrust",
+	"combo"
+]
 
-	var filtered: Array[String] = []
-
-	for attack_name: String in attacks:
-		if attack_name != boss.last_attack_name:
-			filtered.append(attack_name)
-
-	if filtered.is_empty():
-		filtered = attacks
-
-	var chosen: String = filtered.pick_random()
-	boss.last_attack_name = chosen
-
-	boss.debug_print("Attack picked: %s from %s" % [chosen, filtered])
-
-	return chosen
+var unlocked_combos: Array[String] = [
+	"thrust",
+	"combo",
+	"holy_slash",
+	"holy_dash"
+]
 
 
-func pick_phase_one_combo() -> Array[String]:
-	var possible: Array[String] = []
+#ATTACK TRACKING
 
-	if not boss.is_on_floor():
-		possible.append("air_attack")
-
-		if boss.player != null and boss.player.global_position.y < boss.global_position.y - 30.0:
-			possible.append("air_above_attack")
-
-		return [pick_from_bag(possible, phase_one_attack_bag, "phase one air")]
-
-	possible = [
-		"dash",
-		"combo_1",
-		"air_attack",
-		"thrust_attack"
-	]
-
-	if boss.player != null and boss.player.global_position.y < boss.global_position.y - 30.0:
-		possible.append("air_above_attack")
-
-	return [pick_from_bag(possible, phase_one_attack_bag, "phase one")]
+var combo_use_count: int = 0
+var last_combo_name: String = ""
 
 
-func pick_unlocked_combo() -> Array[String]:
-	var possible: Array[String] = []
+#COMBO PICKING
 
-	if not boss.is_on_floor():
-		possible.append("air_attack")
+func pick_phase_one_combo() -> String:
+	return pick_attack_from_list(phase_one_combos)
 
-		if boss.player != null and boss.player.global_position.y < boss.global_position.y - 30.0:
-			possible.append("air_above_attack")
 
-		return [pick_from_bag(possible, holy_attack_bag, "unlocked air")]
+func pick_unlocked_combo() -> String:
+	return pick_attack_from_list(unlocked_combos)
 
-	possible = [
-		"dash",
-		"combo_1",
-		"air_attack",
-		"thrust_attack"
-	]
 
-	if boss.player != null and boss.player.global_position.y < boss.global_position.y - 30.0:
-		possible.append("air_above_attack")
+func pick_attack_from_list(attack_list: Array[String]) -> String:
+	var possible_attacks: Array[String] = attack_list.duplicate()
 
-	if boss.has_reached_half_hp_once:
-		var holy_roll: int = randi() % 100
+	if last_combo_name != "":
+		possible_attacks.erase(last_combo_name)
 
-		if holy_roll < boss.holy_attack_chance:
-			possible.append("holy_dash")
-			possible.append("holy_projectile")
+	if last_combo_name == "combo":
+		possible_attacks.erase("combo")
 
-	var chosen: String = pick_from_bag(possible, holy_attack_bag, "unlocked")
+	if possible_attacks.is_empty():
+		possible_attacks = attack_list.duplicate()
 
-	match chosen:
+	var chosen_attack: String = possible_attacks.pick_random()
+
+	last_combo_name = chosen_attack
+
+	return chosen_attack
+
+
+#COMBO EXECUTION
+
+func execute_combo(combo_name: String) -> void:
+	if boss.attacking:
+		return
+
+	match combo_name:
+		"thrust":
+			await do_thrust()
+
+		"combo":
+			await do_combo()
+
+		"holy_slash":
+			await do_holy_slash()
+
 		"holy_dash":
-			return ["holy_dash"]
-		"holy_projectile":
-			return ["holy_projectile"]
-		_:
-			return [chosen]
+			await do_holy_dash()
 
 
-func execute_combo(combo: Array[String]) -> void:
-	if boss.attacking or boss.dead or boss.attack_spacing_locked:
-		return
+#THRUST ATTACK
 
-	if combo.is_empty():
-		return
-
+func do_thrust() -> void:
+	boss.attacking = true
 	boss.can_attack = false
 	boss.attack_spacing_locked = true
-	boss.attack_timer.start()
-	boss.attacking = true
-	boss.was_running = false
-
-	var used_rest_attack: bool = false
-
-	boss.debug_print("Combo started: %s" % combo)
-
-	for attack_name: String in combo:
-		if boss.dead or boss.player == null:
-			break
-
-		boss.movement.face_player()
-		boss.debug_print("Attack used: %s" % attack_name)
-
-		match attack_name:
-			"dash":
-				await do_dash_attack()
-
-			"air_above_attack":
-				await do_air_above_attack()
-
-			"air_attack":
-				await do_air_attack()
-
-			"thrust_attack":
-				await do_thrust_attack()
-
-			"combo_1":
-				await do_combo_1()
-				used_rest_attack = true
-
-			"holy_dash":
-				await do_holy_dash_attack()
-				used_rest_attack = true
-
-			"holy_projectile":
-				await do_holy_attack()
-
-			_:
-				boss.debug_print("Unknown attack name: %s" % attack_name)
-
-		disable_all_hitboxes()
-
-	if used_rest_attack and not boss.dead:
-		await play_rest("heavy attack finished")
-
-	boss.attacking = false
-	boss.state = boss.BossState.IDLE
-
-	await boss.get_tree().create_timer(boss.combo_cooldown).timeout
-
-	boss.attack_spacing_locked = false
-	boss.debug_print("Combo cooldown finished.")
-
-
-func play_rest(reason: String) -> void:
-	disable_all_hitboxes()
-	boss.movement.stop_all_velocity()
-
-	boss.rest_locked = true
-	boss.attacking = true
-	boss.state = boss.BossState.REST
-
-	boss.sprite.play("rest")
-
-	boss.debug_print("Rest opening started: %s" % reason)
-
-	await wait_for_animation_done("rest")
-
-	boss.rest_locked = false
-
-	boss.debug_print("Rest opening finished.")
-
-func do_air_above_attack() -> void:
 	boss.state = boss.BossState.ATTACK
-	boss.movement.face_player()
-
-	var dir: int = boss.facing_dir
-	var target_position: Vector2 = boss.player.global_position + Vector2(-40.0 * float(dir), -80.0)
-
-	boss.sprite.play("air_above_attack")
-
-	boss.global_position = target_position
-	boss.velocity = Vector2.ZERO
-
-	await boss.get_tree().create_timer(0.20).timeout
-
-	boss.movement.face_player()
-	boss.velocity.y = 300.0
-
-	disable_all_hitboxes()
-
-	boss.air_above_hitbox.damage = boss.air_damage
-	boss.air_above_hitbox.flip(float(boss.facing_dir))
-	boss.air_above_hitbox.activate(0.24)
-
-	await wait_for_animation_done("air_above_attack")
-
-	disable_all_hitboxes()
-
-	boss.global_position.x += -float(boss.facing_dir) * 24.0
-	boss.velocity = Vector2.ZERO
-
-
-func do_air_attack() -> void:
-	boss.state = boss.BossState.ATTACK
-	boss.movement.face_player()
-
-	var dir: int = boss.facing_dir
-
-	boss.sprite.play("air_attack")
-
-	boss.velocity.x = float(dir) * boss.run_speed * 2.2
-	boss.velocity.y = boss.jump_velocity
-
-	await boss.get_tree().create_timer(0.16).timeout
-
-	disable_all_hitboxes()
-
-	boss.combo_hitbox.damage = boss.air_damage
-	boss.combo_hitbox.flip(float(dir))
-	boss.combo_hitbox.activate(0.28)
-
-	await wait_for_animation_done("air_attack")
-
-	disable_all_hitboxes()
 
 	boss.velocity.x = 0.0
-	boss.global_position.x += -float(dir) * 20.0
 
-func do_thrust_attack() -> void:
-	boss.state = boss.BossState.ATTACK
-	boss.movement.stop_velocity()
-	boss.movement.face_player()
+	face_player()
 
 	boss.sprite.play("thrust_attack")
 
-	await boss.get_tree().create_timer(0.18).timeout
+	await wait_for_animation_frame(3)
+	await boss.get_tree().create_timer(0.1).timeout
+
+	boss.thrust_hitbox.position.y = -4.0
+
+	enable_hitbox(
+		boss.thrust_hitbox,
+		boss.thrust_damage
+	)
+
+	await boss.get_tree().create_timer(
+		boss.thrust_active_time
+	).timeout
 
 	disable_all_hitboxes()
 
 	boss.thrust_hitbox.position.y = 0.0
-	boss.thrust_hitbox.damage = boss.thrust_damage
-	boss.thrust_hitbox.flip(float(boss.facing_dir))
-	boss.thrust_hitbox.activate(boss.thrust_active_time)
 
-	await wait_for_animation_done("thrust_attack")
+	await wait_for_animation_finish()
 
-	disable_all_hitboxes()
+	finish_attack()
 
-func do_dash_attack() -> void:
+
+#COMBO ATTACK
+
+func do_combo() -> void:
+	boss.attacking = true
+	boss.can_attack = false
+	boss.attack_spacing_locked = true
 	boss.state = boss.BossState.ATTACK
-	boss.movement.face_player()
-
-	var dir: int = boss.facing_dir
-	var dash_time: float = 0.0
-
-	boss.sprite.play("dash")
-
-	await boss.get_tree().create_timer(boss.dash_startup).timeout
-
-	disable_all_hitboxes()
-
-	boss.dash_hitbox.damage = boss.dash_damage
-	boss.dash_hitbox.flip(float(dir))
-	boss.dash_hitbox.set_active(true)
-
-	while dash_time < boss.dash_max_time and not boss.dead:
-		if boss.movement.is_wall_in_dash_direction(dir):
-			break
-
-		boss.velocity.x = float(dir) * boss.dash_speed
-		boss.move_and_slide()
-
-		dash_time += boss.get_physics_process_delta_time()
-		await boss.get_tree().physics_frame
 
 	boss.velocity.x = 0.0
-	boss.dash_hitbox.set_active(false)
 
-	await wait_for_animation_done("dash")
-
-	disable_all_hitboxes()
-
-func do_combo_1() -> void:
-	boss.state = boss.BossState.ATTACK
-	boss.movement.stop_velocity()
-	boss.movement.face_player()
+	face_player()
 
 	boss.sprite.play("combo_1")
 
-	await boss.get_tree().create_timer(0.15).timeout
+	await wait_for_animation_frame(4)
+
+	enable_hitbox(
+		boss.combo_hitbox,
+		boss.combo_damage
+	)
+
+	await boss.get_tree().create_timer(0.48).timeout
 
 	disable_all_hitboxes()
 
-	boss.combo_hitbox.damage = boss.combo_damage
-	boss.combo_hitbox.flip(float(boss.facing_dir))
-	boss.combo_hitbox.set_active(true)
+	await wait_for_animation_frame(18)
 
-	await boss.get_tree().create_timer(1.65).timeout
+	boss.thrust_hitbox.position.y = -4.0
 
-	boss.movement.face_player()
+	enable_hitbox(
+		boss.thrust_hitbox,
+		boss.thrust_damage
+	)
 
-	boss.combo_hitbox.set_active(false)
+	await boss.get_tree().create_timer(
+		boss.thrust_active_time
+	).timeout
+
+	disable_all_hitboxes()
 
 	boss.thrust_hitbox.position.y = 0.0
-	boss.thrust_hitbox.damage = boss.thrust_damage
-	boss.thrust_hitbox.flip(float(boss.facing_dir))
-	boss.thrust_hitbox.set_active(true)
 
-	await boss.get_tree().create_timer(boss.thrust_active_time).timeout
+	await wait_for_animation_finish()
 
-	boss.thrust_hitbox.set_active(false)
+	combo_use_count += 1
 
-	await wait_for_animation_done("combo_1")
+	if combo_use_count >= 4:
+		combo_use_count = 0
+		await play_rest()
 
-	disable_all_hitboxes()
+	finish_attack()
 
 
-func do_holy_dash_attack() -> void:
-	if not boss.has_reached_half_hp_once:
-		await do_dash_attack()
-		return
+#HOLY SLASH
 
+func do_holy_slash() -> void:
+	boss.attacking = true
+	boss.can_attack = false
+	boss.attack_spacing_locked = true
 	boss.state = boss.BossState.ATTACK
-	boss.movement.face_player()
-
-	var dir: int = boss.facing_dir
-	var dash_time: float = 0.0
-	var desired_x: float = boss.player.global_position.x + float(dir) * boss.dash_overshoot_distance
-
-	boss.movement.stop_velocity()
-	boss.sprite.play("holy_dash_attack")
-
-	await boss.get_tree().create_timer(boss.dash_startup).timeout
-
-	disable_all_hitboxes()
-
-	boss.dash_hitbox.damage = boss.dash_damage
-	boss.dash_hitbox.flip(float(dir))
-	boss.dash_hitbox.set_active(true)
-
-	while abs(boss.global_position.x - desired_x) > 8.0 and not boss.dead:
-		if boss.movement.is_wall_in_dash_direction(dir):
-			break
-
-		boss.velocity.x = float(dir) * boss.dash_speed
-		boss.move_and_slide()
-
-		dash_time += boss.get_physics_process_delta_time()
-
-		if dash_time >= boss.dash_max_time:
-			break
-
-		await boss.get_tree().physics_frame
 
 	boss.velocity.x = 0.0
-	boss.dash_hitbox.set_active(false)
 
-	if not boss.movement.is_wall_in_dash_direction(dir):
-		boss.global_position.x = desired_x
+	face_player()
 
-	await wait_for_animation_done("holy_dash_attack")
+	boss.sprite.play("holy_slash")
+
+	await wait_for_animation_frame(5)
+
+	enable_hitbox(
+		boss.slash_hitbox,
+		boss.holy_damage
+	)
+
+	await boss.get_tree().create_timer(0.2).timeout
 
 	disable_all_hitboxes()
 
+	await wait_for_animation_finish()
 
-func do_holy_attack() -> void:
-	if not boss.has_reached_half_hp_once:
-		await do_combo_1()
-		return
+	finish_attack()
 
+
+#HOLY DASH
+
+func do_holy_dash() -> void:
+	boss.attacking = true
+	boss.can_attack = false
+	boss.attack_spacing_locked = true
 	boss.state = boss.BossState.ATTACK
-	boss.movement.stop_velocity()
-	boss.movement.face_player()
 
-	boss.sprite.play("holy_big_heal")
+	face_player()
 
-	await boss.get_tree().create_timer(0.55).timeout
+	var starting_dir: int = boss.facing_dir
 
-	spawn_holy_projectile()
+	if boss.player != null:
+		boss.global_position.x = boss.player.global_position.x + float(starting_dir) * 20.0
+		boss.global_position.y = boss.player.global_position.y
+		face_player()
 
-	await wait_for_animation_done("holy_big_heal")
+	boss.sprite.play("holy_dash_attack")
 
+	await boss.get_tree().create_timer(
+		boss.dash_startup
+	).timeout
 
-func spawn_holy_projectile() -> void:
-	if boss.holy_projectile_scene == null:
-		boss.debug_print("holy_projectile_scene is not assigned.")
-		return
+	enable_hitbox(
+		boss.dash_hitbox,
+		boss.dash_damage
+	)
 
-	var projectile: Node = boss.holy_projectile_scene.instantiate()
-	boss.get_tree().current_scene.add_child(projectile)
+	var dash_timer: float = 0.0
 
-	if projectile is Node2D:
-		var projectile_2d: Node2D = projectile as Node2D
-		projectile_2d.global_position = boss.global_position + Vector2(30.0 * float(boss.facing_dir), -20.0)
+	while dash_timer < boss.dash_max_time:
+		if boss.movement.is_wall_in_dash_direction(
+			boss.facing_dir
+		):
+			break
 
-	projectile.set("direction", (boss.player.global_position - boss.global_position).normalized())
-	projectile.set("damage", boss.holy_damage)
+		boss.velocity.x = (
+			float(boss.facing_dir)
+			* boss.dash_speed
+		)
 
+		dash_timer += get_process_delta_time()
 
-func wait_for_animation_done(animation_name: String) -> void:
-	if boss.sprite.animation != animation_name:
-		boss.sprite.play(animation_name)
-
-	while boss.sprite.animation == animation_name and boss.sprite.is_playing():
 		await boss.get_tree().process_frame
 
+	disable_all_hitboxes()
 
-func pick_from_bag(possible: Array[String], bag: Array[String], label: String) -> String:
-	# Remove attacks from the bag that are no longer allowed.
-	for i: int in range(bag.size() - 1, -1, -1):
-		if not possible.has(bag[i]):
-			bag.remove_at(i)
+	boss.velocity.x = 0.0
 
-	# Refill the bag only when everything has been used.
-	if bag.is_empty():
-		for attack_name: String in possible:
-			bag.append(attack_name)
+	await wait_for_animation_finish()
 
-		boss.debug_print("Attack bag refilled [%s]: %s" % [label, bag])
+	finish_attack()
 
-	var chosen: String = bag.pick_random()
-	bag.erase(chosen)
 
-	boss.last_attack_name = chosen
+#REST ANIMATION
 
-	boss.debug_print("Attack picked from bag [%s]: %s | remaining:%s" % [
-		label,
-		chosen,
-		bag
-	])
+func play_rest() -> void:
+	boss.state = boss.BossState.REST
+	boss.rest_locked = true
+	boss.velocity = Vector2.ZERO
 
-	return chosen
+	boss.sprite.play("rest")
+
+	await wait_for_animation_finish()
+
+	boss.rest_locked = false
+
+
+#HITBOX CONTROL
+
+func enable_hitbox(
+	hitbox: AttackArea,
+	damage: float
+) -> void:
+
+	if hitbox == null:
+		return
+
+	hitbox.damage = damage
+
+	flip_hitbox(hitbox)
+
+	hitbox.monitoring = true
+	hitbox.visible = true
+
 
 func disable_all_hitboxes() -> void:
-	if boss.thrust_hitbox != null:
-		boss.thrust_hitbox.set_active(false)
+	var hitboxes: Array = [
+		boss.thrust_hitbox,
+		boss.slash_hitbox,
+		boss.dash_hitbox,
+		boss.combo_hitbox,
+		boss.air_above_hitbox
+	]
 
-	if boss.slash_hitbox != null:
-		boss.slash_hitbox.set_active(false)
+	for hitbox in hitboxes:
+		if hitbox == null:
+			continue
 
-	if boss.dash_hitbox != null:
-		boss.dash_hitbox.set_active(false)
+		hitbox.monitoring = false
+		hitbox.visible = false
 
-	if boss.combo_hitbox != null:
-		boss.combo_hitbox.set_active(false)
 
-	if boss.air_above_hitbox != null:
-		boss.air_above_hitbox.set_active(false)
+#HITBOX POSITIONING
+
+func flip_hitbox(hitbox: Node2D) -> void:
+	if hitbox == null:
+		return
+
+	# Uses the AttackArea flip function for normal hitbox direction.
+	if hitbox.has_method("flip"):
+		hitbox.flip(float(boss.facing_dir))
+
+	# Positions holy slash slightly left when Joanna faces left.
+	if hitbox == boss.slash_hitbox:
+		if boss.facing_dir < 0:
+			hitbox.position.x = -10.0
+		else:
+			hitbox.position.x = 10.0
+
+		return
+
+	# Positions regular hitboxes by their current editor offset.
+	var pos := hitbox.position
+	pos.x = abs(pos.x) * boss.facing_dir
+	hitbox.position = pos
+
+
+#COLLISION NODE LOOKUP
+
+func get_first_collision_node(
+	hitbox: Node
+) -> Node2D:
+
+	for child in hitbox.get_children():
+		if child is CollisionShape2D:
+			return child as Node2D
+
+		if child is CollisionPolygon2D:
+			return child as Node2D
+
+	return null
+
+
+#ATTACK FINISH
+
+func finish_attack() -> void:
+	boss.attacking = false
+	boss.attack_spacing_locked = false
+	boss.state = boss.BossState.IDLE
+
+	boss.attack_timer.start(
+		boss.phase_two_attack_cooldown
+		if boss.phase_two
+		else boss.attack_cooldown
+	)
+
+
+#FACE PLAYER
+
+func face_player() -> void:
+	if boss.player == null:
+		return
+
+	var dir: int = int(sign(
+		boss.player.global_position.x
+		- boss.global_position.x
+	))
+
+	if dir != 0:
+		boss.movement.face_direction(dir)
+
+
+#ANIMATION HELPERS
+
+func wait_for_animation_finish() -> void:
+	await boss.sprite.animation_finished
+
+
+func wait_for_animation_frame(
+	target_frame: int
+) -> void:
+
+	while boss.sprite.frame < target_frame:
+		await boss.get_tree().process_frame

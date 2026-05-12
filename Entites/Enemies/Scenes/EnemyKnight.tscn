@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://cislvqw23gs3h" path="res://Entites/Enemies/Assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Idle.png" id="5_ixdea"]
 [ext_resource type="Texture2D" uid="uid://ciq1bxkddy1ur" path="res://Entites/Enemies/Assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Run.png" id="7_xtg4o"]
 [ext_resource type="Texture2D" uid="uid://53alob5gwq4u" path="res://Entites/Enemies/Assets/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets/_Hit.png" id="8_g40jj"]
-[ext_resource type="Script" uid="uid://btmdv5p07ffl5" path="res://General/Scripts/hazard_area.gd" id="9_sf48j"]
 [ext_resource type="Script" uid="uid://buu3vcea6n7iy" path="res://General/Scripts/attack_area.gd" id="10_a54ke"]
 [ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://00_Global/Scripts/damageable_area.gd" id="11_2a4rr"]
 [ext_resource type="AudioStream" uid="uid://cxrvhkvq03rwv" path="res://00_Global/Audio/aargh.wav" id="12_h0meo"]
@@ -388,9 +387,6 @@ size = Vector2(17, 35)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e8aw0"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hucsb"]
-size = Vector2(19, 36)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w6ma0"]
 size = Vector2(40, 19)
 
@@ -401,7 +397,7 @@ size = Vector2(19, 36)
 collision_layer = 32
 collision_mask = 17
 script = ExtResource("1_1p4av")
-max_health = 20.0
+max_health = 4.0
 damage = 2.0
 attack_cooldown = 1.5
 knockback_force = 200.0
@@ -447,18 +443,6 @@ shape = SubResource("CircleShape2D_e8aw0")
 debug_color = Color(0.6036141, 0.54231477, 0, 0.41960785)
 
 [node name="EngageTimer" type="Timer" parent="." unique_id=742009395]
-
-[node name="HazardArea" type="Area2D" parent="." unique_id=336339049]
-z_index = 1
-collision_layer = 4
-collision_mask = 16
-script = ExtResource("9_sf48j")
-metadata/_custom_type_script = "uid://btmdv5p07ffl5"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HazardArea" unique_id=1425450177]
-position = Vector2(-1.5, -18)
-shape = SubResource("RectangleShape2D_hucsb")
-debug_color = Color(1, 0, 0, 0.41960785)
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=597562573]
 collision_layer = 0

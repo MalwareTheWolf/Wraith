@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bw3rv0bpvnnnt" path="res://00_Global/Scripts/save_point.gd" id="1_2eb76"]
 [ext_resource type="Texture2D" uid="uid://byarv75vmqnef" path="res://General/Sprites/GandalfHardcore Portal sheet.png" id="1_8uow3"]
-[ext_resource type="FontFile" uid="uid://l8la2unbwt8u" path="res://Fonts/HelpMe.ttf" id="3_hwsqi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2eb76"]
 atlas = ExtResource("1_8uow3")
@@ -97,9 +96,6 @@ fill = 1
 fill_from = Vector2(0.48181817, 0.5318182)
 fill_to = Vector2(0, 0.013636364)
 
-[sub_resource type="LabelSettings" id="LabelSettings_3lk3g"]
-font = ExtResource("3_hwsqi")
-
 [node name="SavePoint" type="Node2D" unique_id=1223870188]
 script = ExtResource("1_2eb76")
 
@@ -125,13 +121,5 @@ energy = 8.0
 texture = SubResource("GradientTexture2D_2eb76")
 
 [node name="Node2D" type="Node2D" parent="." unique_id=1327258891]
-
-[node name="Label" type="Label" parent="Node2D" unique_id=1660802031]
-offset_left = -47.0
-offset_top = -47.0
-offset_right = 49.0
-offset_bottom = -24.0
-text = "Game Saved"
-label_settings = SubResource("LabelSettings_3lk3g")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Node2D" unique_id=1423338069]

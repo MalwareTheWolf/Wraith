@@ -347,7 +347,6 @@
 [ext_resource type="Script" uid="uid://cunkd1wonlvhp" path="res://00_Global/Scripts/damageable_area.gd" id="319_sfy04"]
 [ext_resource type="Script" uid="uid://b6jhdh8ofctol" path="res://movement_controller.gd" id="321_blfpx"]
 [ext_resource type="AudioStream" uid="uid://ewwuigqbpfag" path="res://Free Pack—Epic Fantasy & Medieval Magic BGM (For Creator, MP3 Only)/mp3/Crimson Bastion.mp3" id="321_icreq"]
-[ext_resource type="Script" uid="uid://ngekla6l7hhw" path="res://debug_controller.gd" id="322_b0w05"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_p0r1n"]
 animations = [{
@@ -1553,9 +1552,6 @@ script = ExtResource("319_1aitd")
 [node name="MovementController" type="Node" parent="." unique_id=729910335]
 script = ExtResource("321_blfpx")
 
-[node name="DebugController" type="Node" parent="." unique_id=1023851638]
-script = ExtResource("322_b0w05")
-
 [node name="thrust" type="Area2D" parent="." unique_id=812004469]
 position = Vector2(33, 8)
 scale = Vector2(1.019119, 1)
@@ -1638,13 +1634,6 @@ debug_color = Color(0.6036141, 0.54231477, 0, 0.41960785)
 [node name="FloorDetector" type="RayCast2D" parent="." unique_id=725275194]
 position = Vector2(10, 19)
 target_position = Vector2(0, 5)
-
-[node name="StateLabel" type="Label" parent="." unique_id=1983173198]
-offset_left = -24.0
-offset_top = -191.0
-offset_right = 24.0
-offset_bottom = -168.0
-text = "Label"
 
 [node name="BossMusicPlayer" type="AudioStreamPlayer" parent="." unique_id=471955833]
 stream = ExtResource("321_icreq")

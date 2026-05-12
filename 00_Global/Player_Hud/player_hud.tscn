@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://dbtlhp4yov65r" path="res://00_Global/Player_Hud/player_hud.gd" id="1_nqvf5"]
 [ext_resource type="Texture2D" uid="uid://b5mxlt2k37fll" path="res://00_Global/Player_Hud/EvilHealthBar.png" id="1_ym8xv"]
 [ext_resource type="Texture2D" uid="uid://jbhtwms6kuid" path="res://00_Global/Player_Hud/EvilHealthBarProg.png" id="2_nqvf5"]
-[ext_resource type="Script" uid="uid://d0qcypf5rlfhc" path="res://00_Global/Player_Hud/debug_menu.gd" id="4_5he8h"]
 [ext_resource type="FontFile" uid="uid://l8la2unbwt8u" path="res://Fonts/HelpMe.ttf" id="4_dofns"]
 
 [sub_resource type="Gradient" id="Gradient_ym8xv"]
@@ -113,67 +112,6 @@ text = "Load last Checkpoint"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit To Menu"
-
-[node name="Debug_Menu" type="Control" parent="." unique_id=187546164]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 243.0
-offset_right = 481.0
-offset_bottom = 268.0
-script = ExtResource("4_5he8h")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Debug_Menu" unique_id=1162162471]
-layout_mode = 0
-offset_left = 118.0
-offset_top = 1.0
-offset_right = 354.0
-offset_bottom = 312.0
-scale = Vector2(0.5, 0.5)
-
-[node name="Particles" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1524327880]
-layout_mode = 2
-text = "Particles"
-
-[node name="GameOver" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1049881917]
-layout_mode = 2
-text = "Death"
-
-[node name="Unlock_Ability" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=928228176]
-layout_mode = 2
-text = "Unlock"
-
-[node name="Test Spell2" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1186180942]
-layout_mode = 2
-text = "Spell (not ready)"
-
-[node name="Test Spell3" type="Button" parent="Debug_Menu/VBoxContainer" unique_id=1825199670]
-layout_mode = 2
-text = "Spell (not ready)"
-
-[node name="Spell_Modifier" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=1124562523]
-layout_mode = 2
-text = "Spell (not ready)"
-
-[node name="Infinite_Mana" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=424602503]
-layout_mode = 2
-text = "Spell (not ready)"
-
-[node name="Infinite_Health" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=944785567]
-layout_mode = 2
-text = "Infinite Health"
-
-[node name="No_Cooldowns" type="CheckButton" parent="Debug_Menu/VBoxContainer" unique_id=981182243]
-layout_mode = 2
-text = "No Cooldowns"
-
-[node name="Label" type="Label" parent="Debug_Menu" unique_id=769654545]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 2.0
-offset_right = 230.0
-offset_bottom = 182.0
-scale = Vector2(0.5, 0.5)
-autowrap_mode = 2
 
 [node name="WIN" type="Control" parent="." unique_id=442216047]
 visible = false

@@ -80,20 +80,18 @@ tile_map_data = PackedByteArray("AAAAACAAAQAkAAEAAAAAACEAAQAkAAIAAAAAACIAAQAkAAM
 tile_set = ExtResource("6_jijdk")
 
 [node name="LevelTransition" parent="." unique_id=1049241325 instance=ExtResource("7_781dj")]
-position = Vector2(1, 622)
-size = 19
-target_level = "uid://d04orqdkvpd2t"
-
-[node name="LevelTransition2" parent="." unique_id=195372818 instance=ExtResource("7_781dj")]
-position = Vector2(2048, 619)
-size = 19
-location = 1
+position = Vector2(-4, 525)
+size = 3
+target_level = "uid://dyaw7yxm0ttd7"
+target_side = 1
 
 [node name="Joanna" parent="." unique_id=1367672001 instance=ExtResource("8_wpewr")]
 position = Vector2(998, 506)
+max_hp = 20.0
+chase_until_distance = 3.0
 
 [node name="PlayerSpawn" type="Node2D" parent="." unique_id=1120049988]
-position = Vector2(22, 495)
+position = Vector2(79, 485)
 script = ExtResource("9_wg3lm")
 metadata/_custom_type_script = "uid://hmuvjhch5nnj"
 

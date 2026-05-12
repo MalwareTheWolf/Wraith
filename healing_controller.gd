@@ -1,252 +1,274 @@
 class_name JoannaHealingController
 extends Node
 
+#HEALING CONTROLLER
+#Handles:
+# - Healing
+# - Buffing
+# - Phase 2 transition
+# - Heal interruption
+# - Heal logic
+
+
+#NODE REFERENCES
+
 @onready var boss = get_parent()
 
+
+#HEAL CHOICES
 
 func choose_heal_type() -> String:
 	if not boss.healing_enabled:
 		return ""
 
-	if boss.heal_locked or boss.attacking or boss.heal_cancel_recovering:
+	if boss.heal_locked:
 		return ""
 
-	if not boss.can_attack:
+	if boss.attacking:
 		return ""
 
 	if boss.current_hp >= boss.max_hp:
 		return ""
 
-	var hp_percent: float = boss.current_hp / boss.max_hp
+	var elapsed: float = (
+		float(Time.get_ticks_msec()
+		- boss.last_heal_time_msec)
+		/ 1000.0
+	)
 
-	if hp_percent > boss.heal_unlock_hp_threshold:
+	if elapsed < boss.heal_cooldown:
 		return ""
 
-	var now_msec: int = Time.get_ticks_msec()
-	var fight_elapsed: float = float(now_msec - boss.fight_start_time_msec) / 1000.0
-	var heal_elapsed: float = float(now_msec - boss.last_heal_time_msec) / 1000.0
+	var hp_percent: float = (
+		boss.current_hp / boss.max_hp
+	)
 
-	if fight_elapsed < boss.heal_start_delay:
-		return ""
-
-	if heal_elapsed < boss.heal_cooldown:
-		return ""
-
-	var can_big_heal: bool = hp_percent <= boss.big_heal_hp_threshold and boss.big_heals_used < boss.big_heal_max_uses
-	var can_small_heal: bool = hp_percent <= boss.small_heal_hp_threshold and boss.small_heals_used < boss.small_heal_max_uses
-
-	if not can_big_heal and not can_small_heal:
-		return ""
-
-	var roll: int = randi() % 100
-
-	if roll >= boss.heal_chance_percent:
-		boss.debug_print("Heal skipped. Roll:%s Chance:%s" % [roll, boss.heal_chance_percent])
-		return ""
-
-	if can_big_heal:
+	if (
+		hp_percent <= boss.big_heal_hp_threshold
+		and boss.big_heals_used
+		< boss.big_heal_max_uses
+	):
 		return "big"
 
-	if can_small_heal:
+	if (
+		hp_percent <= boss.small_heal_hp_threshold
+		and boss.small_heals_used
+		< boss.small_heal_max_uses
+	):
 		return "small"
 
 	return ""
 
 
-func do_heal(heal_type: String) -> void:
+#HEAL EXECUTION
+
+func do_heal(type: String) -> void:
 	if boss.heal_locked:
 		return
 
 	boss.attacking = true
-	boss.can_attack = false
 	boss.heal_locked = true
 	boss.heal_interrupted = false
-	boss.heal_cancel_recovering = false
-	boss.last_heal_time_msec = Time.get_ticks_msec()
-
-	boss.attack_timer.start()
 	boss.state = boss.BossState.HEAL
-	boss.movement.stop_velocity()
-	boss.attacks.disable_all_hitboxes()
+	boss.velocity.x = 0.0
 
-	var amount: float = 0.0
-	var heal_anim: String = "holy_heal"
+	match type:
+		"small":
+			await do_small_heal()
 
-	if heal_type == "big":
-		boss.big_heals_used += 1
-		amount = boss.big_heal_amount
-		heal_anim = "holy_big_heal"
-	else:
-		boss.small_heals_used += 1
-		amount = boss.small_heal_amount
-		heal_anim = "holy_heal"
-
-	boss.debug_print("Heal started | Type:%s Amount:%s" % [heal_type, amount])
-
-	boss.sprite.play(heal_anim)
-
-	while boss.sprite.animation == heal_anim and boss.sprite.is_playing() and not boss.heal_interrupted and not boss.dead:
-		await boss.get_tree().process_frame
-
-	if boss.dead:
-		return
+		"big":
+			await do_big_heal()
 
 	if boss.heal_interrupted:
-		boss.debug_print("Heal interrupted. No HP restored.")
-		await play_interrupted_rest()
-		boss.attacking = false
-		boss.heal_locked = false
-		boss.heal_cancel_recovering = false
-		boss.state = boss.BossState.IDLE
 		return
 
-	boss.current_hp = min(boss.current_hp + amount, boss.max_hp)
-	boss.health_changed.emit(boss.current_hp, boss.max_hp)
-
-	boss.debug_print("Heal completed | Restored:%s HP:%s/%s" % [
-		amount,
-		boss.current_hp,
-		boss.max_hp
-	])
+	boss.last_heal_time_msec = (
+		Time.get_ticks_msec()
+	)
 
 	boss.attacking = false
 	boss.heal_locked = false
 	boss.state = boss.BossState.IDLE
 
-	boss.attack_spacing_locked = true
-	await boss.get_tree().create_timer(boss.combo_cooldown).timeout
-	boss.attack_spacing_locked = false
+	boss.attack_timer.start(
+		boss.attack_cooldown
+	)
 
 
-func cancel_heal_with_knockback(attack_area: AttackArea) -> void:
-	if boss.state != boss.BossState.HEAL:
+#SMALL HEAL
+
+func do_small_heal() -> void:
+	boss.sprite.play("holy_heal")
+
+	await boss.get_tree().create_timer(
+		boss.heal_start_delay
+	).timeout
+
+	if boss.heal_interrupted:
 		return
 
-	boss.heal_cancel_recovering = true
-	boss.heal_interrupted = true
-	boss.attacks.disable_all_hitboxes()
+	boss.current_hp += (
+		boss.small_heal_amount
+	)
 
-	boss.sprite.stop()
+	boss.current_hp = min(
+		boss.current_hp,
+		boss.max_hp
+	)
 
-	var knock_dir: int = int(sign(boss.global_position.x - attack_area.global_position.x))
+	boss.small_heals_used += 1
 
-	if knock_dir == 0:
-		knock_dir = -boss.facing_dir
+	boss.health_changed.emit(
+		boss.current_hp,
+		boss.max_hp
+	)
 
-	boss.velocity.x = float(knock_dir) * boss.heal_knockback_force
-	boss.velocity.y = -boss.heal_knockback_up_force
-
-	boss.state = boss.BossState.REST
+	await boss.sprite.animation_finished
 
 
-func play_interrupted_rest() -> void:
-	boss.attacks.disable_all_hitboxes()
-	boss.movement.stop_all_velocity()
+#BIG HEAL
 
-	boss.rest_locked = true
-	boss.attacking = true
-	boss.state = boss.BossState.REST
+func do_big_heal() -> void:
+	boss.sprite.play("holy_big_heal")
 
-	boss.sprite.play("rest")
+	await boss.get_tree().create_timer(
+		boss.heal_start_delay
+	).timeout
 
-	boss.debug_print("Rest opening started: interrupted heal")
+	if boss.heal_interrupted:
+		return
 
-	await boss.attacks.wait_for_animation_done("rest")
+	boss.current_hp += (
+		boss.big_heal_amount
+	)
 
-	boss.rest_locked = false
-	boss.velocity.x = 0.0
+	boss.current_hp = min(
+		boss.current_hp,
+		boss.max_hp
+	)
 
-	boss.debug_print("Rest opening finished: interrupted heal")
+	boss.big_heals_used += 1
 
+	boss.health_changed.emit(
+		boss.current_hp,
+		boss.max_hp
+	)
+
+	await boss.sprite.animation_finished
+
+
+#BUFFING
 
 func should_buff() -> bool:
-	if boss.buffs_used >= boss.max_buffs:
-		return false
-
 	if boss.buffed:
 		return false
 
-	if boss.current_hp > boss.max_hp * 0.65:
+	if boss.buffs_used >= boss.max_buffs:
 		return false
 
-	if not boss.can_attack:
+	if not boss.phase_two:
 		return false
 
-	if boss.attacking:
-		return false
-
-	return randi() % 100 < 25
+	return true
 
 
 func do_buff() -> void:
-	if boss.attacking:
-		return
-
 	boss.attacking = true
-	boss.can_attack = false
-	boss.attack_timer.start()
 	boss.state = boss.BossState.BUFF
-	boss.movement.stop_velocity()
-	boss.attacks.disable_all_hitboxes()
-
-	boss.buffs_used += 1
+	boss.velocity.x = 0.0
 
 	boss.sprite.play("holy_buff")
 
-	await boss.attacks.wait_for_animation_done("holy_buff")
+	await boss.sprite.animation_finished
 
-	if boss.dead:
-		return
+	boss.walk_speed *= (
+		boss.buff_speed_multiplier
+	)
+
+	boss.run_speed *= (
+		boss.buff_speed_multiplier
+	)
+
+	boss.dash_speed *= (
+		boss.buff_speed_multiplier
+	)
+
+	boss.slash_damage *= (
+		boss.buff_damage_multiplier
+	)
+
+	boss.combo_damage *= (
+		boss.buff_damage_multiplier
+	)
+
+	boss.dash_damage *= (
+		boss.buff_damage_multiplier
+	)
 
 	boss.buffed = true
-
-	boss.walk_speed *= boss.buff_speed_multiplier
-	boss.run_speed *= boss.buff_speed_multiplier
-	boss.dash_speed *= boss.buff_speed_multiplier
-	boss.slash_damage *= boss.buff_damage_multiplier
-	boss.thrust_damage *= boss.buff_damage_multiplier
-	boss.dash_damage *= boss.buff_damage_multiplier
-	boss.holy_damage *= boss.buff_damage_multiplier
-	boss.combo_damage *= boss.buff_damage_multiplier
-	boss.air_damage *= boss.buff_damage_multiplier
+	boss.buffs_used += 1
 
 	boss.attacking = false
 	boss.state = boss.BossState.IDLE
 
 
+#PHASE TWO
+
 func enter_phase_two() -> void:
 	if boss.phase_two:
-		return
-
-	if boss.current_hp >= boss.max_hp:
 		return
 
 	boss.phase_two = true
 	boss.state = boss.BossState.PHASE_TWO
 	boss.attacking = true
-	boss.movement.stop_velocity()
-	boss.attacks.disable_all_hitboxes()
+	boss.velocity.x = 0.0
+
+	boss.phase_two_started.emit()
 
 	boss.sprite.play("holy_buff")
 
-	await boss.attacks.wait_for_animation_done("holy_buff")
+	await boss.sprite.animation_finished
 
-	if boss.dead:
-		return
+	boss.attacking = false
+	boss.state = boss.BossState.IDLE
 
-	boss.walk_speed *= 1.2
-	boss.run_speed *= 1.25
-	boss.dash_speed *= 1.2
 
-	boss.slash_damage *= 1.25
-	boss.thrust_damage *= 1.25
-	boss.dash_damage *= 1.25
-	boss.holy_damage *= 1.25
-	boss.combo_damage *= 1.25
-	boss.air_damage *= 1.25
+#HEAL INTERRUPTION
 
-	boss.attack_timer.wait_time = boss.phase_two_attack_cooldown
-	boss.phase_two_started.emit()
+func cancel_heal_with_knockback(
+	attack_area: AttackArea
+) -> void:
 
+	boss.heal_interrupted = true
+	boss.heal_locked = false
+	boss.heal_cancel_recovering = true
+
+	var dir: float = sign(
+		boss.global_position.x
+		- attack_area.global_position.x
+	)
+
+	if dir == 0.0:
+		dir = 1.0
+
+	boss.velocity.x = (
+		dir
+		* boss.heal_knockback_force
+	)
+
+	boss.velocity.y = (
+		-boss.heal_knockback_up_force
+	)
+
+	boss.attacking = true
+	boss.state = boss.BossState.REST
+
+	boss.attacks.disable_all_hitboxes()
+
+	await boss.get_tree().create_timer(
+		0.4
+	).timeout
+
+	boss.heal_cancel_recovering = false
 	boss.attacking = false
 	boss.state = boss.BossState.IDLE

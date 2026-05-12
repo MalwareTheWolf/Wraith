@@ -1,13 +1,27 @@
 class_name JoannaMovementController
 extends Node
 
+#MOVEMENT CONTROLLER
+#Handles gravity, facing, chasing, jumping, wall checks, and run dust.
+
+
+#NODE REFERENCES
+
 @onready var boss = get_parent()
 
 
+#GRAVITY
+
 func apply_gravity(delta: float) -> void:
 	boss.velocity.y += boss.gravity * delta
-	boss.velocity.y = clampf(boss.velocity.y, -1000.0, boss.max_fall_speed)
+	boss.velocity.y = clampf(
+		boss.velocity.y,
+		-1000.0,
+		boss.max_fall_speed
+	)
 
+
+#VELOCITY CONTROL
 
 func stop_velocity() -> void:
 	boss.velocity.x = 0.0
@@ -16,6 +30,8 @@ func stop_velocity() -> void:
 func stop_all_velocity() -> void:
 	boss.velocity = Vector2.ZERO
 
+
+#FACING
 
 func face_player() -> void:
 	if boss.player == null:
@@ -33,7 +49,6 @@ func face_player() -> void:
 
 
 func face_direction(dir: int) -> void:
-
 	if boss.rest_locked:
 		return
 
@@ -47,24 +62,8 @@ func face_direction(dir: int) -> void:
 	else:
 		boss.sprite.flip_h = dir > 0
 
-	if boss.thrust_hitbox != null:
-		boss.thrust_hitbox.flip(float(dir))
 
-	if boss.slash_hitbox != null:
-		boss.slash_hitbox.flip(float(dir))
-
-	if boss.dash_hitbox != null:
-		boss.dash_hitbox.flip(float(dir))
-
-	if boss.combo_hitbox != null:
-		boss.combo_hitbox.flip(float(dir))
-
-	if boss.air_above_hitbox != null:
-		boss.air_above_hitbox.flip(float(dir))
-
-	if dir != boss.last_facing_debug_dir:
-		boss.last_facing_debug_dir = dir
-		boss.debug_print("Facing changed. Dir:%s FlipH:%s" % [dir, boss.sprite.flip_h])
+#IDLE
 
 func hold_idle() -> void:
 	if boss.rest_locked:
@@ -78,6 +77,9 @@ func hold_idle() -> void:
 
 	if boss.sprite.animation != "idle":
 		boss.sprite.play("idle")
+
+
+#CHASE
 
 func chase_player(distance: float) -> void:
 	if boss.rest_locked:
@@ -126,6 +128,8 @@ func chase_player(distance: float) -> void:
 		boss.sprite.play("walk")
 
 
+#JUMP CHECK
+
 func should_jump_to_player(y_difference: float, x_distance: float) -> bool:
 	if boss.jump_response_pending:
 		return false
@@ -140,6 +144,9 @@ func should_jump_to_player(y_difference: float, x_distance: float) -> bool:
 		return true
 
 	return false
+
+
+#OVERLAP FIX
 
 func step_out_of_player() -> void:
 	if boss.player == null:
@@ -159,7 +166,8 @@ func step_out_of_player() -> void:
 	if boss.sprite.animation != "walk":
 		boss.sprite.play("walk")
 
-	boss.debug_print("Too close to player. Stepping out. Dir:%s" % dir)
+
+#JUMP MOVEMENT
 
 func jump_to_player() -> void:
 	if boss.rest_locked:
@@ -183,8 +191,11 @@ func jump_to_player() -> void:
 	boss.sprite.play("jump")
 
 	await boss.get_tree().create_timer(boss.jump_cooldown).timeout
+
 	boss.can_jump_attack = true
 
+
+#WALL CHECK
 
 func is_wall_in_dash_direction(dir: int) -> bool:
 	if dir == 0:
@@ -202,6 +213,8 @@ func is_wall_in_dash_direction(dir: int) -> bool:
 
 	return not result.is_empty()
 
+
+#RUN DUST
 
 func play_run_start_dust() -> void:
 	if not boss.has_node("RunDustVFX"):
